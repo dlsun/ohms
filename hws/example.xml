@@ -1,21 +1,23 @@
-<p>
-1. How many statisticians does it take to screw in a lightbulb?
-</p>
-<question type="Multiple Choice">
-<options>
-  <option answer="false">One</option>
-  <option answer="false">Two</option>
-  <option answer="false">Three</option>
-  <option answer="true">[-0.7, 4.9], (with 95% confidence)</option>
-</options>
-</question>
+<hw>
+  <p>
+    1. How many statisticians does it take to screw in a lightbulb?
+  </p>
+  <question type="Multiple Choice" points="5">
+    <options>
+      <option answer="false">One</option>
+      <option answer="false">Two</option>
+      <option answer="false">Three</option>
+      <option answer="true">[-0.7, 4.9], (with 95% confidence)</option>
+    </options>
+  </question>
 
-<p>
-2. In 500 words or less, please explain why Bayesians don't have souls.
-</p>
-<question type="Long Answer"></question>
+  <p>
+    2. In 500 words or less, please explain why Bayesians don't have souls.
+  </p>
+  <question type="Long Answer" points="20"></question>
 
-<p>
-3. Three statisticians, Adam, Betty, and Charlie, go big-game hunting together. After hiking for about an hour, they spot a deer. Adam shoots first, and misses 10 meters to the left. Betty shoots next, and misses 10 meters to the right. Charlie exclaims, "We got 'im!" Do you agree? Explain your reasoning briefly.
-</p>
-<question type="Short Answer"></question>
+  <p>
+    3. Three statisticians, Adam, Betty, and Charlie, go big-game hunting together. After hiking for about an hour, they spot a deer. Adam shoots first, and misses 10 meters to the left. Betty shoots next, and misses 10 meters to the right. Charlie exclaims, "We got 'im!" Do you agree? Explain your reasoning briefly.
+  </p>
+  <question type="Short Answer" points="10"></question>
+</hw>

@@ -5,7 +5,7 @@ Objects representing homework questions.
 """
 
 from sqlalchemy import Column, Integer, String, ForeignKey
-from server import Base
+from server import Base, session
 
 
 class Question(Base):
@@ -19,9 +19,15 @@ class Question(Base):
     def score(self, answer):
         pass
 
+    def from_xml(self, node):
+        pass
+
 
 class MultipleChoiceQuestion(Question):
-    pass
+    questiontype = "Multiple Choice"
+
+    def from_xml(self, node):
+        pass
 
 
 class MultipleChoiceOption(Base):
@@ -35,8 +41,31 @@ class MultipleChoiceOption(Base):
 
 
 class ShortAnswerQuestion(Question):
-    pass
+    questiontype = "Short Answer"
+
+    def from_xml(self, node):
+        pass
 
 
 class LongAnswerQuestion(Question):
-    pass
+    questiontype = "Long Answer"
+
+    def from_xml(self, node):
+        pass
+
+
+def from_xml(node):
+    """Constructs a question from an xml node"""
+
+    if node.attrib['type'] == 'Multiple Choice':
+        q = MultipleChoiceQuestion()
+    elif node.attrib['type'] == 'Long Answer':
+        q = LongAnswerQuestion()
+    elif node.attrib['type'] == 'Short Answer':
+        q = ShortAnswerQuestion()
+    else:
+        raise ValueError
+
+    q.from_xml(node)
+    q.points = int(node.attrib['points'])
+    return q

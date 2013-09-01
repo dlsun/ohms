@@ -24,6 +24,10 @@ def hello():
 
 def init_db():
     question.Base.metadata.create_all(engine)
+    h = homework.Homework()
+    h.from_xml('hws/example.xml')
+    session.add(h)
+    session.commit()
 
 if __name__ == "__main__":
     init_db()
