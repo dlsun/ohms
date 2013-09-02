@@ -6,7 +6,7 @@ Defines the database objects.
 
 import os
 import xml.etree.ElementTree as ET
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from base import Base, session
 
@@ -103,3 +103,23 @@ class LongAnswerQuestion(Question):
 
     def from_xml(self, node):
         pass
+
+
+class Student(Base):
+    __tablename__ = 'students'
+    sunet = Column(String, primary_key=True)
+    name = Column(String)
+
+
+class Answer(Base):
+    __tablename__ = 'answers'
+
+    # Unused fields will be set to null
+    id = Column(Integer, primary_key=True)
+    sunet = Column(String, ForeignKey('students.sunet'))
+    question_id = Column(Integer, ForeignKey('questions.id'))
+    option_id = Column(Integer, ForeignKey('mc_options.id'))
+    time = Column(DateTime)
+    text = Column(String)
+    real = Column(Float)
+    integral = Column(Integer)

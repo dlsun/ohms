@@ -11,8 +11,7 @@ import objects
 
 def init_db():
     if os.path.exists("ohms.db"):
-        print "Destroy the database and restart it??? (y/n)"
-        if raw_input() == "y":
+        if raw_input("Destroy the database??? (y/n)") == "y":
             os.remove("ohms.db")
         else:
             print "Aborting"
@@ -24,6 +23,11 @@ def init_db():
     h = objects.Homework()
     h.from_xml('hws/example.xml')
     session.add(h)
+    session.commit()
+
+    naftali = objects.Student(sunet="naftali", name="Naftali Harris")
+    dennis = objects.Student(sunet="dlsun", name="Dennis Sun")
+    session.add_all([naftali, dennis])
     session.commit()
 
 if __name__ == "__main__":
