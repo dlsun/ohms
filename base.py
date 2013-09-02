@@ -1,7 +1,7 @@
 """
 base.py
 
-Simple file to avoid cyclic imports
+A base file for sqlalchemy to avoid cyclic imports
 """
 
 from sqlalchemy import create_engine

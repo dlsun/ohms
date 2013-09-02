@@ -25,7 +25,7 @@ class Homework(Base):
         tree = ET.parse(filename)
         root = tree.getroot()
         for q in root.iter('question'):
-            q_object = from_xml(q)
+            q_object = Question.from_xml(q)
             q_object.hw = self
             session.add(q_object)
             session.commit()
@@ -40,14 +40,26 @@ class Question(Base):
     type = Column(String)
 
     __mapper_args__ = {'polymorphic_on': type,
-                       'polymorphic_identity': 'question'
-                      }
+                       'polymorphic_identity': 'question'}
 
+    @staticmethod
+    def from_xml(node):
+        """Constructs a Question object from an xml node"""
+
+        if node.attrib['type'] == 'Multiple Choice':
+            q = MultipleChoiceQuestion()
+        elif node.attrib['type'] == 'Long Answer':
+            q = LongAnswerQuestion()
+        elif node.attrib['type'] == 'Short Answer':
+            q = ShortAnswerQuestion()
+        else:
+            raise ValueError
+
+        q.from_xml(node)
+        q.points = int(node.attrib['points'])
+        return q
 
     def score(self, answer):
-        pass
-
-    def from_xml(self, node):
         pass
 
 
@@ -56,12 +68,6 @@ class MultipleChoiceQuestion(Question):
     options = relationship("MultipleChoiceOption",
                            order_by="MultipleChoiceOption.id",
                            backref="question")
-
-    """
-    def __init__(self, *args, **kwards):
-        Question.__init__(self, *args, **kwards)
-        self.type = "Multiple Choice"
-    """
 
     def from_xml(self, node):
         pass
@@ -80,12 +86,6 @@ class MultipleChoiceOption(Base):
 class ShortAnswerQuestion(Question):
     __mapper_args__ = {'polymorphic_identity': 'Short Answer'}
 
-    """
-    def __init__(self, *args, **kwards):
-        Question.__init__(self, *args, **kwards)
-        self.type = "Short Answer"
-    """
-
     def from_xml(self, node):
         pass
 
@@ -93,28 +93,5 @@ class ShortAnswerQuestion(Question):
 class LongAnswerQuestion(Question):
     __mapper_args__ = {'polymorphic_identity': 'Long Answer'}
 
-    """
-    def __init__(self, *args, **kwards):
-        Question.__init__(self, *args, **kwards)
-        self.type = "Long Answer"
-    """
-
     def from_xml(self, node):
         pass
-
-
-def from_xml(node):
-    """Constructs a question from an xml node"""
-
-    if node.attrib['type'] == 'Multiple Choice':
-        q = MultipleChoiceQuestion()
-    elif node.attrib['type'] == 'Long Answer':
-        q = LongAnswerQuestion()
-    elif node.attrib['type'] == 'Short Answer':
-        q = ShortAnswerQuestion()
-    else:
-        raise ValueError
-
-    q.from_xml(node)
-    q.points = int(node.attrib['points'])
-    return q
