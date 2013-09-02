@@ -1,12 +1,34 @@
 """
-question.py
+objects.py
 
-Objects representing homework questions.
+Defines the database objects.
 """
 
+import os
+import xml.etree.ElementTree as ET
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
-from server import Base, session
+from base import Base, session
+
+
+class Homework(Base):
+    __tablename__ = 'hws'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True)
+    text = Column(String)
+
+    questions = relationship("Question", order_by="Question.id", backref="hw")
+
+    def from_xml(self, filename):
+        self.name = os.path.splitext(os.path.basename(filename))[0]
+        tree = ET.parse(filename)
+        root = tree.getroot()
+        for q in root.iter('question'):
+            q_object = from_xml(q)
+            q_object.hw = self
+            session.add(q_object)
+            session.commit()
 
 
 class Question(Base):
@@ -14,8 +36,13 @@ class Question(Base):
 
     id = Column(Integer, primary_key=True)
     hw_id = Column(Integer, ForeignKey('hws.id'))
-    questiontype = Column(String)
     points = Column(Integer)
+    type = Column(String)
+
+    __mapper_args__ = {'polymorphic_on': type,
+                       'polymorphic_identity': 'question'
+                      }
+
 
     def score(self, answer):
         pass
@@ -25,13 +52,16 @@ class Question(Base):
 
 
 class MultipleChoiceQuestion(Question):
+    __mapper_args__ = {'polymorphic_identity': 'Multiple Choice'}
     options = relationship("MultipleChoiceOption",
                            order_by="MultipleChoiceOption.id",
                            backref="question")
 
+    """
     def __init__(self, *args, **kwards):
         Question.__init__(self, *args, **kwards)
-        self.questiontype = "Multiple Choice"
+        self.type = "Multiple Choice"
+    """
 
     def from_xml(self, node):
         pass
@@ -48,18 +78,26 @@ class MultipleChoiceOption(Base):
 
 
 class ShortAnswerQuestion(Question):
+    __mapper_args__ = {'polymorphic_identity': 'Short Answer'}
+
+    """
     def __init__(self, *args, **kwards):
         Question.__init__(self, *args, **kwards)
-        self.questiontype = "Short Answer"
+        self.type = "Short Answer"
+    """
 
     def from_xml(self, node):
         pass
 
 
 class LongAnswerQuestion(Question):
+    __mapper_args__ = {'polymorphic_identity': 'Long Answer'}
+
+    """
     def __init__(self, *args, **kwards):
         Question.__init__(self, *args, **kwards)
-        self.questiontype = "Long Answer"
+        self.type = "Long Answer"
+    """
 
     def from_xml(self, node):
         pass
