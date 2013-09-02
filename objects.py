@@ -70,7 +70,15 @@ class MultipleChoiceQuestion(Question):
                            backref="question")
 
     def from_xml(self, node):
-        pass
+        for i, option in enumerate(node.find('options').findall('option')):
+            text = option.text
+            correct = option.attrib['correct']
+            option_object = MultipleChoiceOption(order=i,
+                                                 text=text,
+                                                 correct=correct,
+                                                 question=self)
+            session.add(option_object)
+            session.commit()
 
 
 class MultipleChoiceOption(Base):

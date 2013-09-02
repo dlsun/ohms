@@ -4,10 +4,10 @@
   </p>
   <question type="Multiple Choice" points="5">
     <options>
-      <option answer="false">One</option>
-      <option answer="false">Two</option>
-      <option answer="false">Three</option>
-      <option answer="true">[-0.7, 4.9], (with 95% confidence)</option>
+      <option correct="false">One</option>
+      <option correct="false">Two</option>
+      <option correct="false">Three</option>
+      <option correct="true">[-0.7, 4.9], (with 95% confidence)</option>
     </options>
   </question>
 
