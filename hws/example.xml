@@ -1,0 +1,32 @@
+<hw>
+  <question>
+    <p>
+      How many statisticians does it take to screw in a lightbulb?
+    </p>
+    <answer type="Multiple Choice" points="5">
+      <options>
+        <option correct="false">One</option>
+        <option correct="false">Two</option>
+        <option correct="false">Three</option>
+        <option correct="true">[-0.7, 4.9], (with 95% confidence)</option>
+      </options>
+    </answer>
+  </question>
+
+  <question>
+    <p>
+      In 500 words or less, please explain why Bayesians don't have souls.
+    </p>
+    <answer type="Long Answer" points="20"></answer>
+  </question>
+
+  <question>
+    <p>
+      Three statisticians, Adam, Betty, and Charlie, go big-game hunting together. 
+      After hiking for about an hour, they spot a deer. Adam shoots first, and misses 
+      10 meters to the left. Betty shoots next, and misses 10 meters to the right. 
+      Charlie exclaims, "We got 'im!" Do you agree? Explain your reasoning briefly.
+    </p>
+    <answer type="Short Answer" points="10"></answer>
+  </question>
+</hw>
