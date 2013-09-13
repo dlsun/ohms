@@ -34,9 +34,9 @@ class Question(Base):
     __tablename__ = 'questions'
 
     id = Column(Integer, primary_key=True)
+    name = ""
     hw_id = Column(Integer, ForeignKey('hws.id'))
     xml = Column(String)
-
     items = relationship("Item", order_by="Item.id", backref="question")
 
     @staticmethod
@@ -51,6 +51,39 @@ class Question(Base):
         question.xml = ET.tostring(node)
         return question
 
+    def to_html(self):
+
+        score = ET.fromstring("<tr><td class='score'></td></tr>")
+
+        comment_row = ET.fromstring(r'''
+<tr>
+  <td class='alert comments'><h5>Comments:</h5></td>
+</tr>''')
+        body = ET.fromstring(self.xml)
+        for i,item in enumerate(body.iter('item')):
+            item.clear()
+            item.append(self.items[i].to_html())
+        body_wrap = ET.Element("td",attrib={"class":"body"})
+        body_wrap.append(body)
+        body_row = ET.Element("tr")
+        body_row.append(body_wrap)
+        table = ET.Element("table",attrib={"class":"frame"})
+        table.extend([comment_row,body_row])
+
+        submit = ET.Element("button",attrib={
+                "class": "submit",
+                "disabled": "disabled"
+                })
+        submit.text = "Submit Response"
+        time = ET.Element("span",attrib={"class": "time"})
+
+        form = ET.Element("form",attrib = {"action": "#"})
+
+        form.extend([score,table,submit,time])
+        return form
+
+    def __str__(self):
+        return ET.tostring(self.to_html(),method="html")
 
 class Item(Base):
     __tablename__ = 'items'
@@ -80,6 +113,9 @@ class Item(Base):
         item.points = int(node.attrib['points'])
         return item
 
+    def to_html(self):
+        return ET.Element("p")
+
     def score(self, answer):
         pass
 
@@ -101,6 +137,14 @@ class MultipleChoiceItem(Item):
             session.add(option_object)
             session.commit()
 
+    def to_html(self):
+        root = ET.Element("p",attrib={"class":"Answer MultipleChoice"})
+        for i,option in enumerate(self.options):
+            root.append(ET.fromstring(r'''
+<p><input type='radio' name='%d' value='%d'> %s</input></p>
+''' % (self.id,i,option.text)))
+        return root
+
 
 class MultipleChoiceOption(Base):
     __tablename__ = 'mc_options'
@@ -118,12 +162,26 @@ class ShortAnswerItem(Item):
     def from_xml(self, node):
         pass
 
+    def to_html(self):
+        return ET.Element("input",attrib={
+                "type": "text",
+                "class": "Answer input-medium"
+                })
+        
+
 
 class LongAnswerItem(Item):
     __mapper_args__ = {'polymorphic_identity': 'Long Answer'}
 
     def from_xml(self, node):
         pass
+
+    def to_html(self):
+        node = ET.Element("textarea",attrib={
+                "class": "Answer span7",
+                "rows": "4"
+                })
+        return node
 
 
 class Student(Base):
