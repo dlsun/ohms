@@ -34,7 +34,7 @@ class Question(Base):
     __tablename__ = 'questions'
 
     id = Column(Integer, primary_key=True)
-    name = ""
+    name = Column(String)
     hw_id = Column(Integer, ForeignKey('hws.id'))
     xml = Column(String)
     items = relationship("Item", order_by="Item.id", backref="question")
@@ -52,38 +52,18 @@ class Question(Base):
         return question
 
     def to_html(self):
-
-        score = ET.fromstring("<tr><td class='score'></td></tr>")
-
-        comment_row = ET.fromstring(r'''
-<tr>
-  <td class='alert comments'><h5>Comments:</h5></td>
-</tr>''')
         body = ET.fromstring(self.xml)
         for i,item in enumerate(body.iter('item')):
             item.clear()
             item.append(self.items[i].to_html())
-        body_wrap = ET.Element("td",attrib={"class":"body"})
-        body_wrap.append(body)
-        body_row = ET.Element("tr")
-        body_row.append(body_wrap)
-        table = ET.Element("table",attrib={"class":"frame"})
-        table.extend([comment_row,body_row])
-
-        submit = ET.Element("button",attrib={
-                "class": "submit",
-                "disabled": "disabled"
-                })
-        submit.text = "Submit Response"
-        time = ET.Element("span",attrib={"class": "time"})
-
-        form = ET.Element("form",attrib = {"action": "#"})
-
-        form.extend([score,table,submit,time])
-        return form
+        return body
 
     def __str__(self):
         return ET.tostring(self.to_html(),method="html")
+
+    def check(self,answer):
+        return [item.check(answer[i]) for i,item in enumerate(self.items)]
+    
 
 class Item(Base):
     __tablename__ = 'items'
@@ -116,8 +96,8 @@ class Item(Base):
     def to_html(self):
         return ET.Element("p")
 
-    def score(self, answer):
-        pass
+    def check(self, answer):
+        return 3
 
 
 class MultipleChoiceItem(Item):
@@ -138,7 +118,10 @@ class MultipleChoiceItem(Item):
             session.commit()
 
     def to_html(self):
-        root = ET.Element("p",attrib={"class":"Answer MultipleChoice"})
+        root = ET.Element("p",attrib={
+                "class": "item",
+                "type": "multiple-choice"
+                })
         for i,option in enumerate(self.options):
             root.append(ET.fromstring(r'''
 <p><input type='radio' name='%d' value='%d'> %s</input></p>
@@ -165,7 +148,8 @@ class ShortAnswerItem(Item):
     def to_html(self):
         return ET.Element("input",attrib={
                 "type": "text",
-                "class": "Answer input-medium"
+                "class": "item input-medium",
+                "type": "short-answer"
                 })
         
 
@@ -178,7 +162,8 @@ class LongAnswerItem(Item):
 
     def to_html(self):
         node = ET.Element("textarea",attrib={
-                "class": "Answer span7",
+                "class": "item span7",
+                "type": "long-answer",
                 "rows": "4"
                 })
         return node
@@ -190,15 +175,16 @@ class Student(Base):
     name = Column(String)
 
 
-class Answer(Base):
-    __tablename__ = 'answers'
+class Response(Base):
+    __tablename__ = 'responses'
 
     # Unused fields will be set to null
     id = Column(Integer, primary_key=True)
     sunet = Column(String, ForeignKey('students.sunet'))
     item_id = Column(Integer, ForeignKey('items.id'))
-    option_id = Column(Integer, ForeignKey('mc_options.id'))
+    #option_id = Column(Integer, ForeignKey('mc_options.id'))
     time = Column(DateTime)
-    text = Column(String)
-    real = Column(Float)
-    integral = Column(Integer)
+    response = Column(String)
+    score = Column(Float)
+
+

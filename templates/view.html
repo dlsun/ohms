@@ -30,13 +30,22 @@
 
 {% for q in questions %}
 
-<div class='question'>
+<div class='question' id={{q.id}}>
   <h3 class='questionName'>Question {{loop.index}}
 {% if q.name %}
 : {{q.name|safe}}
 {% endif %}
-</h3>
-  {{q|safe}}
+  </h3>
+
+  <span class='time'></span>
+  <table class='frame'>
+    <tr><td class='alert comments'><h5>Comments:</h5></td></tr>
+    <tr><td class='body'>
+	{{q|safe}}
+    </td></tr>
+  </table>
+
+  <button class='submit' disabled>Submit Response</button> <span class='time'></span>
 </div>
 
 <hr/>
@@ -46,19 +55,16 @@
 {% endblock %}
 
 {% block javascript %}
+<!--<script src="../../js/jquery-1.7.1.min.js"></script>!-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.2-latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/namespace.js"></script>
+<script src="js/item.js"></script>
 <script src="js/homework.js"></script>
 <script src="js/question.js"></script>
-<script src="js/answer.js"></script>
-<script src="js/multiplechoiceanswer.js"></script>
-<script src="js/multipleresponseanswer.js"></script>
-<script src="js/fillintheblankanswer.js"></script>
-<script src="js/truefalseanswer.js"></script>
-<script src="js/shortanswer.js"></script>
-<script src="js/fileuploadanswer.js"></script>
-<script src="js/latexanswer.js"></script>
+<script src="js/multiplechoiceitem.js"></script>
+<script src="js/shortansweritem.js"></script>
+<script src="js/longansweritem.js"></script>
 <script src="js/view.js"></script>
 {% endblock %}
