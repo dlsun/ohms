@@ -47,23 +47,23 @@ class Question(Base):
             item_object.question = question
             session.add(item_object)
             session.commit()
-        
+
         question.xml = ET.tostring(node)
         return question
 
     def to_html(self):
         body = ET.fromstring(self.xml)
-        for i,item in enumerate(body.iter('item')):
+        for i, item in enumerate(body.iter('item')):
             item.clear()
             item.append(self.items[i].to_html())
         return body
 
     def __str__(self):
-        return ET.tostring(self.to_html(),method="html")
+        return ET.tostring(self.to_html(), method="html")
 
-    def check(self,answer):
-        return [item.check(answer[i]) for i,item in enumerate(self.items)]
-    
+    def check(self, answer):
+        return [item.check(answer[i]) for i, item in enumerate(self.items)]
+
 
 class Item(Base):
     __tablename__ = 'items'
@@ -118,14 +118,14 @@ class MultipleChoiceItem(Item):
             session.commit()
 
     def to_html(self):
-        root = ET.Element("p",attrib={
+        root = ET.Element("div", attrib={
                 "class": "item",
                 "type": "multiple-choice"
                 })
-        for i,option in enumerate(self.options):
+        for i, option in enumerate(self.options):
             root.append(ET.fromstring(r'''
 <p><input type='radio' name='%d' value='%d'> %s</input></p>
-''' % (self.id,i,option.text)))
+''' % (self.id, i, option.text)))
         return root
 
 
@@ -146,12 +146,11 @@ class ShortAnswerItem(Item):
         pass
 
     def to_html(self):
-        return ET.Element("input",attrib={
+        return ET.Element("input", attrib={
                 "type": "text",
                 "class": "item input-medium",
                 "type": "short-answer"
                 })
-        
 
 
 class LongAnswerItem(Item):
@@ -161,7 +160,7 @@ class LongAnswerItem(Item):
         pass
 
     def to_html(self):
-        node = ET.Element("textarea",attrib={
+        node = ET.Element("textarea", attrib={
                 "class": "item span7",
                 "type": "long-answer",
                 "rows": "4"
@@ -186,5 +185,3 @@ class Response(Base):
     time = Column(DateTime)
     response = Column(String)
     score = Column(Float)
-
-

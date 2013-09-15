@@ -20,7 +20,7 @@ var OHMS = (function(OHMS) {
 	}
 
 	MultipleChoiceItem.prototype.set_value = function (value) {
-	    this.get_element_by_value(value).attr("checked","checked");
+	    this.element.find("[value="+value+"]").attr("checked","checked");
 	}
 
 	MultipleChoiceItem.prototype.unlock = function () {
