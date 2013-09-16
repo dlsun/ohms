@@ -1,0 +1,27 @@
+{% extends "page.html" %}
+
+{% block content %}
+<h3>Online Homework Management System (OHMS)</h3>
+
+<p id="studentName" class="lead"></p>
+
+<table class="table table-striped" id="homeworks">
+  <thead>
+    <th>Homework</th>
+    <th>Due Date</th>
+  </thead>
+  <tbody>
+
+  {% for hw in homeworks %}
+
+  <tr>
+    <td><a href="view?id={{hw.id}}">{{hw.name}}</a></td>
+    <td>{{hw.due_date}}</td>
+  </tr>
+
+  {% endfor %}
+
+  </tbody>
+</table>
+{% endblock %}
+

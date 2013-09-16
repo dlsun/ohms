@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 
 from base import session
-from objects import Question, Item, Response
+from objects import Homework, Question, Item, Response
 app = Flask(__name__, static_url_path="")
 
 sunet = "dlsun"
@@ -29,8 +29,9 @@ class NewEncoder(json.JSONEncoder):
 
 
 @app.route("/")
-def hello():
-    return "Hello World!"
+def index():
+    hws = session.query(Homework).all()
+    return render_template("index.html", homeworks=hws)
 
 
 @app.route("/view", methods=['GET'])
@@ -66,20 +67,26 @@ def load():
 @app.route("/submit", methods=['POST'])
 def submit():
     q_id = request.args.get("q_id")
-    responses = get_responses(q_id)
+    question = session.query(Question).filter_by(id=q_id).one()
+
+    past_responses = get_responses(q_id)
     items = session.query(Item).filter_by(question_id=q_id).all()
+    responses = request.form.getlist('responses')
+    
+    checked = question.check(responses)
     new_responses = [Response(
             sunet=sunet,
             item_id=item.id,
             time=datetime.now(),
-            response=request.form.getlist('responses')[i],
-            score=10
+            response=responses[i],
+            score=checked['score']
         ) for i, item in enumerate(items)]
     # add response to the database
     session.add_all(new_responses)
     session.commit()
     # add response to what to return to the user
     return json.dumps({
+            "scores": checked['score'],
             "last_submission": new_responses,
             }, cls=NewEncoder)
 

@@ -9,20 +9,32 @@ import xml.etree.ElementTree as ET
 from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from base import Base, session
-
+from datetime import datetime
 
 class Homework(Base):
     __tablename__ = 'hws'
 
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
+    start_date = Column(DateTime)
+    due_date = Column(DateTime)
 
     questions = relationship("Question", order_by="Question.id", backref="hw")
 
     def from_xml(self, filename):
-        self.name = os.path.splitext(os.path.basename(filename))[0]
         tree = ET.parse(filename)
         root = tree.getroot()
+        self.name = root.attrib['name']
+        if 'start_date' in root.attrib:
+            self.start_date = datetime.strptime(root.attrib['start_date'],
+                                                "%m/%d/%Y %H:%M:%S")
+        else:
+            self.start_date = None
+        if 'due_date' in root.attrib:
+            self.due_date = datetime.strptime(root.attrib['due_date'],
+                                              "%m/%d/%Y %H:%M:%S")
+        else:
+            self.due_date = None
         for q in root.iter('question'):
             q_object = Question.from_xml(q)
             q_object.hw = self
@@ -61,8 +73,12 @@ class Question(Base):
     def __str__(self):
         return ET.tostring(self.to_html(), method="html")
 
-    def check(self, answer):
-        return [item.check(answer[i]) for i, item in enumerate(self.items)]
+    def check(self, responses):
+        checked = [item.check(responses[i]) for i, item in enumerate(self.items)]
+        return {
+            "score": sum([c['score'] for c in checked]),
+            "comments": ""
+            }
 
 
 class Item(Base):
@@ -96,8 +112,8 @@ class Item(Base):
     def to_html(self):
         return ET.Element("p")
 
-    def check(self, answer):
-        return 3
+    def check(self, response):
+        return { "score": 2, "comments": "" }
 
 
 class MultipleChoiceItem(Item):
@@ -185,3 +201,4 @@ class Response(Base):
     time = Column(DateTime)
     response = Column(String)
     score = Column(Float)
+    comments = Column(String)
