@@ -11,6 +11,7 @@ from sqlalchemy.orm import relationship, backref
 from base import Base, session
 from datetime import datetime
 
+
 class Homework(Base):
     __tablename__ = 'hws'
 
@@ -106,8 +107,8 @@ class Item(Base):
         return ET.Element("p")
 
     def check(self, response):
-        return { "score": 0, 
-                 "comments": r'''
+        return {"score": 0,
+                "comments": r'''
 %s points have yet to be graded.
 ''' % self.points}
 
@@ -141,7 +142,8 @@ class MultipleChoiceItem(Item):
         return root
 
     def check(self, response):
-        correct = [i for i, option in enumerate(self.options) if option.correct=='true']
+        correct = [i for i, option in enumerate(self.options)
+                   if option.correct == 'true']
         if response == str(correct[0]):
             return {"score": self.points, "comments": ""}
         else:

@@ -19,7 +19,7 @@ class NewEncoder(json.JSONEncoder):
 
     def default(self, obj):
         if isinstance(obj, datetime):
-            return datetime.strftime(obj,"%m/%d/%Y %H:%M:%S")
+            return datetime.strftime(obj, "%m/%d/%Y %H:%M:%S")
         elif isinstance(obj, Response):
             d = {}
             for column in obj.__table__.columns:
@@ -38,7 +38,7 @@ def index():
 def view():
     hw_id = request.args.get("id")
     questions = session.query(Question).filter_by(hw_id=hw_id).all()
-    for i,q in enumerate(questions):
+    for i, q in enumerate(questions):
         items = session.query(Item).filter_by(question_id=q.id).all()
         questions[i].points = sum(item.points for item in items)
     return render_template("view.html", questions=questions)
@@ -75,7 +75,7 @@ def submit():
     past_responses = get_responses(q_id)
     items = session.query(Item).filter_by(question_id=q_id).all()
     responses = request.form.getlist('responses')
-    
+
     new_responses = []
     for i, item in enumerate(items):
         checked = item.check(responses[i])
