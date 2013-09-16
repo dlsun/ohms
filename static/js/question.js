@@ -12,6 +12,7 @@ var OHMS = (function(OHMS) {
 	    this.element = question;
 	    this.homework = homework;
 	    this.id = this.element.attr("id");
+	    this.points = parseFloat(this.element.attr("points"));
 
 	    this.items = [];
 	    var item_elements = this.element.find(".item");
@@ -56,6 +57,7 @@ var OHMS = (function(OHMS) {
 		for (var i=0; i<this.items.length; i++) {
 		    this.items[i].set_value(data.last_submission[i].response);
 		}
+		this.update(data); 
 	    }
 	}
 
@@ -85,6 +87,7 @@ var OHMS = (function(OHMS) {
 
 	Question.prototype.submit_response_success = function (data) {
 	    console.log(data);
+	    this.update(data);
 	}
 
 	Question.prototype.submit_response_error = function (xhr) {
@@ -96,6 +99,40 @@ var OHMS = (function(OHMS) {
 		this.items[i].unlock();
 	    }
 	    this.element.find(".submit").removeAttr('disabled');
+	}
+
+	Question.prototype.update = function (data) {
+
+	    // update score
+	    var score = 0;
+	    for (var i=0; i<data.last_submission.length; i++) {
+		score += data.last_submission[i].score;
+	    }
+	    var score_element = this.element.find(".score");
+	    if (score === this.points) {
+		score_element.html("<img src='img/checkmark.png' " + 
+				   "height='30' width='26'> " + 
+				   "Congrats! You've earned all " + 
+				   this.points + " points.");
+		score_element.attr("class","score alert alert-success");
+	    } else {
+		score_element.html("<strong>You have earned " + score + 
+			   " out of " + this.points + 
+			   " points.</strong>");
+		score_element.attr("class","score alert alert-error");
+	    }
+
+	    // update comments
+	    var comments = "";
+	    for (var i=0; i<data.last_submission.length; i++) {
+		comments += "<p>" + data.last_submission[i].comments + "</p>";
+	    }
+	    this.element.find(".comments").html(comments);
+
+	    // update time
+	    var time = data.last_submission[0].time;
+	    this.element.find(".time").html("Last submission at " +
+					    data.last_submission[0].time);
 	}
 
 	OHMS.Question = Question;

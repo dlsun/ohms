@@ -31,22 +31,22 @@ between the first and second submissions).</li>
 
 {% for q in questions %}
 
-<div class='question' id={{q.id}}>
+<div class='question' id='{{q.id}}' points='{{q.points}}'>
   <h3 class='questionName'>Question {{loop.index}}
 {% if q.name %}
 : {{q.name|safe}}
 {% endif %}
   </h3>
 
-  <span class='time'></span>
   <table class='frame'>
-    <tr><td class='alert comments'><h5>Comments:</h5></td></tr>
+    <tr><td class='score'><strong>This problem is worth {{q.points}} points.</strong></td></tr>
+    <tr><td class='alert'><h5>Comments:</h5> <p class='comments'></p></td></tr>
     <tr><td class='body'>
 	{{q|safe}}
     </td></tr>
   </table>
 
-  <button class='submit' disabled>Submit Response</button> <span class='time'></span>
+  <button class='submit' disabled>Submit Response</button>&nbsp; <span class='time'></span>
 </div>
 
 <hr/>

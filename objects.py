@@ -73,13 +73,6 @@ class Question(Base):
     def __str__(self):
         return ET.tostring(self.to_html(), method="html")
 
-    def check(self, responses):
-        checked = [item.check(responses[i]) for i, item in enumerate(self.items)]
-        return {
-            "score": sum([c['score'] for c in checked]),
-            "comments": ""
-            }
-
 
 class Item(Base):
     __tablename__ = 'items'
@@ -113,7 +106,10 @@ class Item(Base):
         return ET.Element("p")
 
     def check(self, response):
-        return { "score": 2, "comments": "" }
+        return { "score": 0, 
+                 "comments": r'''
+%s points have yet to be graded.
+''' % self.points}
 
 
 class MultipleChoiceItem(Item):
@@ -143,6 +139,13 @@ class MultipleChoiceItem(Item):
 <p><input type='radio' name='%d' value='%d'> %s</input></p>
 ''' % (self.id, i, option.text)))
         return root
+
+    def check(self, response):
+        correct = [i for i, option in enumerate(self.options) if option.correct=='true']
+        if response == str(correct[0]):
+            return {"score": self.points, "comments": ""}
+        else:
+            return {"score": 0, "comments": ""}
 
 
 class MultipleChoiceOption(Base):

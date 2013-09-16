@@ -19,7 +19,7 @@ class NewEncoder(json.JSONEncoder):
 
     def default(self, obj):
         if isinstance(obj, datetime):
-            return str(obj)
+            return datetime.strftime(obj,"%m/%d/%Y %H:%M:%S")
         elif isinstance(obj, Response):
             d = {}
             for column in obj.__table__.columns:
@@ -38,6 +38,9 @@ def index():
 def view():
     hw_id = request.args.get("id")
     questions = session.query(Question).filter_by(hw_id=hw_id).all()
+    for i,q in enumerate(questions):
+        items = session.query(Item).filter_by(question_id=q.id).all()
+        questions[i].points = sum(item.points for item in items)
     return render_template("view.html", questions=questions)
 
 
@@ -73,20 +76,22 @@ def submit():
     items = session.query(Item).filter_by(question_id=q_id).all()
     responses = request.form.getlist('responses')
     
-    checked = question.check(responses)
-    new_responses = [Response(
+    new_responses = []
+    for i, item in enumerate(items):
+        checked = item.check(responses[i])
+        new_responses.append(Response(
             sunet=sunet,
             item_id=item.id,
             time=datetime.now(),
             response=responses[i],
-            score=checked['score']
-        ) for i, item in enumerate(items)]
+            score=checked['score'],
+            comments=checked['comments'],
+        ))
     # add response to the database
     session.add_all(new_responses)
     session.commit()
     # add response to what to return to the user
     return json.dumps({
-            "scores": checked['score'],
             "last_submission": new_responses,
             }, cls=NewEncoder)
 
