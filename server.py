@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 
 from base import session
-from objects import Homework, Question, Item, Response
+from objects import Homework, Question, Item, QuestionResponse, ItemResponse
 app = Flask(__name__, static_url_path="")
 
 sunet = "dlsun"
@@ -20,7 +20,13 @@ class NewEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
             return datetime.strftime(obj, "%m/%d/%Y %H:%M:%S")
-        elif isinstance(obj, Response):
+        elif isinstance(obj, QuestionResponse):
+            d = {}
+            for column in obj.__table__.columns:
+                d[column.name] = getattr(obj, column.name)
+            d['item_responses'] = obj.item_responses
+            return d
+        elif isinstance(obj, ItemResponse):
             d = {}
             for column in obj.__table__.columns:
                 d[column.name] = getattr(obj, column.name)
@@ -45,26 +51,23 @@ def view():
 
 
 def get_responses(q_id):
-    responses = session.query(Response).\
+    responses = session.query(QuestionResponse).\
         filter_by(sunet=sunet).\
-        join(Item).join(Question).\
-        filter(Question.id == q_id).\
-        order_by(Response.time.desc()).all()
+        filter_by(question_id=q_id).\
+        order_by(QuestionResponse.time.desc()).all()
     return responses
 
 
 @app.route("/load", methods=['GET'])
 def load():
     q_id = request.args.get("q_id")
-    n_items = session.query(Item).join(Question).\
-        filter(Question.id == q_id).count()
     responses = get_responses(q_id)
     if responses:
         return json.dumps({
-                "last_submission": responses[:n_items],
+                "last_submission": responses[0],
                 }, cls=NewEncoder)
     else:
-        return json.dumps({"last_submission": []})
+        return json.dumps({})
 
 
 @app.route("/submit", methods=['POST'])
@@ -74,25 +77,31 @@ def submit():
 
     past_responses = get_responses(q_id)
     items = session.query(Item).filter_by(question_id=q_id).all()
-    responses = request.form.getlist('responses')
+    responses = request.form.getlist('responses')        
+    
+    score, comments = question.check(responses)
 
-    new_responses = []
-    for i, item in enumerate(items):
-        checked = item.check(responses[i])
-        new_responses.append(Response(
-            sunet=sunet,
+    question_response = QuestionResponse(
+        sunet=sunet,
+        question_id=q_id,
+        time=datetime.now(),
+        score=score,
+        comments=comments
+        )
+
+    for item, response in zip(items, responses):
+        ir = ItemResponse(
             item_id=item.id,
-            time=datetime.now(),
-            response=responses[i],
-            score=checked['score'],
-            comments=checked['comments'],
-        ))
+            response=response
+            )
+        question_response.item_responses.append(ir)
+
     # add response to the database
-    session.add_all(new_responses)
+    session.add(question_response)
     session.commit()
     # add response to what to return to the user
     return json.dumps({
-            "last_submission": new_responses,
+            "last_submission": question_response,
             }, cls=NewEncoder)
 
 

@@ -74,6 +74,11 @@ class Question(Base):
     def __str__(self):
         return ET.tostring(self.to_html(), method="html")
 
+    def check(self, responses):
+        scores, comments = zip(*[item.check(response) for (item, response) 
+                                 in zip(self.items, responses)])
+        return sum(scores), "<br>".join(comments)
+
 
 class Item(Base):
     __tablename__ = 'items'
@@ -81,6 +86,7 @@ class Item(Base):
     id = Column(Integer, primary_key=True)
     question_id = Column(Integer, ForeignKey('questions.id'))
     points = Column(Integer)
+    order = Column(Integer)
     type = Column(String)
 
     __mapper_args__ = {'polymorphic_on': type,
@@ -107,10 +113,7 @@ class Item(Base):
         return ET.Element("p")
 
     def check(self, response):
-        return {"score": 0,
-                "comments": r'''
-%s points have yet to be graded.
-''' % self.points}
+        return 0, "%s points have yet to be graded." % self.points
 
 
 class MultipleChoiceItem(Item):
@@ -145,9 +148,9 @@ class MultipleChoiceItem(Item):
         correct = [i for i, option in enumerate(self.options)
                    if option.correct == 'true']
         if response == str(correct[0]):
-            return {"score": self.points, "comments": ""}
+            return self.points, ""
         else:
-            return {"score": 0, "comments": ""}
+            return 0, ""
 
 
 class MultipleChoiceOption(Base):
@@ -195,15 +198,20 @@ class Student(Base):
     name = Column(String)
 
 
-class Response(Base):
-    __tablename__ = 'responses'
-
-    # Unused fields will be set to null
+class QuestionResponse(Base):
+    __tablename__ = 'question_response'
     id = Column(Integer, primary_key=True)
     sunet = Column(String, ForeignKey('students.sunet'))
-    item_id = Column(Integer, ForeignKey('items.id'))
-    #option_id = Column(Integer, ForeignKey('mc_options.id'))
+    question_id = Column(Integer, ForeignKey('questions.id'))
     time = Column(DateTime)
-    response = Column(String)
+    item_responses = relationship("ItemResponse", order_by="ItemResponse.id", backref="question")
     score = Column(Float)
     comments = Column(String)
+
+
+class ItemResponse(Base):
+    __tablename__ = 'item_response'
+    id = Column(Integer, primary_key=True)
+    question_response_id = Column(Integer, ForeignKey('question_response.id'))
+    item_id = Column(Integer, ForeignKey('items.id'))
+    response = Column(String)

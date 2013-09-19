@@ -53,9 +53,10 @@ var OHMS = (function(OHMS) {
 	}
 
 	Question.prototype.load_response_success = function (data) {
-	    if (data.last_submission.length > 0) {
+	    if (data.last_submission !== undefined) {
 		for (var i=0; i<this.items.length; i++) {
-		    this.items[i].set_value(data.last_submission[i].response);
+		    console.log(data.last_submission);
+		    this.items[i].set_value(data.last_submission.item_responses[i].response);
 		}
 		this.update(data); 
 	    }
@@ -104,10 +105,7 @@ var OHMS = (function(OHMS) {
 	Question.prototype.update = function (data) {
 
 	    // update score
-	    var score = 0;
-	    for (var i=0; i<data.last_submission.length; i++) {
-		score += data.last_submission[i].score;
-	    }
+	    var score = data.last_submission.score;
 	    var score_element = this.element.find(".score");
 	    if (score === this.points) {
 		score_element.html("<img src='img/checkmark.png' " + 
@@ -123,16 +121,11 @@ var OHMS = (function(OHMS) {
 	    }
 
 	    // update comments
-	    var comments = "";
-	    for (var i=0; i<data.last_submission.length; i++) {
-		comments += "<p>" + data.last_submission[i].comments + "</p>";
-	    }
-	    this.element.find(".comments").html(comments);
+	    this.element.find(".comments").html(data.last_submission.comments);
 
 	    // update time
-	    var time = data.last_submission[0].time;
 	    this.element.find(".time").html("Last submission at " +
-					    data.last_submission[0].time);
+					    data.last_submission.time);
 	}
 
 	OHMS.Question = Question;
