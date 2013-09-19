@@ -77,8 +77,8 @@ def submit():
 
     past_responses = get_responses(q_id)
     items = session.query(Item).filter_by(question_id=q_id).all()
-    responses = request.form.getlist('responses')        
-    
+    responses = request.form.getlist('responses')
+
     score, comments = question.check(responses)
 
     question_response = QuestionResponse(

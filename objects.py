@@ -75,7 +75,7 @@ class Question(Base):
         return ET.tostring(self.to_html(), method="html")
 
     def check(self, responses):
-        scores, comments = zip(*[item.check(response) for (item, response) 
+        scores, comments = zip(*[item.check(response) for (item, response)
                                  in zip(self.items, responses)])
         return sum(scores), "<br>".join(comments)
 
@@ -204,7 +204,9 @@ class QuestionResponse(Base):
     sunet = Column(String, ForeignKey('students.sunet'))
     question_id = Column(Integer, ForeignKey('questions.id'))
     time = Column(DateTime)
-    item_responses = relationship("ItemResponse", order_by="ItemResponse.id", backref="question")
+    item_responses = relationship("ItemResponse",
+                                  order_by="ItemResponse.id",
+                                  backref="question")
     score = Column(Float)
     comments = Column(String)
 
