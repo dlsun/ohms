@@ -57,8 +57,9 @@ class Question(Base):
     def from_xml(node):
         question = Question()
         question.points = 0
-        for item in node.iter('item'):
+        for i, item in enumerate(node.iter('item')):
             item_object = Item.from_xml(item)
+            item_object.order = i
             question.points += item_object.points
             question.items.append(item_object)
 
@@ -205,7 +206,7 @@ class Student(Base):
 
 
 class QuestionResponse(Base):
-    __tablename__ = 'question_response'
+    __tablename__ = 'question_responses'
     id = Column(Integer, primary_key=True)
     sunet = Column(String, ForeignKey('students.sunet'))
     question_id = Column(Integer, ForeignKey('questions.id'))
@@ -218,8 +219,8 @@ class QuestionResponse(Base):
 
 
 class ItemResponse(Base):
-    __tablename__ = 'item_response'
+    __tablename__ = 'item_responses'
     id = Column(Integer, primary_key=True)
-    question_response_id = Column(Integer, ForeignKey('question_response.id'))
+    question_response_id = Column(Integer, ForeignKey('question_responses.id'))
     item_id = Column(Integer, ForeignKey('items.id'))
     response = Column(String)
