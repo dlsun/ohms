@@ -51,17 +51,21 @@ class Question(Base):
     hw_id = Column(Integer, ForeignKey('hws.id'))
     xml = Column(String)
     items = relationship("Item", order_by="Item.id", backref="question")
+    points = Column(Integer)
 
     @staticmethod
     def from_xml(node):
         question = Question()
+        question.points = 0
         for item in node.iter('item'):
             item_object = Item.from_xml(item)
-            item_object.question = question
-            session.add(item_object)
-            session.commit()
+            question.points += item_object.points
+            question.items.append(item_object)
 
-        question.xml = ET.tostring(node)
+        question.xml = ET.tostring(node)            
+        session.add(question)
+        session.commit()
+
         return question
 
     def to_html(self):

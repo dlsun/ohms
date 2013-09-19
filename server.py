@@ -44,9 +44,6 @@ def index():
 def view():
     hw_id = request.args.get("id")
     questions = session.query(Question).filter_by(hw_id=hw_id).all()
-    for i, q in enumerate(questions):
-        items = session.query(Item).filter_by(question_id=q.id).all()
-        questions[i].points = sum(item.points for item in items)
     return render_template("view.html", questions=questions)
 
 
