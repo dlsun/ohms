@@ -1,0 +1,71 @@
+{% extends "page.html" %}
+
+{% block content %}
+<h3>Online Homework Management System (OHMS)</h3>
+
+<p id="studentName" class="lead"></p>
+
+<div id="homework">
+
+<h3 id="homework_name"></h3>
+
+<p><b>Instructions:</b></p>
+<small>
+  <ul>
+    <li>To discourage random guessing, you may only make one submission 
+every 6 hours. However, your first submission is free (i.e., no wait 
+between the first and second submissions).</li>
+    <li>Your overall score per question is shown at the top of each
+      question. The number of points earned is
+      in <b><font color=green>GREEN</font></b>, the number of points missed is
+      in <b><font color=red>RED</font></b>, and the number of points still
+      awaiting grading is in <b><font color=gray>GRAY</font></b>.
+    <li>Yes, you can (and we hope you all will) get 100% on this
+    assignment by trying again and again. &#9786;</li>
+  </ul>
+</small>
+
+<div id="homework_text"></div>
+
+<hr/>
+
+{% for q in questions %}
+
+<div class='question' id='{{q.id}}' points='{{q.points}}'>
+  <h3 class='questionName'>Question {{loop.index}}
+{% if q.name %}
+: {{q.name|safe}}
+{% endif %}
+  </h3>
+
+  <table class='frame'>
+    <tr><td class='score'><strong>This problem is worth {{q.points}} points.</strong></td></tr>
+    <tr><td class='alert'><h5>Comments:</h5> <p class='comments'></p></td></tr>
+    <tr><td class='body'>
+	{{q|safe}}
+    </td></tr>
+  </table>
+
+  <button class='submit' disabled>Submit Response</button>&nbsp; <span class='time'></span>
+</div>
+
+<hr/>
+{% endfor %}
+
+</div>
+{% endblock %}
+
+{% block javascript %}
+<!--<script src="../../js/jquery-1.7.1.min.js"></script>!-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.2-latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/namespace.js"></script>
+<script src="js/item.js"></script>
+<script src="js/homework.js"></script>
+<script src="js/question.js"></script>
+<script src="js/multiplechoiceitem.js"></script>
+<script src="js/shortansweritem.js"></script>
+<script src="js/longansweritem.js"></script>
+<script src="js/hw.js"></script>
+{% endblock %}

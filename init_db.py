@@ -1,7 +1,7 @@
 """
 init_db.py
-Date: 2013-09-02
-Author: Naftali Harris
+
+Initializes the database from scratch.
 """
 
 import os

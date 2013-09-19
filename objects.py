@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from base import Base, session
+from datetime import datetime
 
 
 class Homework(Base):
@@ -16,13 +17,25 @@ class Homework(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
+    start_date = Column(DateTime)
+    due_date = Column(DateTime)
 
     questions = relationship("Question", order_by="Question.id", backref="hw")
 
     def from_xml(self, filename):
-        self.name = os.path.splitext(os.path.basename(filename))[0]
         tree = ET.parse(filename)
         root = tree.getroot()
+        self.name = root.attrib['name']
+        if 'start_date' in root.attrib:
+            self.start_date = datetime.strptime(root.attrib['start_date'],
+                                                "%m/%d/%Y %H:%M:%S")
+        else:
+            self.start_date = None
+        if 'due_date' in root.attrib:
+            self.due_date = datetime.strptime(root.attrib['due_date'],
+                                              "%m/%d/%Y %H:%M:%S")
+        else:
+            self.due_date = None
         for q in root.iter('question'):
             q_object = Question.from_xml(q)
             q_object.hw = self
@@ -34,22 +47,47 @@ class Question(Base):
     __tablename__ = 'questions'
 
     id = Column(Integer, primary_key=True)
+    name = Column(String)
     hw_id = Column(Integer, ForeignKey('hws.id'))
     xml = Column(String)
-
     items = relationship("Item", order_by="Item.id", backref="question")
+    points = Column(Integer)
 
     @staticmethod
     def from_xml(node):
         question = Question()
-        for item in node.iter('item'):
+        question.points = 0
+        for i, item in enumerate(node.iter('item')):
             item_object = Item.from_xml(item)
-            item_object.question = question
-            session.add(item_object)
-            session.commit()
-        
+            item_object.order = i
+            question.points += item_object.points
+            question.items.append(item_object)
+
         question.xml = ET.tostring(node)
+        session.add(question)
+        session.commit()
+
         return question
+
+    def __iter__(self):
+        """Iterates over the items in this question, in order"""
+        for item in sorted(self.items, key=lambda x: x.order):
+            yield item
+
+    def to_html(self):
+        body = ET.fromstring(self.xml)
+        for i, item in enumerate(body.iter('item')):
+            item.clear()
+            item.append(self.items[i].to_html())
+        return body
+
+    def __str__(self):
+        return ET.tostring(self.to_html(), method="html")
+
+    def check(self, responses):
+        scores, comments = zip(*[item.check(response) for (item, response)
+                                 in zip(self, responses)])
+        return sum(scores), "<br>".join(comments)
 
 
 class Item(Base):
@@ -58,6 +96,7 @@ class Item(Base):
     id = Column(Integer, primary_key=True)
     question_id = Column(Integer, ForeignKey('questions.id'))
     points = Column(Integer)
+    order = Column(Integer)
     type = Column(String)
 
     __mapper_args__ = {'polymorphic_on': type,
@@ -80,8 +119,11 @@ class Item(Base):
         item.points = int(node.attrib['points'])
         return item
 
-    def score(self, answer):
-        pass
+    def to_html(self):
+        return ET.Element("p")
+
+    def check(self, response):
+        return 0, "%s points have yet to be graded." % self.points
 
 
 class MultipleChoiceItem(Item):
@@ -93,13 +135,40 @@ class MultipleChoiceItem(Item):
     def from_xml(self, node):
         for i, option in enumerate(node.find('options').findall('option')):
             text = option.text
-            correct = option.attrib['correct']
+            correct = option.attrib['correct'].lower()
+            if correct not in ["true", "false"]:
+                raise ValueError("The 'correct' attribute in multiple choice"
+                                 "options must be one of 'true' or 'false'")
+            correct = 1 if correct == 'true' else 0
             option_object = MultipleChoiceOption(order=i,
                                                  text=text,
                                                  correct=correct,
                                                  item=self)
             session.add(option_object)
             session.commit()
+
+    def __iter__(self):
+        """Iterates over the multiple choice options in this item, in order"""
+        for mc_option in sorted(self.options, key=lambda x: x.order):
+            yield mc_option
+
+    def to_html(self):
+        attrib = {"class": "item",
+                  "type": "multiple-choice"}
+        root = ET.Element("div", attrib=attrib)
+
+        for option in self:
+            root.append(ET.fromstring(r'''
+<p><input type='radio' name='%d' value='%d'> %s</input></p>
+''' % (self.id, option.order, option.text)))
+        return root
+
+    def check(self, response):
+        correct = [option.order for option in self if option.correct]
+        if response == str(correct[0]):
+            return self.points, ""
+        else:
+            return 0, ""
 
 
 class MultipleChoiceOption(Base):
@@ -118,12 +187,25 @@ class ShortAnswerItem(Item):
     def from_xml(self, node):
         pass
 
+    def to_html(self):
+        attrib = {"type": "text",
+                  "class": "item input-medium",
+                  "type": "short-answer"}
+        return ET.Element("input", attrib=attrib)
+
 
 class LongAnswerItem(Item):
     __mapper_args__ = {'polymorphic_identity': 'Long Answer'}
 
     def from_xml(self, node):
         pass
+
+    def to_html(self):
+        attrib = {"class": "item span7",
+                  "type": "long-answer",
+                  "rows": "4"}
+        node = ET.Element("textarea", attrib=attrib)
+        return node
 
 
 class Student(Base):
@@ -132,15 +214,22 @@ class Student(Base):
     name = Column(String)
 
 
-class Answer(Base):
-    __tablename__ = 'answers'
-
-    # Unused fields will be set to null
+class QuestionResponse(Base):
+    __tablename__ = 'question_responses'
     id = Column(Integer, primary_key=True)
     sunet = Column(String, ForeignKey('students.sunet'))
-    item_id = Column(Integer, ForeignKey('items.id'))
-    option_id = Column(Integer, ForeignKey('mc_options.id'))
+    question_id = Column(Integer, ForeignKey('questions.id'))
     time = Column(DateTime)
-    text = Column(String)
-    real = Column(Float)
-    integral = Column(Integer)
+    item_responses = relationship("ItemResponse",
+                                  order_by="ItemResponse.id",
+                                  backref="question")
+    score = Column(Float)
+    comments = Column(String)
+
+
+class ItemResponse(Base):
+    __tablename__ = 'item_responses'
+    id = Column(Integer, primary_key=True)
+    question_response_id = Column(Integer, ForeignKey('question_responses.id'))
+    item_id = Column(Integer, ForeignKey('items.id'))
+    response = Column(String)
