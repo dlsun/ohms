@@ -208,16 +208,17 @@ class LongAnswerItem(Item):
         return node
 
 
-class Student(Base):
-    __tablename__ = 'students'
+class User(Base):
+    __tablename__ = 'users'
     sunet = Column(String, primary_key=True)
     name = Column(String)
+    type = Column(String)
 
 
 class QuestionResponse(Base):
     __tablename__ = 'question_responses'
     id = Column(Integer, primary_key=True)
-    sunet = Column(String, ForeignKey('students.sunet'))
+    sunet = Column(String, ForeignKey('users.sunet'))
     question_id = Column(Integer, ForeignKey('questions.id'))
     time = Column(DateTime)
     item_responses = relationship("ItemResponse",
@@ -238,7 +239,7 @@ class ItemResponse(Base):
 class GradingAssignment(Base):
     __tablename__ = 'grading_assignments'
     id = Column(Integer, primary_key=True)
-    grader = Column(String, ForeignKey('students.sunet'))
+    grader = Column(String, ForeignKey('users.sunet'))
     question_response_id = Column(Integer, ForeignKey('question_responses.id'))
     due_date = Column(DateTime)
 
