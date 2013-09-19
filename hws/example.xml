@@ -11,6 +11,17 @@
         <option correct="true">[-0.7, 4.9], (with 95% confidence)</option>
       </options>
     </item>
+    <p>
+      What does Rob get every time you mention the Lasso?
+    </p>
+    <item type="Multiple Choice" points="5">
+      <options>
+        <option correct="false">Jack shit.</option>
+        <option correct="true">A nickle.</option>
+        <option correct="false">A crate of hockey pucks.</option>
+        <option correct="false">A warm fuzzy feeling inside.</option>
+      </options>
+    </item>
   </question>
 
   <question>
