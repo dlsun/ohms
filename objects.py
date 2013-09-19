@@ -62,7 +62,7 @@ class Question(Base):
             question.points += item_object.points
             question.items.append(item_object)
 
-        question.xml = ET.tostring(node)            
+        question.xml = ET.tostring(node)
         session.add(question)
         session.commit()
 
@@ -129,7 +129,11 @@ class MultipleChoiceItem(Item):
     def from_xml(self, node):
         for i, option in enumerate(node.find('options').findall('option')):
             text = option.text
-            correct = option.attrib['correct']
+            correct = option.attrib['correct'].lower()
+            if correct not in ["true", "false"]:
+                raise ValueError("The 'correct' attribute in multiple choice"
+                                 "options must be one of 'true' or 'false'")
+            correct = 1 if correct == 'true' else 0
             option_object = MultipleChoiceOption(order=i,
                                                  text=text,
                                                  correct=correct,
@@ -138,10 +142,10 @@ class MultipleChoiceItem(Item):
             session.commit()
 
     def to_html(self):
-        root = ET.Element("div", attrib={
-                "class": "item",
-                "type": "multiple-choice"
-                })
+        attrib = {"class": "item",
+                  "type": "multiple-choice"}
+        root = ET.Element("div", attrib=attrib)
+
         for i, option in enumerate(self.options):
             root.append(ET.fromstring(r'''
 <p><input type='radio' name='%d' value='%d'> %s</input></p>
@@ -174,11 +178,10 @@ class ShortAnswerItem(Item):
         pass
 
     def to_html(self):
-        return ET.Element("input", attrib={
-                "type": "text",
-                "class": "item input-medium",
-                "type": "short-answer"
-                })
+        attrib = {"type": "text",
+                  "class": "item input-medium",
+                  "type": "short-answer"}
+        return ET.Element("input", attrib=attrib)
 
 
 class LongAnswerItem(Item):
@@ -188,11 +191,10 @@ class LongAnswerItem(Item):
         pass
 
     def to_html(self):
-        node = ET.Element("textarea", attrib={
-                "class": "item span7",
-                "type": "long-answer",
-                "rows": "4"
-                })
+        attrib = {"class": "item span7",
+                  "type": "long-answer",
+                  "rows": "4"}
+        node = ET.Element("textarea", attrib=attrib)
         return node
 
 

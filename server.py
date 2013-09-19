@@ -60,9 +60,7 @@ def load():
     q_id = request.args.get("q_id")
     responses = get_responses(q_id)
     if responses:
-        return json.dumps({
-                "last_submission": responses[0],
-                }, cls=NewEncoder)
+        return json.dumps({"last_submission": responses[0]}, cls=NewEncoder)
     else:
         return json.dumps({})
 
@@ -84,22 +82,17 @@ def submit():
         time=datetime.now(),
         score=score,
         comments=comments
-        )
+    )
 
     for item, response in zip(items, responses):
-        ir = ItemResponse(
-            item_id=item.id,
-            response=response
-            )
+        ir = ItemResponse(item_id=item.id, response=response)
         question_response.item_responses.append(ir)
 
     # add response to the database
     session.add(question_response)
     session.commit()
     # add response to what to return to the user
-    return json.dumps({
-            "last_submission": question_response,
-            }, cls=NewEncoder)
+    return json.dumps({"last_submission": question_response}, cls=NewEncoder)
 
 
 if __name__ == "__main__":
