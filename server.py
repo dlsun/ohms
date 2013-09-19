@@ -40,11 +40,11 @@ def index():
     return render_template("index.html", homeworks=hws)
 
 
-@app.route("/view", methods=['GET'])
-def view():
+@app.route("/hw", methods=['GET'])
+def hw():
     hw_id = request.args.get("id")
     questions = session.query(Question).filter_by(hw_id=hw_id).all()
-    return render_template("view.html", questions=questions)
+    return render_template("hw.html", questions=questions)
 
 
 def get_responses(q_id):
