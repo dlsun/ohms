@@ -154,7 +154,7 @@ class MultipleChoiceItem(Item):
 
     def check(self, response):
         correct = [i for i, option in enumerate(self.options)
-                   if option.correct == 'true']
+                   if option.correct]
         if response == str(correct[0]):
             return self.points, ""
         else:
