@@ -69,6 +69,11 @@ class Question(Base):
 
         return question
 
+    def __iter__(self):
+        """Iterates over the items in this question, in order"""
+        for item in sorted(self.items, key=lambda x: x.order):
+            yield item
+
     def to_html(self):
         body = ET.fromstring(self.xml)
         for i, item in enumerate(body.iter('item')):
@@ -81,7 +86,7 @@ class Question(Base):
 
     def check(self, responses):
         scores, comments = zip(*[item.check(response) for (item, response)
-                                 in zip(self.items, responses)])
+                                 in zip(self, responses)])
         return sum(scores), "<br>".join(comments)
 
 
@@ -142,20 +147,24 @@ class MultipleChoiceItem(Item):
             session.add(option_object)
             session.commit()
 
+    def __iter__(self):
+        """Iterates over the multiple choice options in this item, in order"""
+        for mc_option in sorted(self.options, key=lambda x: x.order):
+            yield mc_option
+
     def to_html(self):
         attrib = {"class": "item",
                   "type": "multiple-choice"}
         root = ET.Element("div", attrib=attrib)
 
-        for i, option in enumerate(self.options):
+        for option in self:
             root.append(ET.fromstring(r'''
 <p><input type='radio' name='%d' value='%d'> %s</input></p>
-''' % (self.id, i, option.text)))
+''' % (self.id, option.order, option.text)))
         return root
 
     def check(self, response):
-        correct = [i for i, option in enumerate(self.options)
-                   if option.correct]
+        correct = [option.order for option in self if option.correct]
         if response == str(correct[0]):
             return self.points, ""
         else:

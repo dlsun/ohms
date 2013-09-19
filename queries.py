@@ -14,4 +14,3 @@ def get_responses(q_id, sunet="dlsun"):
         filter_by(question_id=q_id).\
         order_by(QuestionResponse.time.desc()).all()
     return responses
-
