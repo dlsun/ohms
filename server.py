@@ -9,6 +9,7 @@ from datetime import datetime
 
 from base import session
 from objects import Homework, Question, Item, QuestionResponse, ItemResponse
+from queries import get_responses
 app = Flask(__name__, static_url_path="")
 
 sunet = "dlsun"
@@ -45,14 +46,6 @@ def hw():
     hw_id = request.args.get("id")
     questions = session.query(Question).filter_by(hw_id=hw_id).all()
     return render_template("hw.html", questions=questions)
-
-
-def get_responses(q_id):
-    responses = session.query(QuestionResponse).\
-        filter_by(sunet=sunet).\
-        filter_by(question_id=q_id).\
-        order_by(QuestionResponse.time.desc()).all()
-    return responses
 
 
 @app.route("/load", methods=['GET'])
