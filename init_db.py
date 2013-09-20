@@ -31,7 +31,14 @@ def init_db():
     dennis = objects.User(sunet="dlsun",
                           name="Dennis Sun",
                           type="admin")
-    session.add_all([naftali, dennis])
+
+    # Create the fake sample user
+    # His sunet is okay since real sunets have no spaces
+    # Use type=sample for identifying sample submissions,
+    sample_sam = objects.User(sunet="Sample Sam",
+                              name="Sample Sam",
+                              type="sample")
+    session.add_all([naftali, dennis, sample_sam])
     session.commit()
 
 if __name__ == "__main__":
