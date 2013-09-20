@@ -255,3 +255,14 @@ class GradedQuestionResponse(Base):
     time = Column(DateTime)
     comments = Column(String)
     score = Column(Float)
+
+
+class GradingPermission(Base):
+    __tablename__ = "grading_permissions"
+    id = Column(Integer, primary_key=True)
+    sunet = Column(String, ForeignKey('users.sunet'))
+    question_id = Column(Integer, ForeignKey('questions.id'))
+    permissions = Column(String)
+
+    user = relationship("User")
+    question = relationship("Question")
