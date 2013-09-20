@@ -263,6 +263,6 @@ class GradingPermission(Base):
     sunet = Column(String, ForeignKey('users.sunet'))
     question_id = Column(Integer, ForeignKey('questions.id'))
     permissions = Column(String)
-    
+
     user = relationship("User")
     question = relationship("Question")
