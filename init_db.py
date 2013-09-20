@@ -25,8 +25,12 @@ def init_db():
     session.add(h)
     session.commit()
 
-    naftali = objects.Student(sunet="naftali", name="Naftali Harris")
-    dennis = objects.Student(sunet="dlsun", name="Dennis Sun")
+    naftali = objects.User(sunet="naftali",
+                           name="Naftali Harris",
+                           type="admin")
+    dennis = objects.User(sunet="dlsun",
+                          name="Dennis Sun",
+                          type="admin")
     session.add_all([naftali, dennis])
     session.commit()
 

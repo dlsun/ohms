@@ -48,6 +48,12 @@ def hw():
     return render_template("hw.html", questions=questions)
 
 
+@app.route("/grade", methods=['GET'])
+def grade():
+    hw_id = request.args.get("id")
+    return ""
+
+
 @app.route("/load", methods=['GET'])
 def load():
     q_id = request.args.get("q_id")

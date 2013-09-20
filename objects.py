@@ -208,16 +208,17 @@ class LongAnswerItem(Item):
         return node
 
 
-class Student(Base):
-    __tablename__ = 'students'
+class User(Base):
+    __tablename__ = 'users'
     sunet = Column(String, primary_key=True)
     name = Column(String)
+    type = Column(String)
 
 
 class QuestionResponse(Base):
     __tablename__ = 'question_responses'
     id = Column(Integer, primary_key=True)
-    sunet = Column(String, ForeignKey('students.sunet'))
+    sunet = Column(String, ForeignKey('users.sunet'))
     question_id = Column(Integer, ForeignKey('questions.id'))
     time = Column(DateTime)
     item_responses = relationship("ItemResponse",
@@ -233,3 +234,24 @@ class ItemResponse(Base):
     question_response_id = Column(Integer, ForeignKey('question_responses.id'))
     item_id = Column(Integer, ForeignKey('items.id'))
     response = Column(String)
+
+
+class GradingAssignment(Base):
+    __tablename__ = 'grading_assignments'
+    id = Column(Integer, primary_key=True)
+    grader = Column(String, ForeignKey('users.sunet'))
+    question_response_id = Column(Integer, ForeignKey('question_responses.id'))
+    due_date = Column(DateTime)
+
+
+class GradedQuestionResponse(Base):
+    __tablename__ = 'graded_question_responses'
+    id = Column(Integer, primary_key=True)
+    grading_assignment_id = Column(Integer,
+                                   ForeignKey('grading_assignments.id'))
+    # Note: Make sure to check grading authorization before allowing people
+    # to submit a grade, (ie, check that they were actually assigned to grade
+    # whatever they claim to be grading
+    time = Column(DateTime)
+    comments = Column(String)
+    score = Column(Float)
