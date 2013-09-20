@@ -23,7 +23,6 @@ def init_db():
     h = objects.Homework()
     h.from_xml('hws/example.xml')
     session.add(h)
-    session.commit()
 
     naftali = objects.User(sunet="naftali",
                            name="Naftali Harris",

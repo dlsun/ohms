@@ -40,7 +40,6 @@ class Homework(Base):
             q_object = Question.from_xml(q)
             q_object.hw = self
             session.add(q_object)
-            session.commit()
 
 
 class Question(Base):
@@ -65,7 +64,6 @@ class Question(Base):
 
         question.xml = ET.tostring(node)
         session.add(question)
-        session.commit()
 
         return question
 
@@ -145,7 +143,6 @@ class MultipleChoiceItem(Item):
                                                  correct=correct,
                                                  item=self)
             session.add(option_object)
-            session.commit()
 
     def __iter__(self):
         """Iterates over the multiple choice options in this item, in order"""
