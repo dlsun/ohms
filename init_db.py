@@ -37,7 +37,20 @@ def init_db():
     sample_sam = objects.User(sunet="Sample Sam",
                               name="Sample Sam",
                               type="sample")
-    session.add_all([naftali, dennis, sample_sam])
+
+    # fake homework response
+    q_response1 = objects.QuestionResponse(sunet="naftali", question_id=2)
+    i_response1 = objects.ItemResponse(question_response=q_response1,
+                                       item_id=3,
+                                       response="Fuck Bayesians, y'know?")
+
+    # fake grading assignment
+    grading1 = objects.GradingPermission(sunet="dlsun",
+                                         question_id=2,
+                                         permissions=1)
+
+    session.add_all([naftali, dennis, sample_sam, q_response1, i_response1,
+                     grading1])
     session.commit()
 
 if __name__ == "__main__":

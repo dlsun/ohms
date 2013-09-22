@@ -1,0 +1,50 @@
+{% extends "page.html" %}
+
+{% block content %}
+<h3>Online Homework Management System (OHMS)</h3>
+
+<p id="studentName" class="lead"></p>
+
+<h3 id="homework_name"></h3>
+
+<hr/>
+
+{% for p in permissions %}
+
+<div class='question' id='{{p.question.id}}' points='{{p.question.points}}'>
+  <h3 class='questionName'>Question 
+{% if p.question.name %}
+: {{p.question.name|safe}}
+{% endif %}
+  </h3>
+
+  <table class='frame'>
+    <tr><td class='score'><strong>This problem is worth {{p.question.points}} points.</strong></td></tr>
+    <tr><td class='body'>
+	{{p.question|safe}}
+    </td></tr>
+  </table>
+
+
+</div>
+
+<hr/>
+{% endfor %}
+
+</div>
+{% endblock %}
+
+{% block javascript %}
+<!--<script src="../../js/jquery-1.7.1.min.js"></script>!-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.2-latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/namespace.js"></script>
+<script src="js/item.js"></script>
+<script src="js/homework.js"></script>
+<script src="js/question.js"></script>
+<script src="js/multiplechoiceitem.js"></script>
+<script src="js/shortansweritem.js"></script>
+<script src="js/longansweritem.js"></script>
+<script src="js/hw.js"></script>
+{% endblock %}

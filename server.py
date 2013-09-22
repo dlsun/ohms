@@ -9,6 +9,7 @@ from datetime import datetime
 
 from base import session
 from objects import Homework, Question, Item, QuestionResponse, ItemResponse
+from objects import GradingPermission
 from queries import get_responses
 app = Flask(__name__, static_url_path="")
 
@@ -44,14 +45,17 @@ def index():
 @app.route("/hw", methods=['GET'])
 def hw():
     hw_id = request.args.get("id")
-    questions = session.query(Question).filter_by(hw_id=hw_id).all()
-    return render_template("hw.html", questions=questions)
+    homework = session.query(Homework).filter_by(id=hw_id).one()
+    return render_template("hw.html", homework=homework)
 
 
 @app.route("/grade", methods=['GET'])
 def grade():
     hw_id = request.args.get("id")
-    return ""
+    permissions = session.query(GradingPermission).\
+        filter_by(sunet=sunet).join(Question).\
+        filter(Question.hw_id == hw_id).all()
+    return render_template("grade.html", permissions=permissions)
 
 
 @app.route("/load", methods=['GET'])
