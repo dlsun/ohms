@@ -233,19 +233,21 @@ class ItemResponse(Base):
     response = Column(String)
 
 
-class GradingAssignment(Base):
-    __tablename__ = 'grading_assignments'
+class GradingTask(Base):
+    __tablename__ = 'grading_tasks'
     id = Column(Integer, primary_key=True)
     grader = Column(String, ForeignKey('users.sunet'))
     question_response_id = Column(Integer, ForeignKey('question_responses.id'))
     due_date = Column(DateTime)
 
+    question_response = relationship("QuestionResponse")
 
-class GradedQuestionResponse(Base):
-    __tablename__ = 'graded_question_responses'
+
+class QuestionGrade(Base):
+    __tablename__ = 'question_grades'
     id = Column(Integer, primary_key=True)
-    grading_assignment_id = Column(Integer,
-                                   ForeignKey('grading_assignments.id'))
+    grading_task_id = Column(Integer,
+                                   ForeignKey('grading_tasks.id'))
     # Note: Make sure to check grading authorization before allowing people
     # to submit a grade, (ie, check that they were actually assigned to grade
     # whatever they claim to be grading
@@ -259,7 +261,7 @@ class GradingPermission(Base):
     id = Column(Integer, primary_key=True)
     sunet = Column(String, ForeignKey('users.sunet'))
     question_id = Column(Integer, ForeignKey('questions.id'))
-    permissions = Column(String)
+    permissions = Column(Integer)
 
     user = relationship("User")
     question = relationship("Question")
