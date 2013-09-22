@@ -232,6 +232,9 @@ class ItemResponse(Base):
     item_id = Column(Integer, ForeignKey('items.id'))
     response = Column(String)
 
+    question_response = relationship("QuestionResponse")
+    item_response = relationship("Item")
+
 
 class GradingTask(Base):
     __tablename__ = 'grading_tasks'
@@ -242,12 +245,23 @@ class GradingTask(Base):
 
     question_response = relationship("QuestionResponse")
 
+    def to_html(self):
+        attrib = {"type": "text",
+                  "class": "item input-medium",
+                  "type": "short-answer"}
+        points = ET.Element("input", attrib=attrib)
+
+        attrib = {"class": "item span7",
+                  "type": "long-answer",
+                  "rows": "4"}
+        comments = ET.Element("textarea", attrib=attrib)
+
 
 class QuestionGrade(Base):
     __tablename__ = 'question_grades'
     id = Column(Integer, primary_key=True)
     grading_task_id = Column(Integer,
-                                   ForeignKey('grading_tasks.id'))
+                             ForeignKey('grading_tasks.id'))
     # Note: Make sure to check grading authorization before allowing people
     # to submit a grade, (ie, check that they were actually assigned to grade
     # whatever they claim to be grading
