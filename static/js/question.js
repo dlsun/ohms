@@ -54,8 +54,8 @@ var OHMS = (function(OHMS) {
 
 	Question.prototype.load_response_success = function (data) {
 	    if (data.last_submission !== undefined) {
+		console.log(data.last_submission);
 		for (var i=0; i<this.items.length; i++) {
-		    console.log(data.last_submission);
 		    this.items[i].set_value(data.last_submission.item_responses[i].response);
 		}
 		this.update(data); 

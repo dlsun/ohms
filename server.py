@@ -10,7 +10,7 @@ from datetime import datetime
 from base import session
 from objects import Homework, Question, Item, QuestionResponse, ItemResponse
 from objects import GradingTask, QuestionGrade, GradingPermission
-from queries import get_responses, get_grading_task
+from queries import get_question_responses, get_question_grades
 app = Flask(__name__, static_url_path="")
 
 sunet = "dlsun"
@@ -75,10 +75,8 @@ def grade():
             qrs = session.query(QuestionResponse).\
                 filter_by(sunet="Sample Sam").\
                 filter_by(question_id=question.id).all()
-            tasks = [{ "id": "s"+str(qr.id),
-                       "question_response": qr
-                       } for qr in qrs]
-            print str(tasks) + '\n\n\n\n\n\n'
+            tasks = [{"id": qr.id,
+                      "question_response":qr} for qr in qrs]
         questions.append({
                 "question": question, 
                 "permission": permission.permissions,
@@ -89,9 +87,14 @@ def grade():
 @app.route("/load", methods=['GET'])
 def load():
     q_id = request.args.get("q_id")
-    responses = get_responses(q_id, sunet)
-    if responses:
-        return json.dumps({"last_submission": responses[0]}, cls=NewEncoder)
+    if q_id[0] == "q":
+        last_submission = get_question_responses(q_id[1:], sunet)
+    elif q_id[0] == "g":
+        last_submission = get_question_grades(q_id[1:], sunet)
+    else:
+        last_submission = None
+    if last_submission:
+        return json.dumps({"last_submission": last_submission[0]}, cls=NewEncoder)
     else:
         return json.dumps({})
 
@@ -99,75 +102,79 @@ def load():
 @app.route("/submit", methods=['POST'])
 def submit():
     q_id = request.args.get("q_id")
+    type = q_id[0]
+    id = q_id[1:]
+
     responses = request.form.getlist('responses')
-
-    if q_id.startswith("gs"):
-
-        score = float(responses[0])
-        comments = responses[1]
-
-        qr = session.query(QuestionResponse).get(q_id[2:])
-        if score == qr.score:
-            session.query(GradingPermission).\
-                filter_by(sunet=sunet).\
-                filter_by(question_id=qr.question_id).\
-                update({"permissions":1})
-            session.commit()
-            feedback = r'''
-Congratulations! You are now qualified to grade this question. 
-Please refresh the page to see the student responses.'''
-        else:
-            feedback = r'''
-Sorry, but there is still a discrepancy between your grades 
-and the grades for this sample response. Please try again.'''
-
-        return json.dumps({"last_submission": QuestionResponse(
-                sunet=sunet,
-                question_id=q_id,
-                time=datetime.now(),
-                comments=feedback
-                )}, cls=NewEncoder)
-
-
-    elif q_id.startswith("g"):
-
-        task = session.query(GradingTask).get(id)
-        score = float(responses[0])
-        comments = responses[1]
-
-        question_grade = QuestionGrade(
-            grading_task=task,
-            time=datetime.now(),
-            score=score,
-            comments=comments
-            )
-        session.add(question_grade)
-        session.commit()
-
-        feedback = "Your scores have been successfully recorded!"
-
-    question = session.query(Question).filter_by(id=q_id).one()
-
-    past_responses = get_responses(q_id, sunet)
-    items = session.query(Item).filter_by(question_id=q_id).all()
-
-    score, comments = question.check(responses)
 
     question_response = QuestionResponse(
         sunet=sunet,
-        question_id=q_id,
         time=datetime.now(),
-        score=score,
-        comments=comments
-    )
+        question_id=id
+        )
 
-    for item, response in zip(items, responses):
-        ir = ItemResponse(item_id=item.id, response=response)
-        question_response.item_responses.append(ir)
+    if type == "q":
 
-    # add response to the database
-    session.add(question_response)
-    session.commit()
+        question = session.query(Question).filter_by(id=id).one()
+
+        past_responses = get_question_responses(id, sunet)
+        items = session.query(Item).filter_by(question_id=id).all()
+
+        score, comments = question.check(responses)
+
+        question_response.score = score
+        question_response.comments = comments
+        for item, response in zip(items, responses):
+            item_response = ItemResponse(item_id=item.id, response=response)
+            question_response.item_responses.append(item_response)
+
+        # add response to the database
+        session.add(question_response)
+        session.commit()
+
+    else:
+
+        if type == "s":
+
+            sample_responses = session.query(QuestionResponse).\
+                filter_by(sunet="Sample Sam").\
+                filter_by(question_id=id).all()
+
+            assigned_scores = [float(response) for response in responses]
+            true_scores = [float(response.score) for response in sample_responses]
+
+            if assigned_scores == true_scores:
+                session.query(GradingPermission).\
+                    filter_by(sunet=sunet).\
+                    filter_by(question_id=id).\
+                    update({"permissions":1})
+                session.commit()
+                question_response.comments = r'''
+Congratulations! You are now qualified to grade this question. 
+Please refresh the page to see the student responses.'''
+            else:
+                question_response.comments = r'''
+Sorry, but there is still a discrepancy between your grades 
+and the grades for this sample response. Please try again.'''
+            
+        elif type == "g":
+
+            task = session.query(GradingTask).get(id)
+            score = float(responses[0])
+            comments = responses[1]
+
+            question_grade = QuestionGrade(
+                grading_task=task,
+                time=datetime.now(),
+                score=score,
+                comments=comments
+                )
+            session.add(question_grade)
+            session.commit()
+
+            question_response.comments = r'''Your scores have 
+been successfully recorded!'''
+
     # add response to what to return to the user
     return json.dumps({"last_submission": question_response}, cls=NewEncoder)
 

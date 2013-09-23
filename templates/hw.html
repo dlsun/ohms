@@ -31,7 +31,7 @@ between the first and second submissions).</li>
 
 {% for q in homework.questions %}
 
-<div class='question' id='{{q.id}}' points='{{q.points}}'>
+<div class='question' id='q{{q.id}}' points='{{q.points}}'>
   <h3 class='questionName'>Question {{loop.index}}
 {% if q.name %}
 : {{q.name|safe}}

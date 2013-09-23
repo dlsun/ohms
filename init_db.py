@@ -61,11 +61,20 @@ officia deserunt mollit anim id est laborum.
 ''')
     q_response3 = objects.QuestionResponse(sunet="Sample Sam", 
                                            question_id=2,
-                                           score=5,
+                                           score=20,
                                            comments="")
     i_response3 = objects.ItemResponse(question_response=q_response3,
                                        item_id=3,
-                                       response="This is the correct answer to the question.")
+                                       response="This is an example of a full-credit answer.")
+    q_response4 = objects.QuestionResponse(sunet="Sample Sam", 
+                                           question_id=2,
+                                           score=5,
+                                           comments="")
+    i_response4 = objects.ItemResponse(question_response=q_response4,
+                                       item_id=3,
+                                       response="This guy only deserves 5 points.")
+
+
 
     # fake grading assignment
     grading1 = objects.GradingPermission(sunet="dlsun",
@@ -80,6 +89,7 @@ officia deserunt mollit anim id est laborum.
                      q_response1, i_response1,
                      q_response2, i_response2,
                      q_response3, i_response3,
+                     q_response4, i_response4,
                      grading1, task1, task2])
     session.commit()
 
