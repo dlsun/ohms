@@ -7,7 +7,7 @@
 
 <div id="homework">
 
-<h3 id="homework_name"></h3>
+<h3 id="homework_name">{{ homework.name }}</h3>
 
 <p><b>Instructions:</b></p>
 <small>
@@ -29,9 +29,9 @@ between the first and second submissions).</li>
 
 <hr/>
 
-{% for q in questions %}
+{% for q in homework.questions %}
 
-<div class='question' id='{{q.id}}' points='{{q.points}}'>
+<div class='question' id='q{{q.id}}' points='{{q.points}}'>
   <h3 class='questionName'>Question {{loop.index}}
 {% if q.name %}
 : {{q.name|safe}}

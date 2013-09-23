@@ -18,7 +18,7 @@ var OHMS = (function(OHMS) {
 	    var item_elements = this.element.find(".item");
 	    for(var i=0; i<item_elements.length; i++) {
 		var item_element = item_elements.eq(i);
-		var type = item_element.attr("type");
+		var type = item_element.attr("itemtype");
 		if (type == "multiple-choice") {
 		    var item = new OHMS.MultipleChoiceItem(this,item_element);
 		} else if (type == "short-answer") {
@@ -54,8 +54,8 @@ var OHMS = (function(OHMS) {
 
 	Question.prototype.load_response_success = function (data) {
 	    if (data.last_submission !== undefined) {
+		console.log(data.last_submission);
 		for (var i=0; i<this.items.length; i++) {
-		    console.log(data.last_submission);
 		    this.items[i].set_value(data.last_submission.item_responses[i].response);
 		}
 		this.update(data); 

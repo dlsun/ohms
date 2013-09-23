@@ -151,7 +151,7 @@ class MultipleChoiceItem(Item):
 
     def to_html(self):
         attrib = {"class": "item",
-                  "type": "multiple-choice"}
+                  "itemtype": "multiple-choice"}
         root = ET.Element("div", attrib=attrib)
 
         for option in self:
@@ -187,7 +187,7 @@ class ShortAnswerItem(Item):
     def to_html(self):
         attrib = {"type": "text",
                   "class": "item input-medium",
-                  "type": "short-answer"}
+                  "itemtype": "short-answer"}
         return ET.Element("input", attrib=attrib)
 
 
@@ -199,7 +199,7 @@ class LongAnswerItem(Item):
 
     def to_html(self):
         attrib = {"class": "item span7",
-                  "type": "long-answer",
+                  "itemtype": "long-answer",
                   "rows": "4"}
         node = ET.Element("textarea", attrib=attrib)
         return node
@@ -224,6 +224,12 @@ class QuestionResponse(Base):
     score = Column(Float)
     comments = Column(String)
 
+    def __str__(self):
+        if len(self.item_responses) == 1:
+            return self.item_responses[0].response
+        else:
+            return ""
+
 
 class ItemResponse(Base):
     __tablename__ = 'item_responses'
@@ -232,28 +238,8 @@ class ItemResponse(Base):
     item_id = Column(Integer, ForeignKey('items.id'))
     response = Column(String)
 
-
-class GradingTask(Base):
-    __tablename__ = 'grading_tasks'
-    id = Column(Integer, primary_key=True)
-    grader = Column(String, ForeignKey('users.sunet'))
-    question_response_id = Column(Integer, ForeignKey('question_responses.id'))
-    due_date = Column(DateTime)
-
     question_response = relationship("QuestionResponse")
-
-
-class QuestionGrade(Base):
-    __tablename__ = 'question_grades'
-    id = Column(Integer, primary_key=True)
-    grading_task_id = Column(Integer,
-                                   ForeignKey('grading_tasks.id'))
-    # Note: Make sure to check grading authorization before allowing people
-    # to submit a grade, (ie, check that they were actually assigned to grade
-    # whatever they claim to be grading
-    time = Column(DateTime)
-    comments = Column(String)
-    score = Column(Float)
+    item_response = relationship("Item")
 
 
 class GradingPermission(Base):
@@ -262,6 +248,32 @@ class GradingPermission(Base):
     sunet = Column(String, ForeignKey('users.sunet'))
     question_id = Column(Integer, ForeignKey('questions.id'))
     permissions = Column(Integer)
+    due_date = Column(DateTime)
 
     user = relationship("User")
     question = relationship("Question")
+
+
+class GradingTask(Base):
+    __tablename__ = 'grading_tasks'
+    id = Column(Integer, primary_key=True)
+    grader = Column(String, ForeignKey('users.sunet'))
+    question_response_id = Column(Integer, ForeignKey('question_responses.id'))
+
+    question_response = relationship("QuestionResponse")
+
+
+class QuestionGrade(Base):
+    __tablename__ = 'question_grades'
+    id = Column(Integer, primary_key=True)
+    grading_task_id = Column(Integer,
+                             ForeignKey('grading_tasks.id'))
+    # Note: Make sure to check grading authorization before allowing people
+    # to submit a grade, (ie, check that they were actually assigned to grade
+    # whatever they claim to be grading
+    time = Column(DateTime)
+    comments = Column(String)
+    score = Column(Float)
+
+    grading_task = relationship("GradingTask")
+

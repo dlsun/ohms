@@ -5,12 +5,19 @@ Some useful sql queries.
 """
 
 from base import session
-from objects import QuestionResponse
+from objects import QuestionResponse, QuestionGrade, GradingTask
 
 
-def get_responses(q_id, sunet="dlsun"):
-    responses = session.query(QuestionResponse).\
+def get_question_responses(id, sunet):
+    return session.query(QuestionResponse).\
         filter_by(sunet=sunet).\
-        filter_by(question_id=q_id).\
+        filter_by(question_id=id).\
         order_by(QuestionResponse.time.desc()).all()
-    return responses
+
+
+def get_question_grades(id, sunet):
+    return session.query(QuestionGrade).\
+        filter_by(grading_task_id=id).\
+        join(GradingTask).\
+        filter(GradingTask.grader == sunet).\
+        order_by(QuestionGrade.time.desc()).all()

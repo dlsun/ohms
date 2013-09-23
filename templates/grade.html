@@ -1,0 +1,119 @@
+{% extends "page.html" %}
+
+{% block content %}
+<h3>Online Homework Management System (OHMS)</h3>
+
+<p id="studentName" class="lead"></p>
+
+<h3 id="homework_name"></h3>
+
+<hr/>
+
+{% for q in questions %}
+
+  <h3 class='questionName'>Question 
+{% if q.question.name %}
+: {{q.question.name|safe}}
+{% endif %}
+  </h3>
+
+  <table class='frame'>
+    <tr><td class='body'>
+	{{q.question|safe}}
+    </td></tr>
+  </table>
+
+  {% if q.permission == 0 %}
+  <div class='question' id='s{{q.question.id}}'>
+  {% endif %}
+  <table>
+    <tr>
+      <td><strong>
+	  {% if q.permission == 1 %}
+	    Please score the following student responses.
+	  {% else %}
+	    Please grade the following sample responses. 
+	    Once you have correctly scored the sample 
+	    responses, you will see the student responses.
+	  {% endif %}
+      </strong></td>
+    </tr>
+    {% for task in q.tasks %}
+    <tr>
+      <td>
+	
+	{% if q.permission == 1 %}
+	<div class='question' id='g{{task.id}}'>
+	{% endif %}
+	
+        <table>
+	  <tr>
+	    <td class='span2'><strong>Response {{loop.index}}</strong></td>
+	    <td class='span5'>{{task.question_response}}</td>
+	  </tr>
+	  <tr>
+	    <td><strong>Score</strong></td>
+	    <td>
+	      <input type='text' class='item input-mini' itemtype='short-answer'/> 
+	      out of {{q.question.points}} points
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><strong>Comments</strong></td>
+	    <td>
+	      {% if q.permission == 1 %}
+	      <textarea class='item span5' itemtype='long-answer'></textarea>
+	      {% else %}
+	      <i>You will have to provide comments for your peers, but 
+		not for these sample responses.</i>
+	      {% endif %}
+	    </td>
+	  </tr>
+	  {% if q.permission == 1 %}
+	  <tr>
+	    <td></td>
+	    <td><button class='submit'>Submit Grades</button>&nbsp; <span class='time'></span></td>
+	  </tr>
+	  {% endif %}
+	</table>
+	
+	{% if q.permission == 1 %}
+	</div>
+	{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+    {% if q.permission == 0 %}
+    <tr>
+      <td>
+	<button class='submit'>Submit Grades</button>
+	<p class='comments'></p>
+      </td>
+    </tr>
+    {% endif %}
+  </table>
+
+  {% if q.permission == 0 %}
+  </div>
+  {% endif %}
+
+<hr/>
+{% endfor %}
+
+</div>
+{% endblock %}
+
+{% block javascript %}
+<!--<script src="../../js/jquery-1.7.1.min.js"></script>!-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.2-latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/namespace.js"></script>
+<script src="js/item.js"></script>
+<script src="js/homework.js"></script>
+<script src="js/question.js"></script>
+<script src="js/multiplechoiceitem.js"></script>
+<script src="js/shortansweritem.js"></script>
+<script src="js/longansweritem.js"></script>
+<script src="js/hw.js"></script>
+{% endblock %}
