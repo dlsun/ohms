@@ -18,7 +18,7 @@ var OHMS = (function(OHMS) {
 	    var item_elements = this.element.find(".item");
 	    for(var i=0; i<item_elements.length; i++) {
 		var item_element = item_elements.eq(i);
-		var type = item_element.attr("type");
+		var type = item_element.attr("itemtype");
 		if (type == "multiple-choice") {
 		    var item = new OHMS.MultipleChoiceItem(this,item_element);
 		} else if (type == "short-answer") {

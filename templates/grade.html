@@ -9,24 +9,59 @@
 
 <hr/>
 
-{% for p in permissions %}
+{% for q in questions %}
 
-<div class='question' id='{{p.question.id}}' points='{{p.question.points}}'>
   <h3 class='questionName'>Question 
-{% if p.question.name %}
-: {{p.question.name|safe}}
+{% if q.question.name %}
+: {{q.question.name|safe}}
 {% endif %}
   </h3>
 
   <table class='frame'>
-    <tr><td class='score'><strong>This problem is worth {{p.question.points}} points.</strong></td></tr>
     <tr><td class='body'>
-	{{p.question|safe}}
+	{{q.question|safe}}
     </td></tr>
+    <tr>
+      <td><strong>
+	  {% if q.permission %}
+	    Please score the following student responses 
+	    out of {{q.question.points}} points.
+	  {% else %}
+	    Please grade the following sample responses. 
+	    Once you have correctly scored the sample 
+	    responses, you will see the student responses.
+	  {% endif %}
+      </strong></td>
+    </tr>
+      {% for task in q.tasks %}
+        <tr>
+          <td>
+	    <div class='question' id='g{{task.id}}'>
+            <table>
+	      <tr>
+		<td class='span2'><strong>Response {{loop.index}}</strong></td>
+		<td class='span5'>{{task.question_response}}</td>
+	      </tr>
+	      <tr>
+		<td><strong>Score</strong></td>
+		<td><input type='text' class='item input-mini' itemtype='short-answer'/></td>
+	      </tr>
+	      <tr>
+		<td><strong>Comments</strong></td>
+		<td>
+		  <textarea class='item span5' itemtype='long-answer'></textarea>
+		</td>
+	      </tr>
+	      <tr>
+		<td></td>
+		<td><button class='submit'>Submit Grades</button></td>
+	      </tr>
+	    </table>
+	    </div>
+          </td>
+        </tr>
+      {% endfor %}
   </table>
-
-
-</div>
 
 <hr/>
 {% endfor %}

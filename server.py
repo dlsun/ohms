@@ -9,7 +9,7 @@ from datetime import datetime
 
 from base import session
 from objects import Homework, Question, Item, QuestionResponse, ItemResponse
-from objects import GradingPermission
+from objects import GradingTask, QuestionGrade, GradingPermission
 from queries import get_responses
 app = Flask(__name__, static_url_path="")
 
@@ -33,6 +33,15 @@ class NewEncoder(json.JSONEncoder):
             for column in obj.__table__.columns:
                 d[column.name] = getattr(obj, column.name)
             return d
+        elif isinstance(obj, QuestionGrade):
+            d = {}
+            for column in obj.__table__.columns:
+                d[column.name] = getattr(obj, column.name)
+            d['item_responses'] = [
+                {"response": obj.score},
+                {"response": obj.comments}
+                ]
+            return d
         return json.JSONEncoder.default(self, obj)
 
 
@@ -55,13 +64,27 @@ def grade():
     permissions = session.query(GradingPermission).\
         filter_by(sunet=sunet).join(Question).\
         filter(Question.hw_id == hw_id).all()
-    return render_template("grade.html", permissions=permissions)
+    questions = []
+    for permission in permissions:
+        question = permission.question
+        if permission.permissions:
+            tasks = session.query(GradingTask).\
+                filter_by(grader=sunet).join(QuestionResponse).\
+                filter(QuestionResponse.question_id == 
+                          question.id).all()
+        else:
+            tasks = None
+        questions.append({
+                "question": question, 
+                "permission": permission.permissions,
+                "tasks": tasks})
+    return render_template("grade.html", questions=questions)
 
 
 @app.route("/load", methods=['GET'])
 def load():
     q_id = request.args.get("q_id")
-    responses = get_responses(q_id)
+    responses = get_responses(q_id, sunet)
     if responses:
         return json.dumps({"last_submission": responses[0]}, cls=NewEncoder)
     else:
@@ -71,11 +94,25 @@ def load():
 @app.route("/submit", methods=['POST'])
 def submit():
     q_id = request.args.get("q_id")
+    responses = request.form.getlist('responses')
+
+    if q_id.startswith("g"):
+
+        question_grade = QuestionGrade(
+            grading_task_id=q_id[1:],
+            time=datetime.now(),
+            score=float(responses[0]),
+            comments=responses[1]
+            )
+        session.add(question_grade)
+        session.commit()
+
+        return json.dumps({})
+
     question = session.query(Question).filter_by(id=q_id).one()
 
-    past_responses = get_responses(q_id)
+    past_responses = get_responses(q_id, sunet)
     items = session.query(Item).filter_by(question_id=q_id).all()
-    responses = request.form.getlist('responses')
 
     score, comments = question.check(responses)
 
