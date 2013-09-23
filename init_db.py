@@ -43,9 +43,12 @@ def init_db():
     i_response1 = objects.ItemResponse(question_response=q_response1,
                                        item_id=3,
                                        response="Fuck Bayesians, y'know?")
-    q_response2 = objects.QuestionResponse(sunet="dlsun", question_id=2)
+    q_response2 = objects.QuestionResponse(sunet="dlsun", 
+                                           question_id=2,
+                                           score=0,
+                                           comments="")
     i_response2 = objects.ItemResponse(question_response=q_response2,
-                                       item_id=4,
+                                       item_id=3,
                                        response=r'''
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
 sed do eiusmod tempor incididunt ut labore et dolore magna 
@@ -56,11 +59,18 @@ esse cillum dolore eu fugiat nulla pariatur. Excepteur
 sint occaecat cupidatat non proident, sunt in culpa qui 
 officia deserunt mollit anim id est laborum.
 ''')
+    q_response3 = objects.QuestionResponse(sunet="Sample Sam", 
+                                           question_id=2,
+                                           score=5,
+                                           comments="")
+    i_response3 = objects.ItemResponse(question_response=q_response3,
+                                       item_id=3,
+                                       response="This is the correct answer to the question.")
 
     # fake grading assignment
     grading1 = objects.GradingPermission(sunet="dlsun",
                                          question_id=2,
-                                         permissions=1)
+                                         permissions=0)
     task1 = objects.GradingTask(grader="dlsun",
                                 question_response=q_response1)
     task2 = objects.GradingTask(grader="dlsun",
@@ -69,6 +79,7 @@ officia deserunt mollit anim id est laborum.
     session.add_all([naftali, dennis, sample_sam, 
                      q_response1, i_response1,
                      q_response2, i_response2,
+                     q_response3, i_response3,
                      grading1, task1, task2])
     session.commit()
 

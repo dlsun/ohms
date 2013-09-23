@@ -23,4 +23,11 @@ def get_responses(id, sunet):
     return responses
 
 
-    
+def get_sample_responses(question_id):
+    return session.query(QuestionResponses).\
+        filter_by(sunet="Sample Sam").\
+        filter_by(question_id=question_id).all()
+
+def get_grading_task(id):
+    id = id[1:] if id.startswith("g") else id
+    return session.query(GradingTask).get(id)

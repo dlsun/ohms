@@ -10,7 +10,7 @@ from datetime import datetime
 from base import session
 from objects import Homework, Question, Item, QuestionResponse, ItemResponse
 from objects import GradingTask, QuestionGrade, GradingPermission
-from queries import get_responses
+from queries import get_responses, get_grading_task
 app = Flask(__name__, static_url_path="")
 
 sunet = "dlsun"
@@ -70,10 +70,15 @@ def grade():
         if permission.permissions:
             tasks = session.query(GradingTask).\
                 filter_by(grader=sunet).join(QuestionResponse).\
-                filter(QuestionResponse.question_id == 
-                          question.id).all()
+                filter(QuestionResponse.question_id == question.id).all()
         else:
-            tasks = None
+            qrs = session.query(QuestionResponse).\
+                filter_by(sunet="Sample Sam").\
+                filter_by(question_id=question.id).all()
+            tasks = [{ "id": "s"+str(qr.id),
+                       "question_response": qr
+                       } for qr in qrs]
+            print str(tasks) + '\n\n\n\n\n\n'
         questions.append({
                 "question": question, 
                 "permission": permission.permissions,
@@ -96,18 +101,50 @@ def submit():
     q_id = request.args.get("q_id")
     responses = request.form.getlist('responses')
 
-    if q_id.startswith("g"):
+    if q_id.startswith("gs"):
+
+        score = float(responses[0])
+        comments = responses[1]
+
+        qr = session.query(QuestionResponse).get(q_id[2:])
+        if score == qr.score:
+            session.query(GradingPermission).\
+                filter_by(sunet=sunet).\
+                filter_by(question_id=qr.question_id).\
+                update({"permissions":1})
+            session.commit()
+            feedback = r'''
+Congratulations! You are now qualified to grade this question. 
+Please refresh the page to see the student responses.'''
+        else:
+            feedback = r'''
+Sorry, but there is still a discrepancy between your grades 
+and the grades for this sample response. Please try again.'''
+
+        return json.dumps({"last_submission": QuestionResponse(
+                sunet=sunet,
+                question_id=q_id,
+                time=datetime.now(),
+                comments=feedback
+                )}, cls=NewEncoder)
+
+
+    elif q_id.startswith("g"):
+
+        task = session.query(GradingTask).get(id)
+        score = float(responses[0])
+        comments = responses[1]
 
         question_grade = QuestionGrade(
-            grading_task_id=q_id[1:],
+            grading_task=task,
             time=datetime.now(),
-            score=float(responses[0]),
-            comments=responses[1]
+            score=score,
+            comments=comments
             )
         session.add(question_grade)
         session.commit()
 
-        return json.dumps({})
+        feedback = "Your scores have been successfully recorded!"
 
     question = session.query(Question).filter_by(id=q_id).one()
 

@@ -275,3 +275,5 @@ class QuestionGrade(Base):
     comments = Column(String)
     score = Column(Float)
 
+    grading_task = relationship("GradingTask")
+
