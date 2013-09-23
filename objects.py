@@ -104,11 +104,11 @@ class Item(Base):
     def from_xml(node):
         """Constructs a Item object from an xml node"""
 
-        if node.attrib['itemtype'] == 'Multiple Choice':
+        if node.attrib['type'] == 'Multiple Choice':
             item = MultipleChoiceItem()
-        elif node.attrib['itemtype'] == 'Long Answer':
+        elif node.attrib['type'] == 'Long Answer':
             item = LongAnswerItem()
-        elif node.attrib['itemtype'] == 'Short Answer':
+        elif node.attrib['type'] == 'Short Answer':
             item = ShortAnswerItem()
         else:
             raise ValueError
