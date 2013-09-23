@@ -13,7 +13,8 @@ from objects import GradingTask, QuestionGrade, GradingPermission
 from queries import get_question_responses, get_question_grades
 app = Flask(__name__, static_url_path="")
 
-sunet = "dlsun"
+import os
+sunet = os.environ.get("WEBAUTH_LDAP_USER") or "dlsun"
 
 
 # special JSON encoder to handle dates and Response objects
