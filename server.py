@@ -1,20 +1,29 @@
+#!/usr/bin/python
 """
 OHMS: Online Homework Management System
 """
 
-from flask import Flask, request, render_template
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
+env = Environment(loader=FileSystemLoader("templates"),
+                  autoescape=True,
+                  undefined=StrictUndefined)
+
 from sqlalchemy.orm.query import Query
 import json
+import cgi
 from datetime import datetime
 
 from base import session
 from objects import Homework, Question, Item, QuestionResponse, ItemResponse
 from objects import GradingTask, QuestionGrade, GradingPermission
 from queries import get_question_responses, get_question_grades
-app = Flask(__name__, static_url_path="")
 
 import os
 sunet = os.environ.get("WEBAUTH_LDAP_USER") or "dlsun"
+
+
+application_json = "Content-Type: application/json\n\n"
+text_html = "Content-Type: text/html\n\n"
 
 
 # special JSON encoder to handle dates and Response objects
@@ -46,22 +55,21 @@ class NewEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-@app.route("/")
 def index():
     hws = session.query(Homework).all()
-    return render_template("index.html", homeworks=hws)
+    print text_html + env.get_template("index.html").render(homeworks=hws)
 
 
-@app.route("/hw", methods=['GET'])
 def hw():
-    hw_id = request.args.get("id")
+    form = cgi.FieldStorage()
+    hw_id = form["id"].value
     homework = session.query(Homework).filter_by(id=hw_id).one()
-    return render_template("hw.html", homework=homework)
+    print text_html + env.get_template("hw.html").render(homework=homework)
 
 
-@app.route("/grade", methods=['GET'])
 def grade():
-    hw_id = request.args.get("id")
+    form = cgi.FieldStorage()
+    hw_id = form["id"].value
     permissions = session.query(GradingPermission).\
         filter_by(sunet=sunet).join(Question).\
         filter(Question.hw_id == hw_id).all()
@@ -82,12 +90,13 @@ def grade():
                 "question": question, 
                 "permission": permission.permissions,
                 "tasks": tasks})
-    return render_template("grade.html", questions=questions)
+    print text_html +\
+        env.get_template("grade.html").render(questions=questions)
 
 
-@app.route("/load", methods=['GET'])
 def load():
-    q_id = request.args.get("q_id")
+    form = cgi.FieldStorage()
+    q_id = form["q_id"].value
     if q_id[0] == "q":
         last_submission = get_question_responses(q_id[1:], sunet)
     elif q_id[0] == "g":
@@ -95,17 +104,19 @@ def load():
     else:
         last_submission = None
     if last_submission:
-        return json.dumps({"last_submission": last_submission[0]}, cls=NewEncoder)
+        return application_json +\
+            json.dumps({"last_submission": last_submission[0]}, cls=NewEncoder)
     else:
-        return json.dumps({})
+        return application_json + json.dumps({})
 
 
-@app.route("/submit", methods=['POST'])
 def submit():
-    q_id = request.args.get("q_id")
+    form = cgi.FieldStorage()
+    q_id = form["q_id"].value
     type = q_id[0]
     id = q_id[1:]
 
+    # TODO: FIXME! (this will fail)
     responses = request.form.getlist('responses')
 
     question_response = QuestionResponse(
@@ -177,8 +188,30 @@ and the grades for this sample response. Please try again.'''
 been successfully recorded!'''
 
     # add response to what to return to the user
-    return json.dumps({"last_submission": question_response}, cls=NewEncoder)
+    return application_json +\
+        json.dumps({"last_submission": question_response}, cls=NewEncoder)
 
+
+def route():
+    form = cgi.FieldStorage()
+
+    try:
+        dest = form['dest'].value
+    except KeyError:
+        # TODO: throw error
+        pass
+
+    try:
+        handler = {'index': index,
+                   'hw': hw,
+                   'grade': grade,
+                   'load': load,
+                   'submit': submit}[dest]
+    except KeyError:
+        # TODO: throw error
+        pass
+
+    handler()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    route()
