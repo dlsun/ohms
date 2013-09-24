@@ -10,6 +10,6 @@ from sqlalchemy.ext.declarative import declarative_base
 
 
 Base = declarative_base()
-engine = create_engine('sqlite:///ohms.db', echo=True)
+engine = create_engine('sqlite:///ohms.db', echo=False)
 Session = sessionmaker(bind=engine)
 session = Session()

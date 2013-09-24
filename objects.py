@@ -2,10 +2,14 @@
 objects.py
 
 Defines the database objects.
+
+We used a manually installed version of ElementTree 1.3 
+for compatibility with Python 2.6.
 """
 
 import os
-import xml.etree.ElementTree as ET
+import elementtree.ElementTree as ET
+#import xml.etree.ElementTree as ET
 from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from base import Base, session
@@ -36,7 +40,7 @@ class Homework(Base):
                                               "%m/%d/%Y %H:%M:%S")
         else:
             self.due_date = None
-        for q in root.iter('question'):
+        for q in root.getiterator('question'):
             q_object = Question.from_xml(q)
             q_object.hw = self
             session.add(q_object)
@@ -56,7 +60,7 @@ class Question(Base):
     def from_xml(node):
         question = Question()
         question.points = 0
-        for i, item in enumerate(node.iter('item')):
+        for i, item in enumerate(node.getiterator('item')):
             item_object = Item.from_xml(item)
             item_object.order = i
             question.points += item_object.points
@@ -74,7 +78,7 @@ class Question(Base):
 
     def to_html(self):
         body = ET.fromstring(self.xml)
-        for i, item in enumerate(body.iter('item')):
+        for i, item in enumerate(body.getiterator('item')):
             item.clear()
             item.append(self.items[i].to_html())
         return body
