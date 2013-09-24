@@ -44,7 +44,7 @@ var OHMS = (function(OHMS) {
 
 	Question.prototype.load_response = function () {
 	    $.ajax({
-		    url : base_url + "?dest=load&q_id=" + this.id,
+		    url : "load?q_id=" + this.id,
 		    type : "GET",
 		    dataType : "json",
 		    success : $.proxy(this.load_response_success,this),
@@ -73,7 +73,7 @@ var OHMS = (function(OHMS) {
 		data.append("responses",this.items[i].get_value());
 	    }
 	    var req = new XMLHttpRequest();
-	    req.open("POST","?dest=submit&q_id=" + this.id,true);
+	    req.open("POST","submit?q_id=" + this.id,true);
 	    req.onload = function (event) {
 		if(event.target.status === 200) {
 		    data = JSON.parse(event.target.response);

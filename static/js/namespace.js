@@ -6,7 +6,7 @@
  *  Copyright (c) 2013, Dennis Sun <dlsun@stanford.edu>
  */
 
-var base_url = "/class/stats60/cgi-bin/server.py/";
+var base_url = "/";
 var OHMS = OHMS || {};
 
 MathJax.Hub.Config({
