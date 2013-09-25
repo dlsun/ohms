@@ -119,11 +119,22 @@ def submit():
     if type == "q":
 
         question = session.query(Question).filter_by(id=id).one()
+        past_responses = get_question_responses(id, sunet)
+
+        ok_to_grade = True
+        # Check if the homework deadline has passed
+        if question.hw.due_date and question.hw.due_date < datetime.utcnow():
+            ok_to_grade = False
+            question_response.score = 0
+            question_response.comments = "You have passed the due date for "\
+                "this homework. This submission has not been graded or saved."
+            if past_responses:
+                question_response.time = max(x.time for x in past_responses)
+            else:
+                question_response.time = ""
 
         # Check if they've submitted too much
-        ok_to_grade = True
-        past_responses = get_question_responses(id, sunet)
-        if len(past_responses) >= 2:
+        if ok_to_grade and len(past_responses) >= 2:
             last_response_time = max(x.time for x in past_responses)
             if datetime.utcnow() - last_response_time < timedelta(hours=6):
                 ok_to_grade = False
@@ -147,7 +158,6 @@ def submit():
             # add response to the database
             session.add(question_response)
             session.commit()
-        else:
 
     else:
 
