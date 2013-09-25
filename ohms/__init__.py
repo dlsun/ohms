@@ -105,7 +105,7 @@ def load():
 @app.route("/submit", methods=['POST'])
 def submit():
     q_id = request.args.get("q_id")
-    type = q_id[0]
+    submit_type = q_id[0]
     id = q_id[1:]
 
     responses = request.form.getlist('responses')
@@ -116,8 +116,8 @@ def submit():
         question_id=id
     )
 
-    if type == "q":
-
+    # Question submission
+    if submit_type == "q":
         question = session.query(Question).filter_by(id=id).one()
         past_responses = get_question_responses(id, sunet)
 
@@ -160,52 +160,54 @@ def submit():
             session.add(question_response)
             session.commit()
 
-    else:
+    # Sample question grading submission
+    elif submit_type == "s":
+        sample_responses = session.query(QuestionResponse).\
+            filter_by(sunet="Sample Sam").\
+            filter_by(question_id=id).all()
 
-        if type == "s":
+        assigned_scores = [float(resp) for resp in responses]
+        true_scores = [float(resp.score) for resp in sample_responses]
 
-            sample_responses = session.query(QuestionResponse).\
-                filter_by(sunet="Sample Sam").\
-                filter_by(question_id=id).all()
-
-            assigned_scores = [float(resp) for resp in responses]
-            true_scores = [float(resp.score) for resp in sample_responses]
-
-            if assigned_scores == true_scores:
-                session.query(GradingPermission).\
-                    filter_by(sunet=sunet).\
-                    filter_by(question_id=id).\
-                    update({"permissions": 1})
-                session.commit()
-                question_response.comments = "Congratulations! You are now "\
-                    "qualified to grade this question. Please refresh the "\
-                    "page to see the student responses."
-            else:
-                question_response.comments = "Sorry, but there is still a "\
-                    "discrepancy between your grades and the grades for this"\
-                    "sample response. Please try again."
-
-        elif type == "g":
-
-            # Make sure student was assigned this grading task
-            task = session.query(GradingTask).get(id)
-            if task.grader != sunet:
-                abort(403)
-
-            score = float(responses[0])
-            comments = responses[1]
-
-            question_grade = QuestionGrade(
-                grading_task=task,
-                time=datetime.utcnow(),
-                score=score,
-                comments=comments
-            )
-            session.add(question_grade)
+        if assigned_scores == true_scores:
+            session.query(GradingPermission).\
+                filter_by(sunet=sunet).\
+                filter_by(question_id=id).\
+                update({"permissions": 1})
             session.commit()
+            question_response.comments = "Congratulations! You are now "\
+                "qualified to grade this question. Please refresh the "\
+                "page to see the student responses."
+        else:
+            question_response.comments = "Sorry, but there is still a "\
+                "discrepancy between your grades and the grades for this"\
+                "sample response. Please try again."
 
-            question_response.comments = "Your scores have been "\
-                "successfully recorded!"
+    # Grading student questions
+    elif submit_type == "g":
+        # Make sure student was assigned this grading task
+        task = session.query(GradingTask).get(id)
+        if task.grader != sunet:
+            abort(403)
+
+        score = float(responses[0])
+        comments = responses[1]
+
+        question_grade = QuestionGrade(
+            grading_task=task,
+            time=datetime.utcnow(),
+            score=score,
+            comments=comments
+        )
+        session.add(question_grade)
+        session.commit()
+
+        question_response.comments = "Your scores have been "\
+            "successfully recorded!"
+
+    # Wrong submit_type
+    else:
+        abort(500)
 
     # add response to what to return to the user
     return json.dumps({"last_submission": question_response}, cls=NewEncoder)
