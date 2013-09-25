@@ -182,15 +182,65 @@ class MultipleChoiceOption(Base):
 
 class ShortAnswerItem(Item):
     __mapper_args__ = {'polymorphic_identity': 'Short Answer'}
+    answers = relationship("ShortAnswer", backref="item")
 
     def from_xml(self, node):
-        pass
+        for answer in node.findall("answer"):
+            short_answer = ShortAnswer()
+            short_answer.from_xml(answer)
+            short_answer.item = self
+            session.add(short_answer)
 
     def to_html(self):
         attrib = {"type": "text",
                   "class": "item input-medium",
                   "itemtype": "short-answer"}
         return ET.Element("input", attrib=attrib)
+
+    def check(self, response):
+        for answer in self.answers:
+            if answer.is_correct(response):
+                return self.points, ""
+        return 0, ""
+
+
+class ShortAnswer(Base):
+    __tablename__ = "short_answers"
+
+    id = Column(Integer, primary_key=True)
+    short_answer_id = Column(Integer, ForeignKey('items.id'))
+    type = Column(String)  # "range" or "exact"
+    lb = Column(Float)
+    ub = Column(Float)
+    exact = Column(String)
+
+    def from_xml(self, node):
+        self.type = node.attrib['type'].lower()
+        data = node.text
+        if self.type == "range":
+            lb, ub = data.split(",")
+            self.lb = float(lb.strip().lstrip("["))
+            self.ub = float(ub.strip().rstrip("]"))
+        elif self.type == "exact":
+            self.exact = data.strip().lower()
+        else:
+            raise NotImplementedError("ShortAnswer type=%s is not implemented"
+                                      % self.type)
+
+    def is_correct(self, response):
+        if self.type == "range":
+            try:
+                num_response = float(response)
+            except ValueError:
+                return False
+            return self.lb <= num_response <= self.ub
+        elif self.type == "exact":
+            str_response = response.strip().lower()
+            # TODO: make this an edit distance comparison
+            return str_response == self.exact
+        else:
+            raise NotImplementedError("ShortAnswer type=%s is not implemented"
+                                      % self.type)
 
 
 class LongAnswerItem(Item):
