@@ -1,0 +1,225 @@
+<hw name="Homework 1" due_date="9/28/2013 12:00:00">
+  <question>
+    <p>Below are sketches of histograms for three lists.</p>
+    <div align="center"><img src="img/hw1-ch4ex6-hist.png"/></div>
+
+    <ol type="a">
+      <li>What are the averages of the three histograms?
+	<item type="Multiple Choice" points="2">
+	  <options>
+	    <option correct="false">(i) 40, (ii) 50, (iii) 60</option>
+	    <option correct="false">(i) 40, (ii) 60, (iii) 50</option>
+	    <option correct="false">(i) 50, (ii) 40, (iii) 60</option>
+	    <option correct="false">(i) 50, (ii) 60, (iii) 40</option>
+	    <option correct="false">(i) 60, (ii) 40, (iii) 50</option>
+	    <option correct="true">(i) 60, (ii) 50, (iii) 40</option>
+	  </options>
+	</item>
+      </li>
+
+      <li>Match the histogram with the description.
+	<item type="Multiple Choice" points="2">
+	  <options>
+	    <option correct="false">
+	      (i) median &lt; average<br />
+	      (ii) median = average<br />
+              (iii) median &gt; average<br />
+	    </option>
+	    <option correct="false">
+	      (i) median &lt; average<br />
+	      (ii) median &gt; average<br />
+              (iii) median = average<br />
+	    </option>
+	    <option correct="false">
+	      (i) median = average<br />
+	      (ii) median &lt; average<br />
+              (iii) median &gt; average<br />
+	    </option>
+	    <option correct="false">
+	      (i) median = average<br />
+	      (ii) median &gt; average<br />
+              (iii) median &lt; average<br />
+	    </option>
+	    <option correct="false">
+	      (i) median &gt; average<br />
+	      (ii) median &lt; average<br />
+              (iii) median = average<br />
+	    </option>
+	    <option correct="true">
+	      (i) median &gt; average<br />
+	      (ii) median = average<br />
+              (iii) median &lt; average<br />
+	    </option>
+	  </options>
+	</item>
+      </li>
+
+      <li>The SD of histogram (iii) is around:
+	<item type="Multiple Choice" points="1">
+	  <options>
+	    <option correct="false">5</option>
+	    <option correct="true">15</option>
+	    <option correct="false">50</option>
+	  </options>
+	</item>
+      </li>
+
+      <li>True or false: the SD for histogram (i) is a lot 
+smaller than that for histogram (iii).
+	<item type="Multiple Choice" points="1">
+	  <options>
+	    <option correct="false">True</option>
+	    <option correct="true">False</option>
+	  </options>
+	</item>
+      </li>
+
+    </ol>
+  </question>
+
+  <question>
+    <p>A study on college students found that the men had an average weight 
+      of about 66 kg and an SD of about 9 kg. The women had an average weight 
+      of about 55 kg and an SD of 9 kg.</p>
+
+    <ol>
+      <li>Find the averages and SDs, in pounds. (1 kg = 2.2 lb)
+	<table class="table span4">
+	  <thead><th></th><th>Average</th><th>SD</th></thead>
+	  <tbody>
+	    <tr>
+	      <td>Men</td>
+	      <td><item type="Short Answer" points=".5"/> lb</td>
+	      <td><item type="Short Answer" points=".5"/> lb</td>
+	    </tr>
+	    <tr>
+	      <td>Women</td>
+	      <td><item type="Short Answer" points=".5"/> lb</td>
+	      <td><item type="Short Answer" points=".5"/> lb</td>
+	    </tr>
+	  </tbody>
+	</table>
+      </li>
+      
+      <li>Just roughly, what percentage of the men weighed between 57 
+	and 75 kg?
+
+	<item type="Short Answer" points="2"/>%
+      </li>
+
+      <li>
+	<p>If you took the men and women together, would the 
+	  SD of their weights be smaller than 9 kg, 
+	  just about 9 kg, or bigger than 9 kg?</p>
+
+	<item type="Multiple Choice" points="2">
+	  <options>
+	    <option correct="false">smaller than 9 kg</option>
+	    <option correct="false">just about 9 kg</option>
+	    <option correct="true">bigger than 9 kg</option>
+	  </options>
+        </item>
+      </li>
+
+    </ol>
+
+  </question>
+
+
+  <question>
+
+    <ol type="a">
+      <li>
+	For women age 25-34 with full time jobs, the average income
+	in 2004 was \$32,000. The SD was \$26,000, and 1/4 of 1% had incomes
+	above \$150,000. About what percentage with incomes in the range from
+	\$32,000 to \$150,000?
+	<item type="Multiple Choice" points="3">
+	  <options>
+	    <option correct="true">40%</option>
+	    <option correct="false">50%</option>
+	    <option correct="false">60%</option>
+	  </options>
+	</item>
+      </li>
+      <li>
+	As part of a survey, one large manufacturing company asked a 
+	thousand of its employees how far they had to commute to work 
+	each day (round trip). The data was analyzed and the average 
+	round trip commute distance was reported as 11.3 miles, with 
+	an SD of 16.2 miles. What would a rough sketch of the histogram 
+	look like? Or is there a mistake somewhere?
+	<item type="Multiple Choice" points="3">
+	  <options>
+	    <option correct="true"></option>
+	    <option correct="false"></option>
+	    <option correct="false"></option>
+	    <option correct="false">There is a mistake somewhere.</option>
+	  </options>
+	</item>
+      </li>
+    </ol>
+  </question>
+
+
+  <question>
+    Among applicants to one law school, the average LSAT score was about 169,
+    the SD was about 9, and the highest score was 178. True or false: the 
+    LSAT scores follow the normal curve.
+
+    <item type="Short Answer" points="6"/>
+  </question>
+
+
+  <question>
+    <p>In 2006, Harvard University President Larry Summers resigned 
+      over remarks he made about women in math and science. 
+      However, contrary to popular belief, what he suggested 
+      was not that women are any less intelligent than men (on average), 
+      but that women's intelligences are less variable than men's. 
+      He noted that among the top 5% of twelfth graders, there was one 
+      woman for every two men.</p>
+
+    <p>In this problem, we will show that based on this data, the 
+      SD of men's IQs is larger than the SD of women's IQs. This is 
+      a challenging problem, so let's walk through the steps 
+      together.</p>
+
+    <ul>
+
+      <li>IQ scores follow the normal curve with mean 100 and SD 15. 
+	What IQ score marks the cutoff for the top 5% (i.e., the 
+	95th percentile)?
+
+	<item type="Short Answer" points="1" />
+      </li>
+
+      <li>The percentage of all people with an IQ above the score 
+	you calculated in (a) is, of course, 5%, but what percentage 
+	of men have an IQ above that score?
+
+	<item type="Short Answer" points="1" />%
+      </li>
+
+      <li>You now know the percentage of men with an IQ above the 
+	score you calculated in (a). Remember that Summers was 
+	assuming that men and women have the same average IQ score 
+	(100). This should enable you to determine the SD of men's 
+	IQs.
+
+	<item type="Short Answer" points="2" />%
+      </li>
+      
+      <li>Repeat (b) and (c), but for women's IQs. What is the SD of 
+	women's IQs?
+
+	<item type="Short Answer" points="2" />%
+      </li>
+
+    </ul>
+
+  </question>
+
+
+</hw>
+      
