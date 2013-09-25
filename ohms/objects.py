@@ -49,7 +49,7 @@ class Question(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     hw_id = Column(Integer, ForeignKey('hws.id'))
-    xml = Column(String)
+    html = Column(String)
     items = relationship("Item", order_by="Item.id", backref="question")
     points = Column(Integer)
 
@@ -58,12 +58,17 @@ class Question(Base):
         question = Question()
         question.points = 0
         for i, item in enumerate(node.iter('item')):
+            # get item object and order
             item_object = Item.from_xml(item)
             item_object.order = i
+            # add items to question
             question.points += item_object.points
             question.items.append(item_object)
-
-        question.xml = ET.tostring(node)
+            # replace items by corresponding html
+            item.clear()
+            item.append(item_object.to_html())
+        # include raw html
+        question.html = ET.tostring(node, method="html")
         session.add(question)
 
         return question
@@ -73,15 +78,8 @@ class Question(Base):
         for item in sorted(self.items, key=lambda x: x.order):
             yield item
 
-    def to_html(self):
-        body = ET.fromstring(self.xml)
-        for i, item in enumerate(body.iter('item')):
-            item.clear()
-            item.append(self.items[i].to_html())
-        return body
-
     def __str__(self):
-        return ET.tostring(self.to_html(), method="html")
+        return self.html
 
     def check(self, responses):
         scores, comments = zip(*[item.check(response) for (item, response)
@@ -133,7 +131,9 @@ class MultipleChoiceItem(Item):
 
     def from_xml(self, node):
         for i, option in enumerate(node.find('options').findall('option')):
-            text = option.text
+            import re
+            match = re.match("<option.*?>(?P<inner>.*)</option>", ET.tostring(option), re.DOTALL)
+            text = match.group('inner') if match else ""
             correct = option.attrib['correct'].lower()
             if correct not in ["true", "false"]:
                 raise ValueError("The 'correct' attribute in multiple choice"
@@ -144,6 +144,7 @@ class MultipleChoiceItem(Item):
                                                  correct=correct,
                                                  item=self)
             session.add(option_object)
+        session.commit()
 
     def __iter__(self):
         """Iterates over the multiple choice options in this item, in order"""
