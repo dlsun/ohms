@@ -11,7 +11,9 @@ from base import session
 from objects import Homework, Question, Item, QuestionResponse, ItemResponse
 from objects import GradingTask, QuestionGrade, GradingPermission
 from queries import get_question_responses, get_question_grades
+import options
 app = Flask(__name__, static_url_path="")
+app.debug = options.test
 
 import os
 sunet = os.environ.get("WEBAUTH_LDAP_USER") or "dlsun"
@@ -49,14 +51,14 @@ class NewEncoder(json.JSONEncoder):
 @app.route("/")
 def index():
     hws = session.query(Homework).all()
-    return render_template("index.html", homeworks=hws)
+    return render_template("index.html", homeworks=hws, options=options)
 
 
 @app.route("/hw", methods=['GET'])
 def hw():
     hw_id = request.args.get("id")
     homework = session.query(Homework).filter_by(id=hw_id).one()
-    return render_template("hw.html", homework=homework)
+    return render_template("hw.html", homework=homework, options=options)
 
 
 @app.route("/grade", methods=['GET'])
@@ -82,7 +84,7 @@ def grade():
                 "question": question, 
                 "permission": permission.permissions,
                 "tasks": tasks})
-    return render_template("grade.html", questions=questions)
+    return render_template("grade.html", questions=questions, options=options)
 
 
 @app.route("/load", methods=['GET'])
@@ -181,4 +183,4 @@ been successfully recorded!'''
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

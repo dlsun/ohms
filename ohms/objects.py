@@ -5,7 +5,8 @@ Defines the database objects.
 """
 
 import os
-import xml.etree.ElementTree as ET
+import elementtree.ElementTree as ET
+#import xml.etree.ElementTree as ET
 from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from base import Base, session
