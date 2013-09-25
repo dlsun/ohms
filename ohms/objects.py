@@ -277,4 +277,3 @@ class QuestionGrade(Base):
     score = Column(Float)
 
     grading_task = relationship("GradingTask")
-
