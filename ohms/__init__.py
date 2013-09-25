@@ -2,7 +2,7 @@
 OHMS: Online Homework Management System
 """
 
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, abort
 from sqlalchemy.orm.query import Query
 import json
 from datetime import datetime
@@ -162,7 +162,11 @@ and the grades for this sample response. Please try again.'''
             
         elif type == "g":
 
+            # Make sure student was assigned this grading task
             task = session.query(GradingTask).get(id)
+            if task.grader != sunet:
+                abort(403)
+
             score = float(responses[0])
             comments = responses[1]
 
