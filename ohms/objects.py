@@ -66,7 +66,7 @@ class Question(Base):
             question.items.append(item_object)
             # replace items by corresponding html
             item.clear()
-            item.append(self.items[i].to_html())
+            item.append(item_object.to_html())
         # include raw html
         question.html = ET.tostring(node, method="html")
         session.add(question)
@@ -79,7 +79,7 @@ class Question(Base):
             yield item
 
     def __str__(self):
-        return question.html
+        return self.html
 
     def check(self, responses):
         scores, comments = zip(*[item.check(response) for (item, response)
@@ -131,7 +131,9 @@ class MultipleChoiceItem(Item):
 
     def from_xml(self, node):
         for i, option in enumerate(node.find('options').findall('option')):
-            text = option.text
+            import re
+            match = re.match("<option.*?>(?P<inner>.*)</option>", ET.tostring(option), re.DOTALL)
+            text = match.group('inner') if match else ""
             correct = option.attrib['correct'].lower()
             if correct not in ["true", "false"]:
                 raise ValueError("The 'correct' attribute in multiple choice"
@@ -142,6 +144,7 @@ class MultipleChoiceItem(Item):
                                                  correct=correct,
                                                  item=self)
             session.add(option_object)
+        session.commit()
 
     def __iter__(self):
         """Iterates over the multiple choice options in this item, in order"""
