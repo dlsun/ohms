@@ -43,38 +43,36 @@ def init_db():
     i_response1 = objects.ItemResponse(question_response=q_response1,
                                        item_id=3,
                                        response="Fuck Bayesians, y'know?")
-    q_response2 = objects.QuestionResponse(sunet="dlsun", 
+    q_response2 = objects.QuestionResponse(sunet="dlsun",
                                            question_id=2,
                                            score=0,
                                            comments="")
     i_response2 = objects.ItemResponse(question_response=q_response2,
                                        item_id=3,
                                        response=r'''
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
-sed do eiusmod tempor incididunt ut labore et dolore magna 
-aliqua. Ut enim ad minim veniam, quis nostrud exercitation 
-ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-Duis aute irure dolor in reprehenderit in voluptate velit 
-esse cillum dolore eu fugiat nulla pariatur. Excepteur 
-sint occaecat cupidatat non proident, sunt in culpa qui 
+Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+sed do eiusmod tempor incididunt ut labore et dolore magna
+aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit
+esse cillum dolore eu fugiat nulla pariatur. Excepteur
+sint occaecat cupidatat non proident, sunt in culpa qui
 officia deserunt mollit anim id est laborum.
 ''')
-    q_response3 = objects.QuestionResponse(sunet="Sample Sam", 
+    q_response3 = objects.QuestionResponse(sunet="Sample Sam",
                                            question_id=2,
                                            score=20,
                                            comments="")
     i_response3 = objects.ItemResponse(question_response=q_response3,
                                        item_id=3,
                                        response="This is an example of a full-credit answer.")
-    q_response4 = objects.QuestionResponse(sunet="Sample Sam", 
+    q_response4 = objects.QuestionResponse(sunet="Sample Sam",
                                            question_id=2,
                                            score=5,
                                            comments="")
     i_response4 = objects.ItemResponse(question_response=q_response4,
                                        item_id=3,
                                        response="This guy only deserves 5 points.")
-
-
 
     # fake grading assignment
     grading1 = objects.GradingPermission(sunet="dlsun",
@@ -85,7 +83,7 @@ officia deserunt mollit anim id est laborum.
     task2 = objects.GradingTask(grader="dlsun",
                                 question_response=q_response2)
 
-    session.add_all([naftali, dennis, sample_sam, 
+    session.add_all([naftali, dennis, sample_sam,
                      q_response1, i_response1,
                      q_response2, i_response2,
                      q_response3, i_response3,

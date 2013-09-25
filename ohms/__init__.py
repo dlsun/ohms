@@ -43,7 +43,7 @@ class NewEncoder(json.JSONEncoder):
             d['item_responses'] = [
                 {"response": obj.score},
                 {"response": obj.comments}
-                ]
+            ]
             return d
         return json.JSONEncoder.default(self, obj)
 
@@ -78,12 +78,11 @@ def grade():
             qrs = session.query(QuestionResponse).\
                 filter_by(sunet="Sample Sam").\
                 filter_by(question_id=question.id).all()
-            tasks = [{"id": qr.id,
-                      "question_response":qr} for qr in qrs]
+            tasks = [{"id": qr.id, "question_response": qr} for qr in qrs]
         questions.append({
-                "question": question, 
-                "permission": permission.permissions,
-                "tasks": tasks})
+            "question": question,
+            "permission": permission.permissions,
+            "tasks": tasks})
     return render_template("grade.html", questions=questions, options=options)
 
 
@@ -97,7 +96,8 @@ def load():
     else:
         last_submission = None
     if last_submission:
-        return json.dumps({"last_submission": last_submission[0]}, cls=NewEncoder)
+        return json.dumps({"last_submission": last_submission[0]},
+                          cls=NewEncoder)
     else:
         return json.dumps({})
 
@@ -114,7 +114,7 @@ def submit():
         sunet=sunet,
         time=datetime.utcnow(),
         question_id=id
-        )
+    )
 
     if type == "q":
 
@@ -152,7 +152,8 @@ def submit():
             question_response.score = score
             question_response.comments = comments
             for item, response in zip(items, responses):
-                item_response = ItemResponse(item_id=item.id, response=response)
+                item_response = ItemResponse(item_id=item.id,
+                                             response=response)
                 question_response.item_responses.append(item_response)
 
             # add response to the database
@@ -167,23 +168,23 @@ def submit():
                 filter_by(sunet="Sample Sam").\
                 filter_by(question_id=id).all()
 
-            assigned_scores = [float(response) for response in responses]
-            true_scores = [float(response.score) for response in sample_responses]
+            assigned_scores = [float(resp) for resp in responses]
+            true_scores = [float(resp.score) for resp in sample_responses]
 
             if assigned_scores == true_scores:
                 session.query(GradingPermission).\
                     filter_by(sunet=sunet).\
                     filter_by(question_id=id).\
-                    update({"permissions":1})
+                    update({"permissions": 1})
                 session.commit()
-                question_response.comments = r'''
-Congratulations! You are now qualified to grade this question. 
-Please refresh the page to see the student responses.'''
+                question_response.comments = "Congratulations! You are now "\
+                    "qualified to grade this question. Please refresh the "\
+                    "page to see the student responses."
             else:
-                question_response.comments = r'''
-Sorry, but there is still a discrepancy between your grades 
-and the grades for this sample response. Please try again.'''
-            
+                question_response.comments = "Sorry, but there is still a "\
+                    "discrepancy between your grades and the grades for this"\
+                    "sample response. Please try again."
+
         elif type == "g":
 
             # Make sure student was assigned this grading task
@@ -199,12 +200,12 @@ and the grades for this sample response. Please try again.'''
                 time=datetime.utcnow(),
                 score=score,
                 comments=comments
-                )
+            )
             session.add(question_grade)
             session.commit()
 
-            question_response.comments = r'''Your scores have 
-been successfully recorded!'''
+            question_response.comments = "Your scores have been "\
+                "successfully recorded!"
 
     # add response to what to return to the user
     return json.dumps({"last_submission": question_response}, cls=NewEncoder)
