@@ -3,20 +3,25 @@ OHMS: Online Homework Management System
 """
 
 from flask import Flask, request, render_template, abort
-from sqlalchemy.orm.query import Query
 import json
 from datetime import datetime, timedelta
 
 from base import session
 from objects import Homework, Question, Item, QuestionResponse, ItemResponse
-from objects import GradingTask, QuestionGrade, GradingPermission
-from queries import get_question_responses, get_question_grades
+from objects import GradingTask, QuestionGrade, GradingPermission, User
+from queries import get_question_responses, get_question_grades, exists_user
 import options
 app = Flask(__name__, static_url_path="")
 app.debug = options.test
 
 import os
-sunet = os.environ.get("WEBAUTH_LDAP_USER") or "dlsun"
+sunet = os.environ.get("WEBAUTH_USER")
+if not exists_user(sunet):
+    user = User(sunet=sunet,
+                name=os.environ.get("WEBAUTH_LDAP_DISPLAYNAME"),
+                type="student")
+    session.add(user)
+    session.commit()
 
 
 # special JSON encoder to handle dates and Response objects
@@ -211,7 +216,3 @@ def submit():
 
     # add response to what to return to the user
     return json.dumps({"last_submission": question_response}, cls=NewEncoder)
-
-
-if __name__ == "__main__":
-    app.run()
