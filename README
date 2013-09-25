@@ -1,0 +1,5 @@
+To deploy the test service:
+$ make test-deploy
+
+To deploy the prod service, (careful!!!):
+$ make prod-deploy
