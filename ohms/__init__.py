@@ -5,7 +5,7 @@ OHMS: Online Homework Management System
 from flask import Flask, request, render_template, abort
 from sqlalchemy.orm.query import Query
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from base import session
 from objects import Homework, Question, Item, QuestionResponse, ItemResponse
@@ -112,7 +112,7 @@ def submit():
 
     question_response = QuestionResponse(
         sunet=sunet,
-        time=datetime.now(),
+        time=datetime.utcnow(),
         question_id=id
         )
 
@@ -120,20 +120,34 @@ def submit():
 
         question = session.query(Question).filter_by(id=id).one()
 
+        # Check if they've submitted too much
+        ok_to_grade = True
         past_responses = get_question_responses(id, sunet)
-        items = session.query(Item).filter_by(question_id=id).all()
+        if len(past_responses) >= 2:
+            last_response_time = max(x.time for x in past_responses)
+            if datetime.utcnow() - last_response_time < timedelta(hours=6):
+                ok_to_grade = False
+                question_response.score = 0
+                question_response.comments = "Please wait six hours since "\
+                    "your last submission to submit again. This submission "\
+                    "has not been graded or saved."
+                question_response.time = last_response_time
 
-        score, comments = question.check(responses)
+        if ok_to_grade:
+            items = session.query(Item).filter_by(question_id=id).all()
 
-        question_response.score = score
-        question_response.comments = comments
-        for item, response in zip(items, responses):
-            item_response = ItemResponse(item_id=item.id, response=response)
-            question_response.item_responses.append(item_response)
+            score, comments = question.check(responses)
 
-        # add response to the database
-        session.add(question_response)
-        session.commit()
+            question_response.score = score
+            question_response.comments = comments
+            for item, response in zip(items, responses):
+                item_response = ItemResponse(item_id=item.id, response=response)
+                question_response.item_responses.append(item_response)
+
+            # add response to the database
+            session.add(question_response)
+            session.commit()
+        else:
 
     else:
 
@@ -172,7 +186,7 @@ and the grades for this sample response. Please try again.'''
 
             question_grade = QuestionGrade(
                 grading_task=task,
-                time=datetime.now(),
+                time=datetime.utcnow(),
                 score=score,
                 comments=comments
                 )
