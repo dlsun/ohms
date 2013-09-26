@@ -218,8 +218,8 @@ def submit():
     return json.dumps({"last_submission": question_response}, cls=NewEncoder)
 
 
-@app.route("/office_hours")
-def office_hours():
+@app.route("/staff")
+def staff():
     return render_template("office_hours.html", options=options)
 
 
