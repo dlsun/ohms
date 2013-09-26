@@ -6,7 +6,7 @@ Defines the database objects.
 
 import os
 import elementtree.ElementTree as ET
-#import xml.etree.ElementTree as ET
+import re
 from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from base import Base, session
@@ -131,7 +131,6 @@ class MultipleChoiceItem(Item):
 
     def from_xml(self, node):
         for i, option in enumerate(node.find('options').findall('option')):
-            import re
             match = re.match("<option.*?>(?P<inner>.*)</option>", ET.tostring(option), re.DOTALL)
             text = match.group('inner') if match else ""
             correct = option.attrib['correct'].lower()

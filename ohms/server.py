@@ -117,7 +117,7 @@ def submit():
 
     question_response = QuestionResponse(
         sunet=sunet,
-        time=datetime.utcnow(),
+        time=datetime.now(),
         question_id=id
     )
 
@@ -128,7 +128,7 @@ def submit():
 
         ok_to_grade = True
         # Check if the homework deadline has passed
-        if question.hw.due_date and question.hw.due_date < datetime.utcnow():
+        if question.hw.due_date and question.hw.due_date < datetime.now():
             ok_to_grade = False
             question_response.score = 0
             question_response.comments = "You have passed the due date for "\
@@ -141,7 +141,7 @@ def submit():
         # Check if they've submitted too much
         if ok_to_grade and len(past_responses) >= 2:
             last_response_time = max(x.time for x in past_responses)
-            if datetime.utcnow() - last_response_time < timedelta(hours=6):
+            if datetime.now() - last_response_time < timedelta(hours=6):
                 ok_to_grade = False
                 question_response.score = 0
                 question_response.comments = "Please wait six hours since "\
@@ -200,7 +200,7 @@ def submit():
 
         question_grade = QuestionGrade(
             grading_task=task,
-            time=datetime.utcnow(),
+            time=datetime.now(),
             score=score,
             comments=comments
         )

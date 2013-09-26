@@ -31,7 +31,6 @@ def testing_init():
                               name="Sample Sam",
                               type="sample")
 
-
     session.add_all([naftali, dennis, sample_sam])
 
     # fake homework response
@@ -109,7 +108,6 @@ def prod_init_db():
     sample_sam = objects.User(sunet="Sample Sam",
                               name="Sample Sam",
                               type="sample")
-
 
     session.add_all([naftali, dennis, sample_sam])
     session.commit()

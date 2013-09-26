@@ -125,7 +125,7 @@ var OHMS = (function(OHMS) {
 
 	    // update time
 	    this.element.find(".time").html("Last submission at " +
-					    data.last_submission.time + " UTC");
+					    data.last_submission.time + " PDT");
 	}
 
 	OHMS.Question = Question;
