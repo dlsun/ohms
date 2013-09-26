@@ -231,7 +231,7 @@ smaller than that for histogram (iii).
       <li>The percentage of women with blood pressures above 130mm is around:
         <item type="Multiple Choice" points="1">
           <options>
-            <option correct="false">25%</option>
+            <option correct="true">25%</option>
             <option correct="false">50%</option>
             <option correct="false">75%</option>
           </options>
@@ -242,7 +242,7 @@ smaller than that for histogram (iii).
           <options>
             <option correct="false">1%</option>
             <option correct="false">50%</option>
-            <option correct="false">99%</option>
+            <option correct="true">99%</option>
           </options>
         </item>
       </li>
@@ -250,28 +250,28 @@ smaller than that for histogram (iii).
         <item type="Multiple Choice" points="1">
           <options>
             <option correct="false">135-140mm</option>
-            <option correct="false">140-150mm</option>
+            <option correct="true">140-150mm</option>
           </options>
         </item>
       </li>
       <li>Which interval is more crowded?
         <item type="Multiple Choice" points="1">
           <options>
-            <option correct="false">135-140mm</option>
+            <option correct="true">135-140mm</option>
             <option correct="false">140-150mm</option>
           </options>
         </item>
       </li>
       <li>On the interval 125-130mm, the height of the histogram is about 2.1% per mm. What percentage of women had blood pressures in this class interval?
         <item type="Short Answer" points="1">
-          <answer type="range">[x,y]</answer>
+          <answer type="range">[8, 12]</answer>
         </item>
       </li>
       <li>Which interval has more women?
         <item type="Multiple Choice" points="1">
           <options>
             <option correct="false">97-98mm</option>
-            <option correct="false">102-103mm</option>
+            <option correct="true">102-103mm</option>
           </options>
         </item>
       </li>
@@ -300,4 +300,3 @@ smaller than that for histogram (iii).
 
 
 </hw>
-      
