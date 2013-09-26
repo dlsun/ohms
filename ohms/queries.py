@@ -4,8 +4,10 @@ queries.py
 Some useful sql queries.
 """
 
+import sqlalchemy
+
 from base import session
-from objects import QuestionResponse, QuestionGrade, GradingTask
+from objects import QuestionResponse, QuestionGrade, GradingTask, User
 
 
 def get_question_responses(id, sunet):
@@ -21,3 +23,15 @@ def get_question_grades(id, sunet):
         join(GradingTask).\
         filter(GradingTask.grader == sunet).\
         order_by(QuestionGrade.time.desc()).all()
+
+
+def get_user(sunet):
+    return session.query(User).filter_by(sunet=sunet).one()
+
+
+def exists_user(sunet):
+    try:
+        user = get_user(sunet)
+        return True
+    except sqlalchemy.orm.exc.NoResultFound:
+        return False

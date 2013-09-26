@@ -1,0 +1,21 @@
+{% extends "page.html" %}
+
+{% block content %}
+<h3>Online Homework Management System (OHMS)</h3>
+
+<p id="studentName" class="lead"></p>
+
+<table class="table table-striped">
+  <thead>
+    <th>Handout</th>
+  </thead>
+  <tbody>
+    {% for filename in handouts %}
+    <tr>
+      <td><a href="{{options.class_prefix}}/handouts/{{filename}}">{{filename}}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

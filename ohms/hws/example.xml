@@ -38,6 +38,9 @@
       10 meters to the left. Betty shoots next, and misses 10 meters to the right. 
       Charlie exclaims, "We got 'im!" Do you agree? Explain your reasoning briefly.
     </p>
-    <item type="Short Answer" points="10"></item>
+    <item type="Short Answer" points="10">
+      <answer type="exact">yes</answer> 
+      <answer type="range">[2, 5.2]</answer> 
+    </item>
   </question>
 </hw>
