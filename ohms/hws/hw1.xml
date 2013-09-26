@@ -286,6 +286,83 @@ smaller than that for histogram (iii).
 
   </question>
 
+  <question>
+    <p>
+      The figure below is a histogram showing the distribution of blood
+      pressure for all 14,148 women in a drug study. Use the histogram to
+      answer the following questions:
+    </p>
+    <div align="center"><img src="/class/stats60/img/hw1-ch3-prob4.png"/></div>
+    <ol type="a">
+      <li>The percentage of women with blood pressures above 130mm is around:
+        <item type="Multiple Choice" points="1">
+          <options>
+            <option correct="true">25%</option>
+            <option correct="false">50%</option>
+            <option correct="false">75%</option>
+          </options>
+        </item>
+      </li>
+      <li>The percentage of women with blood pressures between 90mm and 160mm is around:
+        <item type="Multiple Choice" points="1">
+          <options>
+            <option correct="false">1%</option>
+            <option correct="false">50%</option>
+            <option correct="true">99%</option>
+          </options>
+        </item>
+      </li>
+      <li>In which interval are there more women?
+        <item type="Multiple Choice" points="1">
+          <options>
+            <option correct="false">135-140mm</option>
+            <option correct="true">140-150mm</option>
+          </options>
+        </item>
+      </li>
+      <li>Which interval is more crowded?
+        <item type="Multiple Choice" points="1">
+          <options>
+            <option correct="true">135-140mm</option>
+            <option correct="false">140-150mm</option>
+          </options>
+        </item>
+      </li>
+      <li>On the interval 125-130mm, the height of the histogram is about 2.1% per mm. What percentage of women had blood pressures in this class interval?
+        <item type="Short Answer" points="1">
+          <answer type="range">[8, 12]</answer>
+        </item>
+      </li>
+      <li>Which interval has more women?
+        <item type="Multiple Choice" points="1">
+          <options>
+            <option correct="false">97-98mm</option>
+            <option correct="true">102-103mm</option>
+          </options>
+        </item>
+      </li>
+    </ol>
+  </question>
+
+  <question>
+    <p>A scientist wants to measure the boiling point of mercury at sea level.
+      She makes the following five temperature measurements, in degrees Celcius: 
+      353.81, 360.13, 356.22, 359.79, 351.41.
+    </p>
+    <p>What is the standard deviation of her temperature measurements?</p>
+    <item type="Short Answer" points="3">
+      <answer type="range">[3.35, 3.4]</answer>
+    </item>
+    <p>Her boss, however, insists that she take her measurements in degrees Kelvin.
+      To convert from Celcius to Kelvin, you simply add 273.15 degrees. Thus,
+      the scientist's temperature measurements, expressed in degrees Kelvin,
+      are: 626.96, 633.28, 629.37, 632.94, 624.56.
+    </p>
+    <p>Now what is the standard deviation of her temperatures measurements, (expressed in Kelvin)?</p>
+    <item type="Short Answer" points="3">
+      <answer type="range">[3.35, 3.4]</answer>
+    </item>
+  </question>
+
 
 </hw>
-      
