@@ -1,7 +1,7 @@
 <hw name="Homework 1" due_date="9/28/2013 12:00:00">
   <question>
     <p>Below are sketches of histograms for three lists.</p>
-    <div align="center"><img src="/class/stats60/img/hw1-ch4ex6-hist.png"/></div>
+    <div align="center"><img src="/class/stats60/static/img/3_hists.png"/></div>
 
     <ol type="a">
       <li>What are the averages of the three histograms?
@@ -82,7 +82,7 @@ smaller than that for histogram (iii).
       temperatures of 200 flu patients in their third day of illness. 
       They obtained the following histogram:</p>
 
-      <img src="/class/stats60/img/hw1_body_temp.png" />
+      <img src="/class/stats60/static/img/body_temp_hist.png" />
 
       <ol type='a'>
 	<li>What is the median (50th percentile) temperature of the 200 
