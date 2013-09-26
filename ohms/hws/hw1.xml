@@ -264,7 +264,7 @@ smaller than that for histogram (iii).
       </li>
       <li>On the interval 125-130mm, the height of the histogram is about 2.1% per mm. What percentage of women had blood pressures in this class interval?
         <item type="Short Answer" points="1">
-          <answer type="range">[x,y]</answer>
+          <answer type="range">[99999,-99999]</answer> <!--DENNIS!!! Change this!!!! -->
         </item>
       </li>
       <li>Which interval has more women?
