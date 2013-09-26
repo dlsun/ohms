@@ -347,7 +347,7 @@ smaller than that for histogram (iii).
 
   <question>
     <p>A scientist wants to measure the boiling point of mercury at sea level.
-      She makes the following five temperature measurements, in degrees Celcius: 
+      She makes the following five temperature measurements, in degrees Celsius: 
       353.81, 360.13, 356.22, 359.79, 351.41.
     </p>
     <p>What is the standard deviation of her temperature measurements?</p>
@@ -355,7 +355,7 @@ smaller than that for histogram (iii).
       <answer type="range">[3.35, 3.4]</answer>
     </item>
     <p>Her boss, however, insists that she take her measurements in degrees Kelvin.
-      To convert from Celcius to Kelvin, you simply add 273.15 degrees. Thus,
+      To convert from Celsius to Kelvin, you simply add 273.15 degrees. Thus,
       the scientist's temperature measurements, expressed in degrees Kelvin,
       are: 626.96, 633.28, 629.37, 632.94, 624.56.
     </p>
