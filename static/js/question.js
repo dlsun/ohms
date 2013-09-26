@@ -108,7 +108,7 @@ var OHMS = (function(OHMS) {
 	    var score = data.last_submission.score;
 	    var score_element = this.element.find(".score");
 	    if (score === this.points) {
-		score_element.html("<img src='img/checkmark.png' " + 
+		score_element.html("<img src='/class/stats60/static/img/checkmark.png' " + 
 				   "height='30' width='26'> " + 
 				   "Congrats! You've earned all " + 
 				   this.points + " points.");

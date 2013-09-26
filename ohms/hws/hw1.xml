@@ -1,7 +1,65 @@
 <hw name="Homework 1" due_date="9/28/2013 12:00:00">
   <question>
+    <p>
+      The figure below is a histogram showing the distribution of blood
+      pressure for all 14,148 women in a drug study. Use the histogram to
+      answer the following questions:
+    </p>
+    <div align="center"><img src="/class/stats60/img/hw1-ch3-prob4.png"/></div>
+    <ol type="a">
+      <li>The percentage of women with blood pressures above 130mm is around:
+        <item type="Multiple Choice" points="1">
+          <options>
+            <option correct="true">25%</option>
+            <option correct="false">50%</option>
+            <option correct="false">75%</option>
+          </options>
+        </item>
+      </li>
+      <li>The percentage of women with blood pressures between 90mm and 160mm is around:
+        <item type="Multiple Choice" points="1">
+          <options>
+            <option correct="false">1%</option>
+            <option correct="false">50%</option>
+            <option correct="true">99%</option>
+          </options>
+        </item>
+      </li>
+      <li>In which interval are there more women?
+        <item type="Multiple Choice" points="1">
+          <options>
+            <option correct="false">135-140mm</option>
+            <option correct="true">140-150mm</option>
+          </options>
+        </item>
+      </li>
+      <li>Which interval is more crowded?
+        <item type="Multiple Choice" points="1">
+          <options>
+            <option correct="true">135-140mm</option>
+            <option correct="false">140-150mm</option>
+          </options>
+        </item>
+      </li>
+      <li>On the interval 125-130mm, the height of the histogram is about 2.1% per mm. What percentage of women had blood pressures in this class interval?
+        <item type="Short Answer" points="1">
+          <answer type="range">[8, 12]</answer>
+        </item>
+      </li>
+      <li>Which interval has more women?
+        <item type="Multiple Choice" points="1">
+          <options>
+            <option correct="false">97-98mm</option>
+            <option correct="true">102-103mm</option>
+          </options>
+        </item>
+      </li>
+    </ol>
+  </question>
+
+  <question>
     <p>Below are sketches of histograms for three lists.</p>
-    <div align="center"><img src="img/hw1-ch4ex6-hist.png"/></div>
+    <div align="center"><img src="/class/stats60/static/img/3_hists.png"/></div>
 
     <ol type="a">
       <li>What are the averages of the three histograms?
@@ -78,6 +136,35 @@ smaller than that for histogram (iii).
   </question>
 
   <question>
+    <p>As part of a study on the effects of flu, some doctors took the 
+      temperatures of 200 flu patients in their third day of illness. 
+      They obtained the following histogram:</p>
+
+      <img src="/class/stats60/static/img/body_temp_hist.png" />
+
+      <ol type='a'>
+	<li>What is the median (50th percentile) temperature of the 200 
+	  flu patients? 
+
+	  <item type="Short Answer" points='3'>
+	    <answer type='range'>[99.4, 99.6]</answer>
+	  </item>
+	</li>
+
+	<li>From another part of the hospital, another 50 patients are 
+	  found to have temperatures between 96 and 98. These patients 
+	  are combined with the rest and a new histogram is drawn for 
+	  all 250 patients. The height of the rectangle with base 96-98 
+	  degrees becomes 
+
+	  <item type="Short Answer" points='3'>
+	    <answer type="range">[12, 12]</answer>
+	  </item>
+	</li>
+  </ol>
+  </question>
+
+  <question>
     <p>A study on college students found that the men had an average weight 
       of about 66 kg and an SD of about 9 kg. The women had an average weight 
       of about 55 kg and an SD of 9 kg.</p>
@@ -89,13 +176,29 @@ smaller than that for histogram (iii).
 	  <tbody>
 	    <tr>
 	      <td>Men</td>
-	      <td><item type="Short Answer" points=".5"/> lb</td>
-	      <td><item type="Short Answer" points=".5"/> lb</td>
+	      <td>
+		<item type="Short Answer" points=".5"> 
+		  <answer type="range">[145,145.3]</answer>
+		</item> lb
+	      </td>
+	      <td>
+		<item type="Short Answer" points=".5"> 
+		  <answer type="range">[19,20]</answer>
+		</item> lb
+	      </td>
 	    </tr>
 	    <tr>
 	      <td>Women</td>
-	      <td><item type="Short Answer" points=".5"/> lb</td>
-	      <td><item type="Short Answer" points=".5"/> lb</td>
+	      <td>
+		<item type="Short Answer" points=".5"> 
+		  <answer type="range">[121,121]</answer>
+		</item> lb
+	      </td>
+	      <td>
+		<item type="Short Answer" points=".5"> 
+		  <answer type="range">[19,20]</answer>
+		</item> lb
+	      </td>
 	    </tr>
 	  </tbody>
 	</table>
@@ -104,7 +207,9 @@ smaller than that for histogram (iii).
       <li>Just roughly, what percentage of the men weighed between 57 
 	and 75 kg?
 
-	<item type="Short Answer" points="2"/>%
+	<item type="Short Answer" points="2">
+	  <answer type='range'>[68, 68.4]</answer>
+	</item>%
       </li>
 
       <li>
@@ -130,11 +235,12 @@ smaller than that for histogram (iii).
 
     <ol type="a">
       <li>
-	For women age 25-34 with full time jobs, the average income
+	For a sample of 1,000 women age 25-34 with full time jobs, the 
+	average income
 	in 2004 was \$32,000. The SD was \$26,000, and 1/4 of 1% had incomes
 	above \$150,000. About what percentage with incomes in the range from
 	\$32,000 to \$150,000?
-	<item type="Multiple Choice" points="3">
+	<item type="Multiple Choice" points="2">
 	  <options>
 	    <option correct="true">40%</option>
 	    <option correct="false">50%</option>
@@ -143,31 +249,40 @@ smaller than that for histogram (iii).
 	</item>
       </li>
       <li>
-	As part of a survey, one large manufacturing company asked a 
-	thousand of its employees how far they had to commute to work 
-	each day (round trip). The data was analyzed and the average 
-	round trip commute distance was reported as 11.3 miles, with 
-	an SD of 16.2 miles. What would a rough sketch of the histogram 
-	look like? Or is there a mistake somewhere?
-	<item type="Multiple Choice" points="3">
-	  <options>
-	    <option correct="true"></option>
-	    <option correct="false"></option>
-	    <option correct="false"></option>
-	    <option correct="false">There is a mistake somewhere.</option>
-	  </options>
-	</item>
+	The incomes of the 1,000 women ranged from \$15,000 to \$200,000. 
+	However, by 
+	accident, the highest income is recorded as \$2,000,000. 
+	<ul>
+	  <li>How much higher is the recorded average than the true average? 
+	    <item type="Short Answer" points='2'>
+	      <answer type="range">[1800,1800]</answer>
+	    </item>
+	  </li>
+	  <li>How much higher is the recorded median than the true median?
+	    <item type="Short Answer" points='2'>
+	      <answer type="range">[0,0]</answer>
+	    </item>
+	  </li>
+	</ul>
       </li>
     </ol>
   </question>
 
+  <question>
+    For a certain group of women, the 25th percentile of height is 62.2 inches and the 75th percentile is 65.8 inches. The histogram follows the normal curve. Find the 90th percentile of the height distribution.
+
+    <item type="Short Answer" points='6'>
+      <answer type="range">[67.3, 67.7]</answer>
+    </item>
+  </question>
+  
 
   <question>
     Among applicants to one law school, the average LSAT score was about 169,
     the SD was about 9, and the highest score was 178. True or false: the 
     LSAT scores follow the normal curve.
 
-    <item type="Short Answer" points="6"/>
+    <item type="Long Answer" points="6"/>
   </question>
 
 
@@ -191,35 +306,64 @@ smaller than that for histogram (iii).
 	What IQ score marks the cutoff for the top 5% (i.e., the 
 	95th percentile)?
 
-	<item type="Short Answer" points="1" />
+	<item type="Short Answer" points="1">
+	  <answer type="range">[124, 125]</answer>
+	</item>
       </li>
 
       <li>The percentage of all people with an IQ above the score 
 	you calculated in (a) is, of course, 5%, but what percentage 
-	of men have an IQ above that score?
+	of men have an IQ above that score? (Remember that men make 
+	up about 50% of the population, and that the data show that 
+	there are about twice as many men as women in that range.)
 
-	<item type="Short Answer" points="1" />%
+	<item type="Short Answer" points="1">
+	  <answer type="range">[3.2, 3.4]</answer>
+	</item>%
       </li>
 
       <li>You now know the percentage of men with an IQ above the 
-	score you calculated in (a). Remember that Summers was 
+	score in (a). Remember that Summers was 
 	assuming that men and women have the same average IQ score 
 	(100). This should enable you to determine the SD of men's 
 	IQs.
 
-	<item type="Short Answer" points="2" />%
+	<item type="Short Answer" points="2">
+	  <answer type="range">[16, 17]</answer>
+	</item>
       </li>
       
       <li>Repeat (b) and (c), but for women's IQs. What is the SD of 
 	women's IQs?
 
-	<item type="Short Answer" points="2" />%
+	<item type="Short Answer" points="2">
+	  <answer type="range">[13, 14]</answer>
+	</item>
       </li>
 
     </ul>
 
   </question>
 
+  <question>
+    <p>A scientist wants to measure the boiling point of mercury at sea level.
+      She makes the following five temperature measurements, in degrees Celsius: 
+      353.81, 360.13, 356.22, 359.79, 351.41.
+    </p>
+    <p>What is the standard deviation of her temperature measurements?</p>
+    <item type="Short Answer" points="3">
+      <answer type="range">[3.35, 3.4]</answer>
+    </item>
+    <p>Her boss, however, insists that she take her measurements in degrees Kelvin.
+      To convert from Celsius to Kelvin, you simply add 273.15 degrees. Thus,
+      the scientist's temperature measurements, expressed in degrees Kelvin,
+      are: 626.96, 633.28, 629.37, 632.94, 624.56.
+    </p>
+    <p>Now what is the standard deviation of her temperatures measurements, (expressed in Kelvin)?</p>
+    <item type="Short Answer" points="3">
+      <answer type="range">[3.35, 3.4]</answer>
+    </item>
+  </question>
+
 
 </hw>
-      
