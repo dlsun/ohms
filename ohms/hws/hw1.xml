@@ -1,4 +1,4 @@
-<hw name="Homework 1" due_date="9/28/2013 12:00:00">
+<hw name="Homework 1" due_date="9/28/2013 17:00:00">
   <question>
     <p>
       The figure below is a histogram showing the distribution of blood
@@ -43,14 +43,15 @@
       </li>
       <li>On the interval 125-130mm, the height of the histogram is about 2.1% per mm. What percentage of women had blood pressures in this class interval?
         <item type="Short Answer" points="1">
-          <answer type="range">[8, 12]</answer>
-        </item>
+          <answer type="range">[10, 10.6]</answer>
+        </item>%
       </li>
       <li>Which interval has more women?
         <item type="Multiple Choice" points="1">
           <options>
             <option correct="false">97-98mm</option>
-            <option correct="true">102-103mm</option>
+            <option correct="false">102-103mm</option>
+            <option correct="true">Not enough information to tell</option>
           </options>
         </item>
       </li>
@@ -79,34 +80,34 @@
 	<item type="Multiple Choice" points="2">
 	  <options>
 	    <option correct="false">
-	      (i) median &lt; average<br />
-	      (ii) median = average<br />
-              (iii) median &gt; average<br />
+	      (i) median &lt; average,
+	      (ii) median = average,
+        (iii) median &gt; average
 	    </option>
 	    <option correct="false">
-	      (i) median &lt; average<br />
-	      (ii) median &gt; average<br />
-              (iii) median = average<br />
+	      (i) median &lt; average,
+	      (ii) median &gt; average,
+        (iii) median = average
 	    </option>
 	    <option correct="false">
-	      (i) median = average<br />
-	      (ii) median &lt; average<br />
-              (iii) median &gt; average<br />
+	      (i) median = average,
+	      (ii) median &lt; average,
+        (iii) median &gt; average
 	    </option>
 	    <option correct="false">
-	      (i) median = average<br />
-	      (ii) median &gt; average<br />
-              (iii) median &lt; average<br />
+	      (i) median = average,
+	      (ii) median &gt; average,
+        (iii) median &lt; average
 	    </option>
 	    <option correct="false">
-	      (i) median &gt; average<br />
-	      (ii) median &lt; average<br />
-              (iii) median = average<br />
+	      (i) median &gt; average,
+	      (ii) median &lt; average,
+        (iii) median = average
 	    </option>
 	    <option correct="true">
-	      (i) median &gt; average<br />
-	      (ii) median = average<br />
-              (iii) median &lt; average<br />
+	      (i) median &gt; average,
+	      (ii) median = average,
+        (iii) median &lt; average
 	    </option>
 	  </options>
 	</item>
@@ -159,7 +160,7 @@ smaller than that for histogram (iii).
 
 	  <item type="Short Answer" points='3'>
 	    <answer type="range">[12, 12]</answer>
-	  </item>
+	  </item>% per degree
 	</li>
   </ol>
   </question>
@@ -300,7 +301,7 @@ smaller than that for histogram (iii).
       a challenging problem, so let's walk through the steps 
       together.</p>
 
-    <ul>
+    <ol type="a">
 
       <li>IQ scores follow the normal curve with mean 100 and SD 15. 
 	What IQ score marks the cutoff for the top 5% (i.e., the 
@@ -341,7 +342,7 @@ smaller than that for histogram (iii).
 	</item>
       </li>
 
-    </ul>
+    </ol>
 
   </question>
 
@@ -350,7 +351,7 @@ smaller than that for histogram (iii).
       She makes the following five temperature measurements, in degrees Celsius: 
       353.81, 360.13, 356.22, 359.79, 351.41.
     </p>
-    <p>What is the standard deviation of her temperature measurements?</p>
+    <p>What is the SD of her temperature measurements?</p>
     <item type="Short Answer" points="3">
       <answer type="range">[3.35, 3.4]</answer>
     </item>
@@ -359,11 +360,10 @@ smaller than that for histogram (iii).
       the scientist's temperature measurements, expressed in degrees Kelvin,
       are: 626.96, 633.28, 629.37, 632.94, 624.56.
     </p>
-    <p>Now what is the standard deviation of her temperatures measurements, (expressed in Kelvin)?</p>
+    <p>Now what is the SD of her temperatures measurements, (expressed in Kelvin)?</p>
     <item type="Short Answer" points="3">
       <answer type="range">[3.35, 3.4]</answer>
     </item>
   </question>
-
 
 </hw>
