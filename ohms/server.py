@@ -100,21 +100,34 @@ def grade():
     return render_template("grade.html", questions=questions, options=options)
 
 
+def check_if_locked(due_date, submissions):
+    past_due = due_date and due_date < datetime.now()
+    if submissions:
+        too_many_submissions = len(submissions) > 1 and \
+            datetime.now() < submissions[0].time + timedelta(hours=6)
+    else:
+        too_many_submissions = False
+    return past_due or too_many_submissions
+
+
 @app.route("/load", methods=['GET'])
 def load():
     q_id = request.args.get("q_id")
+    id = q_id[1:]
+    question = session.query(Question).filter_by(id=id).one()
     if q_id[0] == "q":
-        last_submission = get_question_responses(q_id[1:], sunet)
+        submissions = get_question_responses(id, sunet)
+        is_locked = check_if_locked(question.hw.due_date, submissions)
     elif q_id[0] == "g":
-        last_submission = get_question_grades(q_id[1:], sunet)
-    else:
-        last_submission = None
-    if last_submission:
-        return json.dumps({"last_submission": last_submission[0]},
-                          cls=NewEncoder)
+        submissions = get_question_grades(id, sunet)
+        is_locked = False
     else:
         return json.dumps({})
-
+    return json.dumps({
+            "locked": is_locked,
+            "submission": submissions[0] if submissions else None
+            },
+                      cls=NewEncoder)
 
 @app.route("/submit", methods=['POST'])
 def submit():
@@ -133,32 +146,11 @@ def submit():
     # Question submission
     if submit_type == "q":
         question = session.query(Question).filter_by(id=id).one()
-        past_responses = get_question_responses(id, sunet)
+        submissions = get_question_responses(id, sunet)
 
-        ok_to_grade = True
-        # Check if the homework deadline has passed
-        if question.hw.due_date and question.hw.due_date < datetime.now():
-            ok_to_grade = False
-            question_response.score = 0
-            question_response.comments = "You have passed the due date for "\
-                "this homework. This submission has not been graded or saved."
-            if past_responses:
-                question_response.time = max(x.time for x in past_responses)
-            else:
-                question_response.time = ""
+        is_locked = check_if_locked(question.hw.due_date, submissions)
 
-        # Check if they've submitted too much
-        if ok_to_grade and len(past_responses) >= 2:
-            last_response_time = max(x.time for x in past_responses)
-            if datetime.now() - last_response_time < timedelta(hours=6):
-                ok_to_grade = False
-                question_response.score = 0
-                question_response.comments = "Please wait six hours since "\
-                    "your last submission to submit again. This submission "\
-                    "has not been graded or saved."
-                question_response.time = last_response_time
-
-        if ok_to_grade:
+        if not is_locked:
             items = session.query(Item).filter_by(question_id=id).all()
 
             score, comments = question.check(responses)
@@ -174,8 +166,16 @@ def submit():
             session.add(question_response)
             session.commit()
 
+            submissions.append(question_response)
+            is_locked = check_if_locked(question.hw.due_date, submissions)
+
+        else:
+            raise Exception
+
     # Sample question grading submission
     elif submit_type == "s":
+        is_locked = False
+
         sample_responses = session.query(QuestionResponse).\
             filter_by(sunet="Sample Sam").\
             filter_by(question_id=id).all()
@@ -199,6 +199,8 @@ def submit():
 
     # Grading student questions
     elif submit_type == "g":
+        is_locked = False
+
         # Make sure student was assigned this grading task
         task = session.query(GradingTask).get(id)
         if task.grader != sunet:
@@ -224,7 +226,10 @@ def submit():
         abort(500)
 
     # add response to what to return to the user
-    return json.dumps({"last_submission": question_response}, cls=NewEncoder)
+    return json.dumps({
+            "locked": is_locked,
+            "submission": question_response,
+            }, cls=NewEncoder)
 
 
 @app.route("/staff")

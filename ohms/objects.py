@@ -84,7 +84,7 @@ class Question(Base):
     def check(self, responses):
         scores, comments = zip(*[item.check(response) for (item, response)
                                  in zip(self, responses)])
-        return sum(scores), "<br>".join(comments)
+        return sum(scores), "<br/>".join(c for c in comments if c)
 
 
 class Item(Base):
@@ -157,7 +157,7 @@ class MultipleChoiceItem(Item):
 
         for option in self:
             root.append(ET.fromstring(r'''
-<p><input type='radio' name='%d' value='%d'> %s</input></p>
+<p><input type='radio' name='%d' value='%d' disabled='disabled'> %s</input></p>
 ''' % (self.id, option.order, option.text)))
         return root
 
@@ -193,7 +193,8 @@ class ShortAnswerItem(Item):
     def to_html(self):
         attrib = {"type": "text",
                   "class": "item input-medium",
-                  "itemtype": "short-answer"}
+                  "itemtype": "short-answer",
+                  "disabled": "disabled"}
         return ET.Element("input", attrib=attrib)
 
     def check(self, response):
@@ -251,7 +252,8 @@ class LongAnswerItem(Item):
     def to_html(self):
         attrib = {"class": "item span7",
                   "itemtype": "long-answer",
-                  "rows": "4"}
+                  "rows": "4",
+                  "disabled": "disabled"}
         node = ET.Element("textarea", attrib=attrib)
         return node
 
