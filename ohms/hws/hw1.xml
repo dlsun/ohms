@@ -46,7 +46,7 @@
           <answer type="range">[10, 10.6]</answer>
         </item>%
       </li>
-      <li>Which interval would you gess has more women?
+      <li>Which interval would you guess has more women?
         <item type="Multiple Choice" points="1">
           <options>
             <option correct="false">97-98mm</option>
