@@ -1,0 +1,5 @@
+target = "local"
+class_prefix = ""
+cgi = ""
+static = "/static"
+db = "ohms.db"
