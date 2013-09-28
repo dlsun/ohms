@@ -46,12 +46,11 @@
           <answer type="range">[10, 10.6]</answer>
         </item>%
       </li>
-      <li>Which interval has more women?
+      <li>Which interval would you gess has more women?
         <item type="Multiple Choice" points="1">
           <options>
             <option correct="false">97-98mm</option>
             <option correct="false">102-103mm</option>
-            <option correct="true">Not enough information to tell</option>
           </options>
         </item>
       </li>
@@ -159,7 +158,7 @@ smaller than that for histogram (iii).
 	  degrees becomes 
 
 	  <item type="Short Answer" points='3'>
-	    <answer type="range">[12, 12]</answer>
+	    <answer type="range">[13.5, 14.5]</answer>
 	  </item>% per degree
 	</li>
   </ol>
