@@ -1,3 +1,9 @@
+To deploy locally:
+$ make local-deploy
+$ cd ohms
+$ python init_db.py
+$ python server.py
+
 To deploy the test service:
 $ make test-deploy
 

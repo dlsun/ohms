@@ -2,6 +2,7 @@
 OHMS: Online Homework Management System
 """
 
+import os
 from flask import Flask, request, render_template, abort
 import json
 from datetime import datetime, timedelta
@@ -11,18 +12,26 @@ from objects import Homework, Question, Item, QuestionResponse, ItemResponse
 from objects import GradingTask, QuestionGrade, GradingPermission, User
 from queries import get_question_responses, get_question_grades, exists_user
 import options
-app = Flask(__name__, static_url_path="")
-app.debug = options.test
 
-import os
-sunet = os.environ.get("WEBAUTH_USER")
-if not exists_user(sunet):
-    user = User(sunet=sunet,
-                name=os.environ.get("WEBAUTH_LDAP_DISPLAYNAME"),
-                type="student")
-    session.add(user)
-    session.commit()
 
+# Configuration based on deploy target
+if options.target == "local":
+    app = Flask(__name__, static_url_path="/static", static_folder="../static")
+else:
+    app = Flask(__name__)
+
+app.debug = (options.target != "prod")
+
+if options.target != "local":
+    sunet = os.environ.get("WEBAUTH_USER")
+    if not exists_user(sunet):
+        user = User(sunet=sunet,
+                    name=os.environ.get("WEBAUTH_LDAP_DISPLAYNAME"),
+                    type="student")
+        session.add(user)
+        session.commit()
+else:
+    sunet = "dlsun"
 
 # special JSON encoder to handle dates and Response objects
 class NewEncoder(json.JSONEncoder):
@@ -227,3 +236,8 @@ def staff():
 def handouts():
     handouts = os.listdir("/afs/ir/class/stats60/WWW/handouts")
     return render_template("handouts.html", handouts=handouts, options=options)
+
+
+# For local development--this does not run in prod or test
+if __name__ == "__main__":
+    app.run(debug=True)
