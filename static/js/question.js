@@ -37,6 +37,7 @@ var OHMS = (function(OHMS) {
 	    var that = this;
 	    // submit onclick handler
 	    this.element.find(".submit").click(function () {
+		    that.lock();
 		    that.submit_response();
 		})
 	}
@@ -58,9 +59,8 @@ var OHMS = (function(OHMS) {
 		}
 		this.update(data);
 	    }
-	    if (!data.locked) {
+	    if (!data.locked)
 		this.unlock();
-	    }
 	}
 
 	Question.prototype.load_response_error = function (xhr) {
@@ -88,14 +88,13 @@ var OHMS = (function(OHMS) {
 	}
 
 	Question.prototype.submit_response_success = function (data) {
-	    console.log(data);
 	    this.update(data);
-	    if (data.locked) {
-		this.lock();
-	    }
+	    if (!data.locked)
+		this.unlock();
 	}
 
 	Question.prototype.submit_response_error = function (xhr) {
+	    this.unlock();
 	    console.log(xhr.responseText);
 	}
 
