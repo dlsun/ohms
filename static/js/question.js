@@ -63,7 +63,6 @@ var OHMS = (function(OHMS) {
 		this.unlock();
 	    if (data.solution)
 		for (var i=0; i<data.solution.length; i++) {
-		    console.log(this.items[i].set_solution)
 		    this.items[i].set_solution(data.solution[i]);
 		}
 	}
