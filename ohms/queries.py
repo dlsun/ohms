@@ -14,7 +14,7 @@ def get_question_responses(id, sunet):
     return session.query(QuestionResponse).\
         filter_by(sunet=sunet).\
         filter_by(question_id=id).\
-        order_by(QuestionResponse.time.desc()).all()
+        order_by(QuestionResponse.time).all()
 
 
 def get_question_grades(id, sunet):
@@ -22,7 +22,7 @@ def get_question_grades(id, sunet):
         filter_by(grading_task_id=id).\
         join(GradingTask).\
         filter(GradingTask.grader == sunet).\
-        order_by(QuestionGrade.time.desc()).all()
+        order_by(QuestionGrade.time).all()
 
 
 def get_user(sunet):

@@ -31,13 +31,13 @@ var OHMS = (function(OHMS) {
 
 	    this.load_response();
 	    this.bind_events();
-	    this.unlock();
 	}
 
 	Question.prototype.bind_events = function () {
 	    var that = this;
 	    // submit onclick handler
 	    this.element.find(".submit").click(function () {
+		    that.lock();
 		    that.submit_response();
 		})
 	}
@@ -53,13 +53,14 @@ var OHMS = (function(OHMS) {
 	}
 
 	Question.prototype.load_response_success = function (data) {
-	    if (data.last_submission !== undefined) {
-		console.log(data.last_submission);
+	    if (data.submission) {
 		for (var i=0; i<this.items.length; i++) {
-		    this.items[i].set_value(data.last_submission.item_responses[i].response);
+		    this.items[i].set_value(data.submission.item_responses[i].response);
 		}
-		this.update(data); 
+		this.update(data);
 	    }
+	    if (!data.locked)
+		this.unlock();
 	}
 
 	Question.prototype.load_response_error = function (xhr) {
@@ -87,12 +88,21 @@ var OHMS = (function(OHMS) {
 	}
 
 	Question.prototype.submit_response_success = function (data) {
-	    console.log(data);
 	    this.update(data);
+	    if (!data.locked)
+		this.unlock();
 	}
 
 	Question.prototype.submit_response_error = function (xhr) {
+	    this.unlock();
 	    console.log(xhr.responseText);
+	}
+
+	Question.prototype.lock = function () {
+	    for (var i=0; i<this.items.length; i++) {
+		this.items[i].lock();
+	    }
+	    this.element.find(".submit").attr('disabled','disabled');	    
 	}
 
 	Question.prototype.unlock = function () {
@@ -105,7 +115,7 @@ var OHMS = (function(OHMS) {
 	Question.prototype.update = function (data) {
 
 	    // update score
-	    var score = data.last_submission.score;
+	    var score = data.submission.score;
 	    var score_element = this.element.find(".score");
 	    if (score === this.points) {
 		score_element.html("<img src='/class/stats60/static/img/checkmark.png' " + 
@@ -121,11 +131,11 @@ var OHMS = (function(OHMS) {
 	    }
 
 	    // update comments
-	    this.element.find(".comments").html(data.last_submission.comments);
+	    this.element.find(".comments").html(data.submission.comments);
 
 	    // update time
 	    this.element.find(".time").html("Last submission at " +
-					    data.last_submission.time + " PDT");
+					    data.submission.time + " PDT");
 	}
 
 	OHMS.Question = Question;

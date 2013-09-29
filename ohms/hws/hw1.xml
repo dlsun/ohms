@@ -50,7 +50,7 @@
         <item type="Multiple Choice" points="1">
           <options>
             <option correct="false">97-98mm</option>
-            <option correct="false">102-103mm</option>
+            <option correct="true">102-103mm</option>
           </options>
         </item>
       </li>
