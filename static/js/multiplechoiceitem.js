@@ -31,6 +31,10 @@ var OHMS = (function(OHMS) {
 	    this.element.find("input").attr("disabled","disabled");
 	}
 
+	MultipleChoiceItem.prototype.set_solution = function (solution) {
+	    this.element.find("[value="+solution+"]").parent().addClass("alert-success");
+	}
+
 	
 	OHMS.MultipleChoiceItem = MultipleChoiceItem;
 

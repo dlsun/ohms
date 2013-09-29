@@ -95,6 +95,7 @@ class Item(Base):
     points = Column(Integer)
     order = Column(Integer)
     type = Column(String)
+    solution = Column(String)
 
     __mapper_args__ = {'polymorphic_on': type,
                        'polymorphic_identity': 'item'}
@@ -137,7 +138,11 @@ class MultipleChoiceItem(Item):
             if correct not in ["true", "false"]:
                 raise ValueError("The 'correct' attribute in multiple choice"
                                  "options must be one of 'true' or 'false'")
-            correct = 1 if correct == 'true' else 0
+            if correct == 'true':
+                self.solution = i
+                correct = 1
+            else:
+                correct = 0
             option_object = MultipleChoiceOption(order=i,
                                                  text=text,
                                                  correct=correct,
@@ -184,11 +189,17 @@ class ShortAnswerItem(Item):
     answers = relationship("ShortAnswer", backref="item")
 
     def from_xml(self, node):
+        short_answer = None
         for answer in node.findall("answer"):
             short_answer = ShortAnswer()
             short_answer.from_xml(answer)
             short_answer.item = self
             session.add(short_answer)
+        solution = node.find('solution')
+        if solution is not None:
+            self.solution = ET.tostring(solution)
+        elif short_answer and short_answer.type == "range":
+            self.solution = 0.5*(short_answer.lb + short_answer.ub)
 
     def to_html(self):
         attrib = {"type": "text",
@@ -247,7 +258,8 @@ class LongAnswerItem(Item):
     __mapper_args__ = {'polymorphic_identity': 'Long Answer'}
 
     def from_xml(self, node):
-        pass
+        solution = node.find('solution')
+        self.solution = ET.tostring(solution) if solution is not None else ""
 
     def to_html(self):
         attrib = {"class": "item span7",

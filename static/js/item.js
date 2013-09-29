@@ -29,6 +29,10 @@ var OHMS = (function(OHMS) {
 	    this.element.attr("disabled","disabled");
 	}
 
+	Item.prototype.set_solution = function (solution) {
+	    this.set_value(solution);
+	}
+
 	OHMS.Item = Item;
 
 	return OHMS;

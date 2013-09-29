@@ -113,21 +113,20 @@ def check_if_locked(due_date, submissions):
 
 @app.route("/load", methods=['GET'])
 def load():
+    out = {}
     q_id = request.args.get("q_id")
     id = q_id[1:]
     question = session.query(Question).filter_by(id=id).one()
     if q_id[0] == "q":
         submissions = get_question_responses(id, sunet)
-        is_locked = check_if_locked(question.hw.due_date, submissions)
+        out['locked'] = check_if_locked(question.hw.due_date, submissions)
     elif q_id[0] == "g":
         submissions = get_question_grades(id, sunet)
-        is_locked = False
-    else:
-        return json.dumps({})
-    return json.dumps({
-        "locked": is_locked,
-        "submission": submissions[-1] if submissions else None
-    }, cls=NewEncoder)
+        out['locked'] = False
+    out['submission'] = submissions[-1] if submissions else None
+    if datetime.now() > question.hw.due_date:
+        out['solution'] = [item.solution for item in question.items]
+    return json.dumps(out, cls=NewEncoder)
 
 
 @app.route("/submit", methods=['POST'])
@@ -152,13 +151,12 @@ def submit():
         is_locked = check_if_locked(question.hw.due_date, submissions)
 
         if not is_locked:
-            items = session.query(Item).filter_by(question_id=id).all()
 
             score, comments = question.check(responses)
 
             question_response.score = score
             question_response.comments = comments
-            for item, response in zip(items, responses):
+            for item, response in zip(question.items, responses):
                 item_response = ItemResponse(item_id=item.id,
                                              response=response)
                 question_response.item_responses.append(item_response)
