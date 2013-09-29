@@ -33,6 +33,7 @@ if options.target != "local":
 else:
     sunet = "dlsun"
 
+
 # special JSON encoder to handle dates and Response objects
 class NewEncoder(json.JSONEncoder):
 
@@ -102,9 +103,9 @@ def grade():
 
 def check_if_locked(due_date, submissions):
     past_due = due_date and due_date < datetime.now()
-    if submissions:
-        too_many_submissions = len(submissions) > 1 and \
-            datetime.now() < submissions[-1].time + timedelta(hours=6)
+    if len(submissions) > 1:
+        last_time = max(x.time for x in submissions)
+        too_many_submissions = datetime.now() < last_time + timedelta(hours=6)
     else:
         too_many_submissions = False
     return past_due or too_many_submissions
@@ -124,10 +125,10 @@ def load():
     else:
         return json.dumps({})
     return json.dumps({
-            "locked": is_locked,
-            "submission": submissions[-1] if submissions else None
-            },
-                      cls=NewEncoder)
+        "locked": is_locked,
+        "submission": submissions[-1] if submissions else None
+    }, cls=NewEncoder)
+
 
 @app.route("/submit", methods=['POST'])
 def submit():
@@ -227,9 +228,9 @@ def submit():
 
     # add response to what to return to the user
     return json.dumps({
-            "locked": is_locked,
-            "submission": question_response,
-            }, cls=NewEncoder)
+        "locked": is_locked,
+        "submission": question_response,
+    }, cls=NewEncoder)
 
 
 @app.route("/staff")
