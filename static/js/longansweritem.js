@@ -15,6 +15,10 @@ var OHMS = (function(OHMS) {
 
 	LongAnswerItem.prototype = new OHMS.Item();
 
+	LongAnswerItem.prototype.set_solution = function (solution) {
+	    this.element.after("<div class='alert alert-success'>" + solution + "</div>");
+	}
+
 	OHMS.LongAnswerItem = LongAnswerItem;
 
 	return OHMS;

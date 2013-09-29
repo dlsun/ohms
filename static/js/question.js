@@ -61,6 +61,10 @@ var OHMS = (function(OHMS) {
 	    }
 	    if (!data.locked)
 		this.unlock();
+	    if (data.solution)
+		for (var i=0; i<data.solution.length; i++) {
+		    this.items[i].set_solution(data.solution[i]);
+		}
 	}
 
 	Question.prototype.load_response_error = function (xhr) {

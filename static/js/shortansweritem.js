@@ -19,6 +19,10 @@ var OHMS = (function(OHMS) {
 	    this.element.val(value);
 	}
 
+	ShortAnswerItem.prototype.set_solution = function (solution) {
+	    this.element.after("<span class='alert-success'>" + solution + "</span>");
+	}
+
 	OHMS.ShortAnswerItem = ShortAnswerItem;
 
 	return OHMS;

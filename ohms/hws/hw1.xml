@@ -282,7 +282,31 @@ smaller than that for histogram (iii).
     the SD was about 9, and the highest score was 178. True or false: the 
     LSAT scores follow the normal curve.
 
-    <item type="Long Answer" points="6"/>
+    <item type="Long Answer" points="6">
+      <solution>
+
+	<h4>Sample Correct Solution</h4>
+
+	<p>False. The highest score is only 1 SD above the mean. If the LSAT scores followed the normal curve, we would still expect 
+	16% of observations to be more than 1 SD above the mean. Therefore, the LSAT scores probably do not follow the normal 
+	curve.</p>
+
+	<h4>Grading Rubric</h4>
+
+	<p>Please grade this question out of 6 points following these guidelines.</p>
+
+	<ul>
+	  <li>2 points for realizing that 178 is 1 SD above the mean.</li>
+	  <li>2 points for connecting this to the normal curve (e.g., "16% of the data should be more than 1 SD above the mean").</li>
+	  <li>2 points for the correct conclusion.
+	    <ul>
+	      <li>It is not necessary to explicitly state "true" or "false", as long as the conclusion (the data do not follow the normal curve) is clear.</li>
+	      <li>A solution which says "false" with no explanation earns no credit.</li>
+	    </ul>
+	  </li>
+	</ul>
+      </solution>
+    </item>
   </question>
 
 
