@@ -104,7 +104,7 @@ def check_if_locked(due_date, submissions):
     past_due = due_date and due_date < datetime.now()
     if submissions:
         too_many_submissions = len(submissions) > 1 and \
-            datetime.now() < submissions[0].time + timedelta(hours=6)
+            datetime.now() < submissions[-1].time + timedelta(hours=6)
     else:
         too_many_submissions = False
     return past_due or too_many_submissions
@@ -125,7 +125,7 @@ def load():
         return json.dumps({})
     return json.dumps({
             "locked": is_locked,
-            "submission": submissions[0] if submissions else None
+            "submission": submissions[-1] if submissions else None
             },
                       cls=NewEncoder)
 
@@ -170,7 +170,7 @@ def submit():
             is_locked = check_if_locked(question.hw.due_date, submissions)
 
         else:
-            raise Exception
+            abort(403)
 
     # Sample question grading submission
     elif submit_type == "s":
