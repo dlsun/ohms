@@ -11,11 +11,13 @@
 
 {% for q in questions %}
 
-  <h3 class='questionName'>Question 
-{% if q.question.name %}
-: {{q.question.name|safe}}
-{% endif %}
-  </h3>
+<h3>Peer Grading Item #{{loop.index}}</h3>
+
+<p>Shown in the box below is the question to be graded, along with your 
+response and the correct solution.</p>
+
+<div class='alert'>
+<div class='question' id='q{{q.question.id}}' points='{{q.question.points}}'>
 
   <table class='frame'>
     <tr><td class='body'>
@@ -23,20 +25,26 @@
     </td></tr>
   </table>
 
+</div>
+</div>
+
   {% if q.permission == 0 %}
   <div class='question' id='s{{q.question.id}}'>
   {% endif %}
   <table>
     <tr>
-      <td><strong>
+      <td>
 	  {% if q.permission == 1 %}
-	    Please score the following student responses.
+	    Please score the following responses from your peers.
 	  {% else %}
-	    Please grade the following sample responses. 
-	    Once you have correctly scored the sample 
-	    responses, you will see the student responses.
+	    Before you grade responses from your peers, we want 
+	    to make sure everyone is using the same standards. 
+	    The following 
+	    responses have been scored by an instructor. You must 
+	    match the instructor's score. Once you do so, 
+            the student responses will be shown.
 	  {% endif %}
-      </strong></td>
+      </td>
     </tr>
     {% for task in q.tasks %}
     <tr>

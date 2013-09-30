@@ -66,7 +66,12 @@ class NewEncoder(json.JSONEncoder):
 @app.route("/")
 def index():
     hws = session.query(Homework).all()
-    return render_template("index.html", homeworks=hws, options=options)
+    permissions = session.query(GradingPermission).\
+        filter_by(sunet=sunet).all()
+    peer_grade = set(p.question.hw_id for p in permissions)
+    return render_template("index.html", homeworks=hws,
+                           peer_grade=peer_grade,
+                           options=options)
 
 
 @app.route("/hw", methods=['GET'])
@@ -94,10 +99,12 @@ def grade():
                 filter_by(sunet="Sample Sam").\
                 filter_by(question_id=question.id).all()
             tasks = [{"id": qr.id, "question_response": qr} for qr in qrs]
+
         questions.append({
             "question": question,
             "permission": permission.permissions,
             "tasks": tasks})
+
     return render_template("grade.html", questions=questions, options=options)
 
 
@@ -113,19 +120,25 @@ def check_if_locked(due_date, submissions):
 
 @app.route("/load", methods=['GET'])
 def load():
+
     out = {}
     q_id = request.args.get("q_id")
     id = q_id[1:]
+
     question = session.query(Question).filter_by(id=id).one()
+
     if q_id[0] == "q":
         submissions = get_question_responses(id, sunet)
         out['locked'] = check_if_locked(question.hw.due_date, submissions)
+        if datetime.now() > question.hw.due_date:
+            out['solution'] = [item.solution for item in question.items]
+
     elif q_id[0] == "g":
         submissions = get_question_grades(id, sunet)
         out['locked'] = False
+
     out['submission'] = submissions[-1] if submissions else None
-    if datetime.now() > question.hw.due_date:
-        out['solution'] = [item.solution for item in question.items]
+
     return json.dumps(out, cls=NewEncoder)
 
 
@@ -193,7 +206,7 @@ def submit():
                 "page to see the student responses."
         else:
             question_response.comments = "Sorry, but there is still a "\
-                "discrepancy between your grades and the grades for this"\
+                "discrepancy between your grades and the grades for this "\
                 "sample response. Please try again."
 
     # Grading student questions

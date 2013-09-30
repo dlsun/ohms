@@ -9,6 +9,7 @@
   <thead>
     <th>Homework</th>
     <th>Due Date</th>
+    <th>Peer Grading</th>
   </thead>
   <tbody>
 
@@ -17,6 +18,11 @@
   <tr>
     <td><a href="hw?id={{hw.id}}">{{hw.name}}</a></td>
     <td>{{hw.due_date}} PDT</td>
+    <td>
+      {% if hw.id in peer_grade %}
+        <a href="hw?id={{hw.id}}">Peer Grading</a>
+      {% endif %}
+    </td>
   </tr>
 
   {% endfor %}
