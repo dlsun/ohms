@@ -125,9 +125,8 @@ def load():
     q_id = request.args.get("q_id")
     id = q_id[1:]
 
-    question = session.query(Question).filter_by(id=id).one()
-
     if q_id[0] == "q":
+        question = session.query(Question).filter_by(id=id).one()
         submissions = get_question_responses(id, sunet)
         out['locked'] = check_if_locked(question.hw.due_date, submissions)
         if datetime.now() > question.hw.due_date:
