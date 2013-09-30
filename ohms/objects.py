@@ -132,7 +132,8 @@ class MultipleChoiceItem(Item):
 
     def from_xml(self, node):
         for i, option in enumerate(node.find('options').findall('option')):
-            match = re.match("<option.*?>(?P<inner>.*)</option>", ET.tostring(option), re.DOTALL)
+            match = re.match("<option.*?>(?P<inner>.*)</option>",
+                             ET.tostring(option), re.DOTALL)
             text = match.group('inner') if match else ""
             correct = option.attrib['correct'].lower()
             if correct not in ["true", "false"]:
