@@ -35,11 +35,15 @@ response and the correct solution.</p>
     <tr>
       <td>
 	  {% if q.permission == 1 %}
+	    <h4>Step 2. Peer Grading</h4>
+
 	    Please score the following responses from your peers. You 
 	    should provide detailed comments, even if the response is perfect. 
 	    In the case of a perfect response, you should reiterate what 
             the student did well.
 	  {% else %}
+	    <h4>Step 1. Calibration</h4>
+
 	    Before you grade responses from your peers, we want 
 	    to make sure everyone is using the same standards. 
 	    The following 
@@ -120,11 +124,11 @@ response and the correct solution.</p>
 <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.2-latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
 <script src="{{options.static}}/js/bootstrap.min.js"></script>
 <script src="{{options.static}}/js/namespace.js"></script>
-<script src="{{options.static}}/js/item.js"></script>
-<script src="{{options.static}}/js/homework.js"></script>
-<script src="{{options.static}}/js/question.js"></script>
-<script src="{{options.static}}/js/multiplechoiceitem.js"></script>
-<script src="{{options.static}}/js/shortansweritem.js"></script>
-<script src="{{options.static}}/js/longansweritem.js"></script>
-<script src="{{options.static}}/js/hw.js"></script>
+<script src="{{options.static}}/js/item.js?V=1"></script>
+<script src="{{options.static}}/js/homework.js?V=1"></script>
+<script src="{{options.static}}/js/question.js?V=1"></script>
+<script src="{{options.static}}/js/multiplechoiceitem.js?V=1"></script>
+<script src="{{options.static}}/js/shortansweritem.js?V=1"></script>
+<script src="{{options.static}}/js/longansweritem.js?V=1"></script>
+<script src="{{options.static}}/js/hw.js?V=1"></script>
 {% endblock %}
