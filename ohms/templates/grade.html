@@ -71,7 +71,7 @@ response and the correct solution.</p>
 	  <tr>
 	    <td><strong>Score</strong></td>
 	    <td>
-	      <input type='text' class='item input-mini' itemtype='short-answer'/> 
+	      <input type='text' class='item input-mini' itemtype='short-answer' disabled='disabled'/> 
 	      out of {{q.question.points}} points
 	    </td>
 	  </tr>
@@ -79,7 +79,7 @@ response and the correct solution.</p>
 	    <td><strong>Comments</strong></td>
 	    <td>
 	      {% if q.permission == 1 %}
-	      <textarea class='item span5' itemtype='long-answer'></textarea>
+	      <textarea class='item span5' itemtype='long-answer' disabled='disabled'></textarea>
 	      {% else %}
 	      <i>You will have to provide comments for your peers, but 
 		not for these sample responses.</i>

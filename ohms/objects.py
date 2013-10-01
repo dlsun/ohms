@@ -334,11 +334,9 @@ class QuestionGrade(Base):
     id = Column(Integer, primary_key=True)
     grading_task_id = Column(Integer,
                              ForeignKey('grading_tasks.id'))
-    # Note: Make sure to check grading authorization before allowing people
-    # to submit a grade, (ie, check that they were actually assigned to grade
-    # whatever they claim to be grading
     time = Column(DateTime)
-    comments = Column(String)
     score = Column(Float)
+    comments = Column(String)
+    rating = Column(Integer)
 
     grading_task = relationship("GradingTask")

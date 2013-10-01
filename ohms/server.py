@@ -33,7 +33,7 @@ if options.target != "local":
         session.add(user)
         session.commit()
 else:
-    sunet = "guest"
+    sunet = "dlsun"
     user = User(sunet=sunet,
                 name="Guest User",
                 type="student")
@@ -143,9 +143,19 @@ def load():
         if datetime.now() > question.hw.due_date:
             out['solution'] = [item.solution for item in question.items]
 
-    elif q_id[0] == "g":
-        submissions = get_question_grades(id, sunet)
-        out['locked'] = False
+    else:
+
+        if q_id[0] == "g":
+            submissions = get_question_grades(id, sunet)
+            grading_task = session.query(GradingTask).filter_by(id=id).one()
+            id = grading_task.question_response.question_id
+        elif q_id[0] == "s":
+            submissions = None
+
+        permission = session.query(GradingPermission).\
+            filter_by(sunet=sunet).join(Question).\
+            filter_by(id=id).one()
+        out['locked'] = (datetime.now() > permission.due_date)
 
     out['submission'] = submissions[-1] if submissions else None
 
