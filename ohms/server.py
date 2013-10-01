@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from base import session
 from objects import Homework, Question, Item, QuestionResponse, ItemResponse
 from objects import GradingTask, QuestionGrade, GradingPermission, User
-from queries import get_question_responses, get_question_grades, exists_user
+from queries import get_question_responses, get_question_grades, get_user
 import options
 
 
@@ -24,15 +24,19 @@ app.debug = (options.target != "prod")
 
 if options.target != "local":
     sunet = os.environ.get("WEBAUTH_USER")
-    if not exists_user(sunet):
+    try:
+        user = get_user(sunet)
+    except:
         user = User(sunet=sunet,
                     name=os.environ.get("WEBAUTH_LDAP_DISPLAYNAME"),
                     type="student")
         session.add(user)
         session.commit()
 else:
-    sunet = "dlsun"
-
+    sunet = "guest"
+    user = User(sunet=sunet,
+                name="Guest User",
+                type="student")
 
 # special JSON encoder to handle dates and Response objects
 class NewEncoder(json.JSONEncoder):
@@ -71,6 +75,7 @@ def index():
     peer_grade = set(p.question.hw_id for p in permissions)
     return render_template("index.html", homeworks=hws,
                            peer_grade=peer_grade,
+                           user=user,
                            options=options)
 
 
@@ -78,7 +83,10 @@ def index():
 def hw():
     hw_id = request.args.get("id")
     homework = session.query(Homework).filter_by(id=hw_id).one()
-    return render_template("hw.html", homework=homework, options=options)
+    return render_template("hw.html",
+                           homework=homework,
+                           user=user,
+                           options=options)
 
 
 @app.route("/grade", methods=['GET'])
@@ -105,7 +113,10 @@ def grade():
             "permission": permission.permissions,
             "tasks": tasks})
 
-    return render_template("grade.html", questions=questions, options=options)
+    return render_template("grade.html",
+                           questions=questions,
+                           user=user,
+                           options=options)
 
 
 def check_if_locked(due_date, submissions):

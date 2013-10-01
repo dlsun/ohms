@@ -43,10 +43,3 @@ def get_question_grades(id, sunet):
 def get_user(sunet):
     return session.query(User).filter_by(sunet=sunet).one()
 
-
-def exists_user(sunet):
-    try:
-        user = get_user(sunet)
-        return True
-    except sqlalchemy.orm.exc.NoResultFound:
-        return False
