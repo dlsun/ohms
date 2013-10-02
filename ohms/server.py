@@ -33,7 +33,7 @@ if options.target != "local":
         session.add(user)
         session.commit()
 else:
-    sunet = "dlsun"
+    sunet = "parkerp1"
     user = User(sunet=sunet,
                 name="Guest User",
                 type="student")
@@ -142,6 +142,10 @@ def load():
         out['locked'] = check_if_locked(question.hw.due_date, submissions)
         if datetime.now() > question.hw.due_date:
             out['solution'] = [item.solution for item in question.items]
+
+    elif q_id[0] == "r":
+        submissions = None
+        out['locked'] = False
 
     else:
 
@@ -253,6 +257,19 @@ def submit():
         question_response.comments = "Your scores have been "\
             "successfully recorded!"
 
+
+    # Rating the peer reviews
+    elif submit_type == "r":
+        is_locked = False
+        rating = request.form.getlist('responses')[0]
+        session.query(QuestionGrade).\
+            filter_by(id=id).\
+            update({"rating": rating})
+        session.commit()
+
+        question_response.comments = "Rating submitted successfully!"
+        
+
     # Wrong submit_type
     else:
         abort(500)
@@ -262,6 +279,28 @@ def submit():
         "locked": is_locked,
         "submission": question_response,
     }, cls=NewEncoder)
+
+
+@app.route("/rate", methods=['GET'])
+def rate():
+
+    out = {}
+    id = request.args.get("id")
+
+    grading_tasks = session.query(GradingTask).\
+        filter_by(question_response_id=id).all()
+
+    question_grades = []
+    for task in grading_tasks:
+        submissions = session.query(QuestionGrade).\
+            filter_by(grading_task_id=task.id).\
+            order_by(QuestionGrade.time).all()
+        if submissions:
+            question_grades.append(submissions[-1])
+
+    return render_template("rate.html", 
+                           question_grades=question_grades,
+                           options=options)
 
 
 @app.route("/staff")

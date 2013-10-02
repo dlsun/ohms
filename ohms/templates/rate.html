@@ -1,0 +1,66 @@
+<html>
+
+  <head>
+    <title>Rating the Peer Reviews</title>
+    <link href="{{options.static}}/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{options.static}}/css/style.css" rel="stylesheet">
+  </head>
+
+  <body class='span6'>
+
+    <h3>Rating the Peer Reviews</h3>
+
+    <p>Please rate the following comments, and try to rate objectively. 
+      Even if the 
+      comments are critical, please take into account only whether they 
+      are accurate (according to the rubric) and fair.
+    </p>
+
+    {% for grade in question_grades %}
+
+    <h4>Comment {{loop.index}}</h4>
+    
+    <div class='alert'>
+      {{grade.comments}}
+    </div>
+    
+    <h5>Your Rating</h5>
+    
+    <div class='question' id='r{{grade.id}}'>
+      
+      <div class="item" itemtype="multiple-choice">
+	<p><input type="radio" name="rating" value="4" disabled='disabled'>
+	  The comments responded thoughtfully and accurately to my response.
+	</input></p>
+	<p><input type="radio" name="rating" value="3" disabled='disabled'>
+	  The comments were mostly accurate, but could be more detailed or 
+	  were slightly inaccurate in places.
+	</input></p>
+	<p><input type="radio" name="rating" value="2" disabled='disabled'>
+	  The comments missed a key component of my response.
+	</input></p>
+	<p><input type="radio" name="rating" value="1" disabled='disabled'>
+	  The comments demonstrate no engagement with my response.
+	</input></p>
+      </div>
+
+      <button class='submit' disabled>Submit Rating</button>
+      <p class='comments'></p>
+      
+    </div>
+
+    {% endfor %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.2-latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+    <script src="{{options.static}}/js/bootstrap.min.js?V=1"></script>
+    <script src="{{options.static}}/js/namespace.js?V=1"></script>
+    <script src="{{options.static}}/js/item.js?V=1"></script>
+    <script src="{{options.static}}/js/homework.js?V=1"></script>
+    <script src="{{options.static}}/js/question.js?V=1"></script>
+    <script src="{{options.static}}/js/multiplechoiceitem.js?V=1"></script>
+    <script src="{{options.static}}/js/hw.js?V=1"></script>
+
+  </body>
+  
+</html>
