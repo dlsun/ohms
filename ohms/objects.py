@@ -84,7 +84,10 @@ class Question(Base):
     def check(self, responses):
         scores, comments = zip(*[item.check(response) for (item, response)
                                  in zip(self, responses)])
-        return sum(scores), "<br/>".join(c for c in comments if c)
+        if any(s is None for s in scores):
+            return None, "The score for this submission is pending, awaiting a human grader."
+        else:
+            return sum(scores), "<br/>".join(c for c in comments if c)
 
 
 class Item(Base):
@@ -121,7 +124,7 @@ class Item(Base):
         return ET.Element("p")
 
     def check(self, response):
-        return 0, "%s points have yet to be graded." % self.points
+        return None, ""
 
 
 class MultipleChoiceItem(Item):
@@ -135,8 +138,11 @@ class MultipleChoiceItem(Item):
             match = re.match("<option.*?>(?P<inner>.*)</option>",
                              ET.tostring(option), re.DOTALL)
             text = match.group('inner') if match else ""
-            correct = option.attrib['correct'].lower()
-            if correct not in ["true", "false"]:
+            if 'correct' in option.attrib:
+                correct = option.attrib['correct'].lower()
+            else:
+                correct = None
+            if correct not in ["true", "false", None]:
                 raise ValueError("The 'correct' attribute in multiple choice"
                                  "options must be one of 'true' or 'false'")
             if correct == 'true':

@@ -127,6 +127,9 @@ var OHMS = (function(OHMS) {
 				   "Congrats! You've earned all " + 
 				   this.points + " points.");
 		score_element.attr("class","score alert alert-success");
+	    } else if (score == null) {
+		score_element.html("SCORE PENDING");
+		score_element.attr("class","score alert-info");
 	    } else {
 		score_element.html("<strong>You have earned " + score + 
 			   " out of " + this.points + 
