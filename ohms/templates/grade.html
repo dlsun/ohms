@@ -89,7 +89,7 @@ response and the correct solution.</p>
 	  {% if q.permission == 1 %}
 	  <tr>
 	    <td></td>
-	    <td><button class='submit'>Submit Grades</button>&nbsp; <span class='time'></span></td>
+	    <td><button class='submit' disabled>Submit Grades</button>&nbsp; <span class='time'></span></td>
 	  </tr>
 	  {% endif %}
 	</table>
@@ -103,7 +103,7 @@ response and the correct solution.</p>
     {% if q.permission == 0 %}
     <tr>
       <td>
-	<button class='submit'>Submit Grades</button>
+	<button class='submit' disabled>Submit Grades</button>
 	<p class='comments'></p>
       </td>
     </tr>
