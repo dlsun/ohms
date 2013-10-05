@@ -1,0 +1,62 @@
+<hw name="Homework 3" due_date="10/11/2013 17:00:00">
+  <question>
+    <p>Suppose we are interested in how something_y varies with something_x. We break the sometings down into two groups, A and B. In group A, the regression line has slope 1.3. In group B, the regression line has slope 1.5. Now suppose that we pool the data. What's the most you can say about the slope of the regression line in the pooled data?</p>
+    <item type="Long Answer" points="6">
+      <solution>
+
+      </solution>
+    </item>
+  </question>
+
+  <question>
+    <p>A basketball coach conducts an interesting experiment to help his players hit three pointers. On Monday, he has each player on his team take ten shots from right behind the three point line, in the middle of the court. If the player makes three or fewer of his shots, then the coach criticizes him for his sloppy shooting and makes him run ten laps around the court. In the player makes seven or more shots, then the coach high-fives him and buys him a gatorade. Finally, if the player makes between four and six shots, then the coach just tells him good job.</p>
+    <p>On Tuesday, he has each player take ten shots again from the same location. The coach observes that the players he made run laps on Monday tended to do better on Tuesday, the players he congratulated on Monday tended to make fewer shots on Tuesday, and the players who the coach just said good job to did about the same. To verify this hypothesis, the coach repeats this experiment five times, and finds that the same conclusions hold. The coach therefore concludes that praise doesn't work on basketball players, and decides that in his practices when players miss too many shots he will just make them run laps.</p>
+    <p>Do you agree with the coach's conclusions?</p>
+    <item type="Long Answer" points="6">
+      <solution>
+        <h4>Sample Correct Solution</h4>
+        <p>
+          Not necessarily. It's very possible that the coach is just observing regression to the mean. Suppose that there is in fact no effect whatsover of the coach's behavior on his players. Then the coach could still observe the same effects! On Monday, a player shoots ten three-pointers, and just by chance does poorly, okay, or well. If he does poorly on Monday, then on Tuesday he'll tend to do better, just because he if he does okay or well on Tuesday then that is better. Similarly, if the player does well on Monday, then he'll tend to do worse on Tuesday just because he might only do okay or poorly.
+        </p>
+        <h4>Grading Rubric</h4>
+        <p>Please grade this question out of 6 points following these guidelines.</p>
+        <ul>
+          <li>2 points for getting the conclusion right</li>
+          <li>4 points for explaining how the coach could observe this behavior even if his policies have no influence on his players.</li>
+          <li>It is a common misconception that if a player did below average on Monday, he'll  tend to do above average on Tuesday. In fact, their average on Tuesday would be no different from on any other days, it's just that they'll tend to do better than on Monday because Monday was below average. Take off two points if the student makes this mistake.</li>
+          <li>Feel free to give partial credit or to use your good judgement if you think the case merits it</li>
+        </ul>
+      </solution>
+    </item>
+  </question>
+
+  <question>
+    <p>A sociologist wants to model the how someone's self-satisfaction varies with the number of online friends they have. To do so, she recruits 53 facebook users as subjects for a study. She has each subject complete a self-satisfaction questionaire, (scored from 1 to 10), and records the number of Facebook friends that person has. She gathers the following (summarized data):</p>
+    <p>Facebook friends: Sample mean=333.7, sample SD=255.9</p>
+    <p>Self satisfaction: Sample mean=5.5, sample SD=2.7</p>
+    <p>Regression line: Intercept=2.705, slope=0.00842</p>
+    <p>But the sociologist then decides that self statisfaction really ought to be measured from 0 to 100. So she takes every self satisfaction score, subtracts 1, and then multiplies it by 100/9. (For example, an initial score of 5 would become 44.44). And she decides that for convenience, it's easier to measure Facebook friends in units of 100. So she divides everyone's friend count by 100. What are the new values for the following quantities?</p>
+
+    <ol type="a">
+      <li>New slope:
+        <item type="Short Answer" points="2">
+          <answer type="range">[9.30, 9.40]</answer>
+          <answer type="exact">9.36</answer>
+        </item>
+      </li>
+      <li>New intercept:
+        <item type="Short Answer" points="2">
+          <answer type="range">[18.7, 18.9]</answer>
+          <answer type="exact">18.77</answer>
+        </item>
+      </li>
+      <li>New correlation:
+        <item type="Short Answer" points="2">
+          <answer type="range">[0.79, 0.81]</answer>
+          <answer type="exact">0.80</answer>
+        </item>
+      </li>
+    </ol>
+  </question>
+
+</hw>
