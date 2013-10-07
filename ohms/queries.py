@@ -5,10 +5,10 @@ Some useful sql queries.
 """
 
 from collections import defaultdict
-import sqlalchemy
 
 from base import session
 from objects import QuestionResponse, QuestionGrade, GradingTask, User
+from objects import Homework, Question
 
 
 def get_question_responses(id, sunet):
@@ -43,3 +43,12 @@ def get_question_grades(id, sunet):
 def get_user(sunet):
     return session.query(User).filter_by(sunet=sunet).one()
 
+
+def get_long_answer_qs(hw_id):
+    """Returns questions that are composed of a single long answer"""
+    questions = session.query(Question).\
+        join(Homework).\
+        filter_by(id=hw_id).all()
+
+    return [q for q in questions if len(q.items) == 1 and
+            q.items[0].type == "Long Answer"]
