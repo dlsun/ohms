@@ -23,6 +23,8 @@
     <td>
       {% if hw.id in peer_grade %}
         <a href="grade?id={{hw.id}}">Peer Grading</a>
+      {% else %}
+        No peer grading for this homework.
       {% endif %}
     </td>
   </tr>
