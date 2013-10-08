@@ -55,26 +55,23 @@ class NewEncoder(json.JSONEncoder):
             for column in obj.__table__.columns:
                 d[column.name] = getattr(obj, column.name)
             return d
-        elif isinstance(obj, QuestionGrade):
-            d = {}
-            for column in obj.__table__.columns:
-                d[column.name] = getattr(obj, column.name)
-            d['item_responses'] = [
-                {"response": obj.score},
-                {"response": obj.comments}
-            ]
-            return d
         return json.JSONEncoder.default(self, obj)
 
 
 @app.route("/")
 def index():
     hws = session.query(Homework).all()
-    permissions = session.query(GradingPermission).\
-        filter_by(sunet=sunet).all()
-    peer_grade = set(p.question.hw_id for p in permissions)
+    
+    # get list of whether user was assigned to peer grading or not
+    from treatment_assignments import treatments, group_assignments
+    if sunet in group_assignments:
+        group = group_assignments[sunet]
+        peer_grading = treatments[group]
+    else:
+        peer_grading = [-1,-1,-1,-1,-1,-1,-1,-1,-1]
+
     return render_template("index.html", homeworks=hws,
-                           peer_grade=peer_grade,
+                           peer_grading=peer_grading,
                            user=user,
                            options=options)
 
@@ -136,32 +133,56 @@ def load():
     q_id = request.args.get("q_id")
     id = q_id[1:]
 
+    # if loading a student response to a question
     if q_id[0] == "q":
         question = session.query(Question).filter_by(id=id).one()
         submissions = get_question_responses(id, sunet)
+        out['submission'] = submissions[-1] if submissions else None
         out['locked'] = check_if_locked(question.hw.due_date, submissions)
         if datetime.now() > question.hw.due_date:
             out['solution'] = [item.solution for item in question.items]
 
+    # if loading a student rating to a peer grade
     elif q_id[0] == "r":
-        submissions = None
+        question_grade = session.query(QuestionGrade).filter_by(id=id).one()
+        if question_grade.rating:
+            out['submission'] = {
+                "time": datetime.now(),
+                "item_responses": [
+                    {"response": question_grade.rating},
+                    ]
+                }
+        else:
+            out['submission'] = None
         out['locked'] = False
 
     else:
 
+        # if loading a grade for an actual peer response
         if q_id[0] == "g":
             submissions = get_question_grades(id, sunet)
+            if submissions:
+                out['submission'] = {
+                    "time": datetime.now(),
+                    "item_responses": [
+                        {"response": submissions[-1].score},
+                        {"response": submissions[-1].comments}
+                        ]
+                    }
+            else:
+                out['submission'] = None
             grading_task = session.query(GradingTask).filter_by(id=id).one()
             id = grading_task.question_response.question_id
-        elif q_id[0] == "s":
-            submissions = None
 
+        # if loading a grade for a sample response (not currently being saved)
+        elif q_id[0] == "s":
+            out['submission'] = None
+
+        # get due date for peer grading to determine whether it should be locked
         permission = session.query(GradingPermission).\
             filter_by(sunet=sunet).join(Question).\
             filter_by(id=id).one()
         out['locked'] = (datetime.now() > permission.due_date)
-
-    out['submission'] = submissions[-1] if submissions else None
 
     return json.dumps(out, cls=NewEncoder)
 
@@ -261,10 +282,14 @@ def submit():
     # Rating the peer reviews
     elif submit_type == "r":
         is_locked = False
+
+        # Make sure student was assigned to rate this
         rating = request.form.getlist('responses')[0]
-        session.query(QuestionGrade).\
-            filter_by(id=id).\
-            update({"rating": rating})
+        entry = session.query(QuestionGrade).filter_by(id=id)
+        if entry.one().grading_task.question_response.sunet == sunet:
+            entry.update({"rating": rating})
+        else:
+            abort(403)
         session.commit()
 
         question_response.comments = "Rating submitted successfully!"

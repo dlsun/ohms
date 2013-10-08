@@ -21,10 +21,12 @@
     <td><a href="hw?id={{hw.id}}">{{hw.name}}</a></td>
     <td>{{hw.due_date}} PDT</td>
     <td>
-      {% if hw.id in peer_grade %}
+      {% if peer_grading[loop.index0]==1 %}
         <a href="grade?id={{hw.id}}">Peer Grading</a>
-      {% else %}
-        No peer grading for this homework.
+      {% elif peer_grading[loop.index0]==0 %}
+        You were not assigned to peer grade this week.
+      {% elif peer_grading[loop.index0]==-1 %}
+	Please see a member of the course staff.
       {% endif %}
     </td>
   </tr>
