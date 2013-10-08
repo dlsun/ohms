@@ -1,9 +1,50 @@
 <hw name="Homework 3" due_date="10/11/2013 17:00:00">
   <question>
-    <p>Suppose we are interested in how something_y varies with something_x. We break the sometings down into two groups, A and B. In group A, the regression line has slope 1.3. In group B, the regression line has slope 1.5. Now suppose that we pool the data. What's the most you can say about the slope of the regression line in the pooled data?</p>
+    <p>In a large statistics class, the correlation between midterm scores and final scores is found to be nearly 0.6, every term. The scatter diagrams are football-shaped. Predict the percentile rank on the final for a student whose percentile rank on the midterm is:</p>
+    <ol type="a">
+      <li>10%:
+        <item type="Short Answer" points="2">
+          <answer type="range">[21.185, 22.665]</answer>
+          <answer type="exact">21.2</answer>
+        </item>%
+      </li>
+      <li>55%:
+        <item type="Short Answer" points="2">
+          <answer type="range">[51.995, 53.985]</answer>
+          <answer type="exact">53.0</answer>
+        </item>%
+      </li>
+      <li>50%:
+        <item type="Short Answer" points="1">
+          <answer type="range">[50, 50]</answer>
+          <answer type="exact">50</answer>
+        </item>%
+      </li>
+      <li>unknown:
+        <item type="Short Answer" points="1">
+          <answer type="range">[50, 50]</answer>
+          <answer type="exact">50</answer>
+        </item>%
+      </li>
+    </ol>
+  </question>
+
+  <question>
+    <p>Suppose we are interested in how Y varies with X. We break the (x, y) points down into two groups, A and B. In group A, the regression line has slope 1.3. In group B, the regression line has slope 1.5. Now suppose that we pool the data again. What's the most you can say about the slope of the regression line in the pooled data? Must it be greater than 1.3? Less than 1.5? Greater than 0? Less than 2.8?</p>
     <item type="Long Answer" points="6">
       <solution>
-
+        <h4>Sample Correct Solution</h4>
+        <p>
+          Nothing. Although intuitively you might think that the regression line for the pooled data would need to positive, or between 1.3 and 1.5, in fact it can be anything. An easy way to see this is to suppose you have four points, two each in groups in A and B. Suppose that two the points in A are really close to each other, and have the proper slope. And suppose the same holds for the points in B. Then we can place the groups A and B wherever we want in the plane to get whatever slope we want for the pooled data. For example, if you want the pooled slope to be negative, you can put the points in group A in the top left of a plot, and the points in group B in the bottom right.
+        </p>
+        <h4>Grading Rubric</h4>
+        <p>Please grade this question out of 6 points following these guidelines.</p>
+        <ul>
+          <li>1 point for correctly answering that the pooled slope doesn't need to be between 1.3 and 1.5</li>
+          <li>1 point for futher answering correctly that the pooled slope can be anything</li>
+          <li>4 points for a good explanation of their answers</li>
+          <li>Feel free to give partial credit or to use your good judgement if you think the case merits it, especially in the explanation</li>
+        </ul>
       </solution>
     </item>
   </question>
@@ -16,7 +57,7 @@
       <solution>
         <h4>Sample Correct Solution</h4>
         <p>
-          Not necessarily. It's very possible that the coach is just observing regression to the mean. Suppose that there is in fact no effect whatsover of the coach's behavior on his players. Then the coach could still observe the same effects! On Monday, a player shoots ten three-pointers, and just by chance does poorly, okay, or well. If he does poorly on Monday, then on Tuesday he'll tend to do better, just because he if he does okay or well on Tuesday then that is better. Similarly, if the player does well on Monday, then he'll tend to do worse on Tuesday just because he might only do okay or poorly.
+          Not necessarily. It's very possible that the coach is just observing regression to the mean. Suppose that there is in fact no effect whatsover of the coach's behavior on his players. Then the coach could still observe the same effects! On Monday, a player shoots ten three-pointers, and suppose that just by chance the player does poorly, okay, or well. If he does poorly on Monday, then on Tuesday he'll tend to do better, just because he if he does okay or well on Tuesday then that is already better. Similarly, if the player does well on Monday, then he'll tend to do worse on Tuesday just because he might only do okay or poorly. Thus, under this model, the coach's rewards and punishments could have appear to have an effect, but actually just be due to regression to the mean.
         </p>
         <h4>Grading Rubric</h4>
         <p>Please grade this question out of 6 points following these guidelines.</p>
