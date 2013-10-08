@@ -7,20 +7,27 @@ import random
 
 from base import session
 from objects import User, GradingTask, GradingPermission
-from queries import get_recent_question_responses
+from queries import get_recent_question_responses, get_long_answer_qs, get_user
 from datetime import datetime
 
 
-def make_grading_assignments(q_id):
-    """Assigns students to grade each other, regardless of treatment group"""
+def make_grading_assignments(q_id, sunets):
+    """
+    Assigns students in "sunets" to grade each other.
+
+    Note that students who didn't respond to a question q_id will not be
+    asked to grade their peers on this question.
+    """
+
     responses = get_recent_question_responses(q_id)
+    responses = [r for r in responses if r.sunet in sunets]
     random.shuffle(responses)
 
     # Create grading permissions
     for r in responses:
         gp = GradingPermission(sunet=r.sunet, question_id=q_id,
                                permissions=0,
-                               due_date=datetime(2013, 10, 1, 17, 0, 0))
+                               due_date=datetime(2013, 10, 9, 17, 0, 0))
         session.add(gp)
 
     # This scheme guarantees that no pair of students is ever assigned to grade
@@ -55,5 +62,20 @@ def make_grader_assignments(q_id):
     session.commit()
 
 
+def selective_peer_grading(hw_id, user_file):
+    with open(user_file) as f:
+        sunets = [line.strip() for line in f]
+
+    # Check validity of sunets, just in case
+    for sunet in sunets:
+        get_user(sunet)
+
+    # XXX: Make sure all homework questions you want graded are composed of a
+    # single Item, with a "Long Answer" type
+    questions = get_long_answer_qs(hw_id)
+    for q in questions:
+        make_grading_assignments(q.id, sunets)
+
+
 if __name__ == "__main__":
-    make_grader_assignments(sys.argv[1])
+    selective_peer_grading(2, "assignments_week_2.dat")
