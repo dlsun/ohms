@@ -75,6 +75,11 @@ var OHMS = (function(OHMS) {
 	    var that = this;
 	    var data = new FormData();
 	    for (var i=0; i<this.items.length; i++) {
+		if (this.items[i].get_value() == undefined) {
+		    alert("You must make a selection for all multiple choice questions.");
+		    that.unlock();
+		    return false;
+		}
 		data.append("responses",this.items[i].get_value());
 	    }
 	    var req = new XMLHttpRequest();

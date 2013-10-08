@@ -56,6 +56,7 @@ class Question(Base):
     @staticmethod
     def from_xml(node):
         question = Question()
+        question.name = node.attrib['name'] if 'name' in node.attrib else ""
         question.points = 0
         for i, item in enumerate(node.iter('item')):
             # get item object and order
