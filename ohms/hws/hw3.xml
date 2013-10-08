@@ -3,13 +3,13 @@
     <p>In a large statistics class, the correlation between midterm scores and final scores is found to be nearly 0.6, every term. The scatter diagrams are football-shaped. Predict the percentile rank on the final for a student whose percentile rank on the midterm is:</p>
     <ol type="a">
       <li>10%:
-        <item type="Short Answer" points="2">
+        <item type="Short Answer" points="1">
           <answer type="range">[21.185, 22.665]</answer>
           <answer type="exact">21.2</answer>
         </item>%
       </li>
       <li>55%:
-        <item type="Short Answer" points="2">
+        <item type="Short Answer" points="1">
           <answer type="range">[51.995, 53.985]</answer>
           <answer type="exact">53.0</answer>
         </item>%
@@ -27,6 +27,16 @@
         </item>%
       </li>
     </ol>
+    <p>What percentage of students with a 90th percentile midterm grade would you expect to score better than 80th percentile on the final?</p>
+    <item type="Short Answer" points="1">
+      <answer type="range">[45,48]</answer>
+      <answer type="exact">46.4</answer>
+    </item>%
+    <p>What percentage of students with a 15th percentile midterm grade would you expect to score worse than 30th percentile on the final?</p>
+    <item type="Short Answer" points="1">
+      <answer type="range">[53.3,56.3]</answer>
+      <answer type="exact">54.8</answer>
+    </item>%
   </question>
 
   <question>
