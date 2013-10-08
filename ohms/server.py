@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from base import session
 from objects import Homework, Question, Item, QuestionResponse, ItemResponse
 from objects import GradingTask, QuestionGrade, GradingPermission, User
-from queries import get_question_responses, get_question_grades, get_user
+from queries import get_question_responses, get_question_grades, get_grading_permissions, get_user
 import options
 
 
@@ -116,6 +116,33 @@ def grade():
                            options=options)
 
 
+@app.route("/rate", methods=['GET'])
+def rate():
+
+    out = {}
+    question_response_id = request.args.get("id")
+
+    # check that student is the one who submitted this QuestionResponse
+    question_response = session.query(QuestionResponse).get(question_response_id)
+    if question_response.sunet != sunet:
+        abort(403)
+
+    # fetch all peers that were assigned to grade this QuestionResponse
+    grading_tasks = session.query(GradingTask).\
+        filter_by(question_response_id=question_response_id).all()
+    question_grades = []
+    for task in grading_tasks:
+        submissions = session.query(QuestionGrade).\
+            filter_by(grading_task_id=task.id).\
+            order_by(QuestionGrade.time).all()
+        if submissions:
+            question_grades.append(submissions[-1])
+
+    return render_template("rate.html", 
+                           question_grades=question_grades,
+                           options=options)
+
+
 def check_if_locked(due_date, submissions):
     past_due = due_date and due_date < datetime.now()
     if len(submissions) > 1:
@@ -131,58 +158,48 @@ def load():
 
     out = {}
     q_id = request.args.get("q_id")
-    id = q_id[1:]
 
     # if loading a student response to a question
     if q_id[0] == "q":
-        question = session.query(Question).filter_by(id=id).one()
-        submissions = get_question_responses(id, sunet)
+        question_id = q_id[1:]
+        question = session.query(Question).get(question_id)
+        submissions = get_question_responses(question_id, sunet)
         out['submission'] = submissions[-1] if submissions else None
         out['locked'] = check_if_locked(question.hw.due_date, submissions)
         if datetime.now() > question.hw.due_date:
             out['solution'] = [item.solution for item in question.items]
 
-    # if loading a student rating to a peer grade
-    elif q_id[0] == "r":
-        question_grade = session.query(QuestionGrade).filter_by(id=id).one()
-        if question_grade.rating:
+    # if loading a student's peer grade for an actual student's response
+    elif q_id[0] == "g":
+        grading_task_id = q_id[1:]
+        question_id = session.query(GradingTask).get(grading_task_id).question_response.question_id
+        question_grades = get_question_grades(grading_task_id, sunet)
+        if question_grades:
             out['submission'] = {
                 "time": datetime.now(),
                 "item_responses": [
-                    {"response": question_grade.rating},
+                    {"response": question_grades[-1].score},
+                    {"response": question_grades[-1].comments}
                     ]
                 }
-        else:
-            out['submission'] = None
-        out['locked'] = False
-
-    else:
-
-        # if loading a grade for an actual peer response
-        if q_id[0] == "g":
-            submissions = get_question_grades(id, sunet)
-            if submissions:
-                out['submission'] = {
-                    "time": datetime.now(),
-                    "item_responses": [
-                        {"response": submissions[-1].score},
-                        {"response": submissions[-1].comments}
-                        ]
-                    }
-            else:
-                out['submission'] = None
-            grading_task = session.query(GradingTask).filter_by(id=id).one()
-            id = grading_task.question_response.question_id
-
-        # if loading a grade for a sample response (not currently being saved)
-        elif q_id[0] == "s":
-            out['submission'] = None
-
-        # get due date for peer grading to determine whether it should be locked
-        permission = session.query(GradingPermission).\
-            filter_by(sunet=sunet).join(Question).\
-            filter_by(id=id).one()
+        permission = get_grading_permissions(question_id, sunet)
         out['locked'] = (datetime.now() > permission.due_date)
+
+    # if loading a student's scores for a sample response (not currently functional)
+    elif q_id[0] == "s":
+        question_id = q_id[1:]
+        permission = get_grading_permissions(question_id, sunet)
+        out['locked'] = (datetime.now() > permission.due_date)
+
+    # if loading a student rating to a peer grade
+    elif q_id[0] == "r":
+        question_grade_id = q_id[1:]
+        question_grade = session.query(QuestionGrade).get(question_grade_id)
+        if question_grade.rating:
+            out['submission'] = {
+                "item_responses": [ {"response": question_grade.rating} ]
+                }
+        out['locked'] = False
 
     return json.dumps(out, cls=NewEncoder)
 
@@ -278,7 +295,6 @@ def submit():
         question_response.comments = "Your scores have been "\
             "successfully recorded!"
 
-
     # Rating the peer reviews
     elif submit_type == "r":
         is_locked = False
@@ -304,28 +320,6 @@ def submit():
         "locked": is_locked,
         "submission": question_response,
     }, cls=NewEncoder)
-
-
-@app.route("/rate", methods=['GET'])
-def rate():
-
-    out = {}
-    id = request.args.get("id")
-
-    grading_tasks = session.query(GradingTask).\
-        filter_by(question_response_id=id).all()
-
-    question_grades = []
-    for task in grading_tasks:
-        submissions = session.query(QuestionGrade).\
-            filter_by(grading_task_id=task.id).\
-            order_by(QuestionGrade.time).all()
-        if submissions:
-            question_grades.append(submissions[-1])
-
-    return render_template("rate.html", 
-                           question_grades=question_grades,
-                           options=options)
 
 
 @app.route("/staff")

@@ -1,5 +1,5 @@
 target = "test"
 class_prefix = "/class/stats60"
-cgi = "/class/stats60/cgi-bin/test/index_test.cgi"
+cgi = "/class/stats60/cgi-bin/test/index.cgi"
 static = "/class/stats60/static_test"
 db = "/afs/ir/class/stats60/db/test.db"

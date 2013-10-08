@@ -7,7 +7,7 @@ Some useful sql queries.
 from collections import defaultdict
 
 from base import session
-from objects import QuestionResponse, QuestionGrade, GradingTask, User
+from objects import QuestionResponse, QuestionGrade, GradingTask, GradingPermission, User
 from objects import Homework, Question
 
 
@@ -32,9 +32,15 @@ def get_recent_question_responses(q_id):
     return [max(rs, key=lambda r: r.time) for rs in student_responses.values()]
 
 
-def get_question_grades(id, sunet):
+def get_grading_permissions(question_id, sunet):
+    return session.query(GradingPermission).\
+        filter_by(sunet=sunet).join(Question).\
+        filter_by(id=question_id).one()
+
+
+def get_question_grades(grading_task_id, sunet):
     return session.query(QuestionGrade).\
-        filter_by(grading_task_id=id).\
+        filter_by(grading_task_id=grading_task_id).\
         join(GradingTask).\
         filter(GradingTask.grader == sunet).\
         order_by(QuestionGrade.time).all()

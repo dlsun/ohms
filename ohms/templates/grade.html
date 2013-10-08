@@ -11,6 +11,10 @@
 
 <hr/>
 
+{% if not questions %}
+No responses to peer grade at the moment. Please check back again later.
+{% endif %}
+
 {% for q in questions %}
 
 <h3>Peer Grading Item #{{loop.index}}</h3>

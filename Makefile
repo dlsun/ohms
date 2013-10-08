@@ -6,7 +6,7 @@ local-deploy:
 	cp options/local_options.py ohms/options.py
 
 test-deploy: static-test-deploy ohms-test-deploy
-	@echo "running on: http://www.stanford.edu/class/stats60/cgi-bin/test/index_test.cgi/"
+	@echo "running on: http://www.stanford.edu/class/stats60/cgi-bin/test/index.cgi/"
 
 prod-deploy: static-prod-deploy ohms-prod-deploy
 	@echo "running on: http://www.stanford.edu/class/stats60/cgi-bin/index.cgi/"
