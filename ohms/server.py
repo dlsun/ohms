@@ -67,6 +67,8 @@ def index():
     if sunet in group_assignments:
         group = group_assignments[sunet]
         peer_grading = treatments[group]
+    elif user.type == "admin" or user.type == "grader":
+        peer_grading = [1,1,1,1,1,1,1,1,1]
     else:
         peer_grading = [-1,-1,-1,-1,-1,-1,-1,-1,-1]
 

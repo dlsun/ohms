@@ -1,5 +1,4 @@
 treatments = {
-    -1: [1,1,1,1,1,1,1,1,1],
     0: [1,1,1,0,0,1,1,0,0],
     1: [1,0,0,1,1,0,0,1,1],
     2: [1,1,1,0,0,0,0,1,1],
@@ -7,9 +6,6 @@ treatments = {
 }
 
 group_assignments = {
- 'dlsun': -1,
- 'junyangq': -1,
- 'sunstat': -1,
  'abboyle': 1,
  'abeecher': 1,
  'abright': 1,
