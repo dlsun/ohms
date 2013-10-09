@@ -1,0 +1,352 @@
+<hw name="Homework 3" due_date="10/11/2013 17:00:00">
+
+  <question>
+    <p>In a large statistics class, the correlation between midterm scores 
+      and final scores is found to be nearly 0.7, every term. The scatter diagrams 
+      are football-shaped. Predict the percentile rank on the final for a student 
+      whose percentile rank on the midterm is:</p>
+    <ol type="a">
+      <li>5%:
+        <item type="Short Answer" points="2">
+          <answer type="range">[12.4, 12.6]</answer>
+          <answer type="exact">12.5</answer>
+        </item>%
+      </li>
+      <li>80%:
+        <item type="Short Answer" points="2">
+          <answer type="range">[72.4, 72.7]</answer>
+          <answer type="exact">72.5</answer>
+        </item>%
+      </li>
+      <li>50%:
+        <item type="Short Answer" points="1">
+          <answer type="range">[50, 50]</answer>
+          <answer type="exact">50</answer>
+        </item>%
+      </li>
+      <li>unknown:
+        <item type="Short Answer" points="1">
+          <answer type="range">[50, 50]</answer>
+          <answer type="exact">50</answer>
+        </item>%
+      </li>
+    </ol>
+  </question>
+
+  <question>
+    <p>A basketball coach conducts an interesting experiment to help his players hit three pointers. 
+      On Monday, he has each player on his team take ten shots from right behind the three point 
+      line, in the middle of the court. If the player makes three or fewer of his shots, then 
+      the coach makes him run ten laps around the court. In the player makes seven or more shots, 
+      then the coach high-fives him and buys him a Gatorade. Finally, if the player makes between 
+      four and six shots, then the coach just tells him &quot;good job&quot;.</p>
+    <p>On Tuesday, he has each player take ten shots again from the same location. The coach 
+      observes that the players he made run laps on Monday tended to make more shots on Tuesday, the 
+      players he rewarded with a Gatorade tended to make fewer shots on Tuesday, and the players 
+      to whom he said &quot;good job&quot; made the same number of shots. To verify this hypothesis, 
+      the coach repeats this experiment five times, and finds that the same conclusions hold. 
+      The coach concludes that praise doesn't work on basketball players, and decides 
+      that in his practices when players miss too many shots he will just make them run laps.</p>
+    <p>Do you agree with the coach's conclusions?</p>
+    <item type="Long Answer" points="6">
+      <solution>
+        <h4>Sample Correct Solution</h4>
+        <p>
+          Not necessarily. It's very possible that the coach is just observing regression to the 
+	  mean. We would expect the players who did poorly on Monday to improve on Tuesday, and the 
+	  people who played well to do worse, regardless of the treatment. 
+        </p>
+        <h4>Grading Rubric</h4>
+        <p>Please grade this question out of 6 points following these guidelines.</p>
+        <ul>
+          <li>2 points for getting the conclusion right</li>
+	  <li>2 points for recognizing "regression to the mean" or "regression effect". The 
+	  student need not use these terms explicitly if they understand the idea.</li>
+	  <li>2 points for using the regression effect to explain <b>both</b> why the players who 
+	  were punished did better <b>and</b> why the players who were rewarded did worse.</li>
+          <li>It is a common misconception that if a player did below average on Monday, he'll 
+	    do above average on Tuesday. In fact, his average on Tuesday would be no 
+	    different from on any other days, it's just that he'll tend to do better than on 
+	    Monday because Monday was below average. Take off 2 points if the student makes 
+	    this mistake.</li>
+          <li>Feel free to give partial credit or to use your good judgement if you think the case merits it</li>
+        </ul>
+      </solution>
+    </item>
+  </question>
+
+  <question>
+    <p>Pearson and Lee obtained the following results in a study of about 1,000 families.</p>
+
+    \begin{align}
+    \text{avg height of husband} &\approx \text{68 in} & SD &\approx \text{2.7 in} \\
+    \text{avg height of wife} &\approx \text{63 in} & SD &\approx \text{2.5 in} & r \approx 0.25
+    \end{align}
+
+    <ol type="a">
+      <li>Predict the height of a husband when the height of his wife is 65 in.
+	<item type="Short Answer" points="2">
+	  <answer type="range">[68.5, 68.61]</answer>
+	  <answer type="exact">68.54</answer>
+	</item>in
+      </li>
+      <li>What is the SD of the heights of husbands whose wives are 65 in tall?
+	<item type="Short Answer" points="2">
+	  <answer type="range">[2.58, 2.63]</answer>
+	  <answer type="exact">2.61</answer>
+	</item>in
+      </li>
+      <li>Among wives that are 65 in tall, what percentage have husbands who are taller 
+	(than 65 in)?
+	<item type="Short Answer" points="2">
+	  <answer type="range">[91, 92]</answer>
+	  <answer type="exact">91.2</answer>
+	</item>%
+      </li>
+    </ol>
+  </question>
+
+  <question>
+    <p>A sociologist wants to model the how someone's self-satisfaction varies with the number of 
+      online friends they have. To do so, she recruits 53 facebook users as subjects for a study. 
+      She has each subject complete a self-satisfaction questionaire (scored from 1 to 10), and 
+      records the number of Facebook friends that person has. She gathers the following 
+      (summarized data):</p>
+    <p>Facebook friends: mean = 333.7, SD = 255.9</p>
+    <p>Self satisfaction: mean = 5.5, SD = 2.7</p>
+    <p>Regression line: 
+      $$\text{satisfaction} = 2.705 + 0.00842 \times \text{number of Facebook friends}$$
+    </p>
+
+    <p>What is the correlation coefficient? (Hint: Remember that that regression line 
+      predicts that \(Y\) increases by \(r\) SD's for every 1 SD increase in \(X\).)</p>
+
+    <item type="Short Answer" points="2">
+      <answer type="range">[0.79, 0.81]</answer>
+      <answer type="exact">0.80</answer>
+    </item>
+
+    <p>The sociologist then decides that self statisfaction really ought to be measured from 
+      0 to 100. So she takes every self satisfaction score, subtracts 1, and then multiplies it 
+      by 100/9. (For example, an initial score of 5 would become 44.44). And she decides that 
+      for convenience, it's easier to measure Facebook friends in units of 100. So she divides 
+      everyone's friend count by 100. What are the new values for the following quantities?</p>
+
+    <ol type="a">
+      <li>new slope:
+        <item type="Short Answer" points="2">
+          <answer type="range">[9.30, 9.40]</answer>
+          <answer type="exact">9.36</answer>
+        </item>
+      </li>
+      <li>new intercept:
+        <item type="Short Answer" points="1">
+          <answer type="range">[18.7, 18.9]</answer>
+          <answer type="exact">18.77</answer>
+        </item>
+      </li>
+      <li>new correlation:
+        <item type="Short Answer" points="1">
+          <answer type="range">[0.79, 0.81]</answer>
+          <answer type="exact">0.80</answer>
+        </item>
+      </li>
+    </ol>
+  </question>
+
+  <question>
+    <p>Ms. Bubblegum's 4th grade class all had to run a mile today. Everyone in the class 
+      recently had a physical, where their leg lengths were measured (in inches), and of 
+      course Ms. Bubblegum measured everyone's mile times (in seconds). The average mile 
+      time was 450 seconds and the SD of mile times was 30 seconds. 
+      The scatterplot of leg lengths and mile times is football-shaped.</p>
+
+    <ol type="a">
+      <li>Based on your knowledge about the relationship between leg lengths and mile times, 
+which of the following was the correlation?
+        <item type="Multiple Choice" points="1">
+          <options>
+	    <option>-1</option>
+	    <option correct="true">-.4</option>
+	    <option>0</option>
+	    <option>.4</option>
+	    <option>1</option>
+          </options>
+        </item>
+      </li>
+      <li>Using your answer to (a), what mile time would you expect from a 
+	student whose leg length is in the 20th percentile?
+        <item type="Short Answer" points="2">
+          <answer type="range">[460, 460.3]</answer>
+	  <answer type="exact">460.1</answer>
+        </item>
+      </li>
+      <li>Among students in the 20th percentile, what percentage ran faster than the 
+	class average of 450 seconds?
+	<item type="Short Answer" points="2">
+	  <answer type="range">[63, 66]</answer>
+	  <answer type="exact">64.3</answer>
+	</item>
+      </li>
+      <li>Consider a student who ran a 420 second mile today. If she were timed again 
+	next week, which of the following would be a reasonable percentile for her mile time 
+	to fall?
+        <item type="Multiple Choice" points="2">
+          <options>
+            <option>10th</option>
+            <option correct="true">30th</option>
+            <option>50th</option>
+            <option>70th</option>
+            <option>90th</option>
+          </options>
+        </item>
+      </li>      
+    </ol>
+  </question>
+
+  <question>
+    <p>The average Verbal SAT score of incoming Stanford freshmen is approximately 650 with 
+    an SD of 50. The average GPA in PWR classes at Stanford is 3.0 with an SD of 0.4. The 
+    correlation between Verbal SAT score and PWR GPA is 0.50. The scatterplot is football 
+    shaped.</p>
+
+    <p>Among students who scored a 750 on the SAT, what percentage will earn at least an 
+      A- (GPA > 3.7) in PWR?</p>
+
+    <item type="Short Answer" points="6">
+      <answer type="range">[18,20]</answer>
+      <answer type="range">19.5</answer>
+    </item>%
+  </question>
+
+  <question name="Sports Illustrated Jinx">
+    <p>Athletes who appear on the cover of Sports Illustrated magazine will subsequently 
+      perform worse. Is this a jinx?</p>
+    
+    <p>Let's imagine that we have some way of comparing athletes' performances across 
+      sports. Only the best athletes get their photos on the cover of SI, so let's 
+      suppose that such athletes are at the 95th percentile among all athletes that week. 
+      Also, suppose the correlation of ``performance'' from one week to the next is $0.6$.</p>
+    
+    <p>What percentage of the athletes on the cover of SI one week (i.e., at the 95th 
+      percentile) would you naturally expect to do worse the next (i.e., below the 95th 
+      percentile of all players)? Show your work.</p>
+
+    <item type="Long Answer" points="6">
+      <solution>
+        <h4>Sample Correct Solution</h4>
+        <p>
+	  Work in standard units. Athletes at the 95th percentile this week have a $z$-score 
+	  of 1.65. Since the correlation is 0.6, we would expect them to be at a $z$-score of 
+	  $0.6 \times 1.65 = 0.99$ next week. This is the average performance next week 
+	  among players in the 95th percentile this week.
+	</p>
+	<p>
+	  We are interested in the percentage of players who will do better than $1.65$ next 
+	  week. To calculate this, we also need to know the SD of performances next week 
+	  among players in the 95th percentile this week. This is given by:
+	  \[ \text{new SD} = \sqrt{1-0.6^2}\times 1 = 0.8 \]
+	  Therefore, a performance of 1.65 represents a z-score of 
+	  $z = \frac{1.65 - 0.99}{0.8} = 0.825$ next week. Looking at the normal table, 
+	  we would expect about 79% of athletes to perform below this level.
+	</p>
+        <h4>Grading Rubric</h4>
+        <p>Please grade this question out of 6 points following these guidelines.</p>
+        <ul>
+	  <li>2 points for determining that the predicted performance next week among 
+	    people in the 95th percentile this week is 0.99 SD's above the mean.</li>
+	  <li>2 points for determining that the "new SD" (the SD of values in the vertical 
+	    strip) is 0.8 SD's.</li>
+	  <li>2 points for calculating that 79% of athletes in the vertical strip will 
+	    perform below the 95th percentile next week.</li>
+        </ul>
+      </solution>
+    </item>
+    
+  </question>
+
+  <question>
+    <p>For the following questions, use the plot below.</p>
+    <img src="/static/img/hw3_2.jpg" />
+
+    <ol type="a">
+      <li>What are plausible values for the standard deviations of x and y, respectively?
+        <item type="Multiple Choice" points="2">
+          <options>
+            <option>1.6, 3.5</option>
+            <option correct="true">4.4, 1.9</option>
+            <option>2.0, 2.0</option>
+            <option>4.2, 3.9</option>
+          </options>
+        </item>
+      </li>
+      <li>What is a plausible value for the slope of the SD line?
+        <item type="Multiple Choice" points="2">
+          <options>
+            <option>0.1</option>
+            <option correct="true">0.45</option>
+            <option>1.2</option>
+            <option>1.65</option>
+          </options>
+        </item>
+      </li>`
+      <li>Given your answer to part (b), what is a plausible value for the 
+	regression coefficient?
+        <item type="Multiple Choice" points="2">
+          <options>
+            <option>0.05</option>
+            <option correct="true">0.35</option>
+            <option>0.7</option>
+            <option>1.05</option>
+            <option>1.4</option>
+            <option>1.85</option>
+          </options>
+        </item>
+      </li>      
+    </ol>
+  </question>
+
+  <question>
+    <p>Suppose the heights of sons and fathers has a correlation of 0.6, and 
+      both sons and fathers have an average height of 68 inches. 
+
+      <ol>
+	<li>If the 
+	  average height of sons of 74-inch fathers is 72 inches, does this mean 
+	  that the average height of fathers of 72-inch sons is 74 inches? Explain.</li>
+	<li>If the average height of sons of 68-inch fathers is 68 inches, does this mean 
+	  that the average height of fathers of 68-inch sons is 68 inches? Explain.</li>
+      </ol>
+    </p>
+
+    <item type="Long Answer" points="6">
+      <solution>
+        <h4>Sample Correct Solution</h4>
+        <p>No, the average height of fathers of 72-inch sons should not be 74 inches. This is 
+	  due to the difference between the regression line fitting heights of sons to heights 
+	  of fathers, and the regression line fitting heights of fathers to heights of sons. 
+	  In both cases, we expect regression to the mean, and since 72 inches is above the 
+	  mean for sons, the average height of fathers of 72-inch sons should be less than 
+	  72 (but greater than 68). If the question were about 68-inch fathers whose sons 
+	  average 68 inches, then the answer would be yes, since both heights are already 
+	  at the mean, so both regression lines intersect that point.</p>
+        <h4>Grading Rubric</h4>
+        <p>Please grade this question out of 6 points following these guidelines.</p>
+        <ul>
+	  <li>4 points for concluding "no" in part (a) and explaining that there 
+	    is a difference between regressing y on x and regressing x on y, or applying 
+	    regression to the mean to answer the question.</li>
+	  <li>2 points for concluding "yes" in part (b) and explaining that there is 
+	    no regression when x and y are already at the mean (or equivalent).</li>
+          <li>Feel free to give partial credit or to use your good judgement if you think the case merits it</li>
+        </ul>
+      </solution>
+    </item>
+  </question>
+
+  <question>
+    
+  </question>
+
+
+</hw>
