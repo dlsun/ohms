@@ -14,8 +14,8 @@
       </li>
       <li>80%:
         <item type="Short Answer" points="2">
-          <answer type="range">[72.4, 72.7]</answer>
-          <answer type="exact">72.5</answer>
+          <answer type="range">[72, 72.7]</answer>
+          <answer type="exact">72.2</answer>
         </item>%
       </li>
       <li>50%:
@@ -79,8 +79,8 @@
     <p>Pearson and Lee obtained the following results in a study of about 1,000 families.</p>
 
     \begin{align}
-    \text{avg height of husband} &\approx \text{68 in} & SD &\approx \text{2.7 in} \\
-    \text{avg height of wife} &\approx \text{63 in} & SD &\approx \text{2.5 in} & r \approx 0.25
+    \text{avg height of husband} &#038;\approx \text{68 in} &#038; SD &#038;\approx \text{2.7 in} \\
+    \text{avg height of wife} &#038;\approx \text{63 in} &#038; SD &#038;\approx \text{2.5 in} &#038; r \approx 0.25
     \end{align}
 
     <ol type="a">
@@ -191,7 +191,7 @@ which of the following was the correlation?
       <li>Consider a student who ran a 420 second mile today. If she were timed again 
 	next week, which of the following would be a reasonable percentile for her mile time 
 	to fall?
-        <item type="Multiple Choice" points="2">
+        <item type="Multiple Choice" points="1">
           <options>
             <option>10th</option>
             <option correct="true">30th</option>
@@ -205,17 +205,17 @@ which of the following was the correlation?
   </question>
 
   <question>
-    <p>The average Verbal SAT score of incoming Stanford freshmen is approximately 650 with 
+    <p>The average SAT Writing score of incoming Stanford freshmen is approximately 650 with 
     an SD of 50. The average GPA in PWR classes at Stanford is 3.0 with an SD of 0.4. The 
-    correlation between Verbal SAT score and PWR GPA is 0.50. The scatterplot is football 
-    shaped.</p>
+    scatterplot of students' SAT Writing score and PWR GPA is football-shaped with a correlation 
+      of 0.50.</p>
 
-    <p>Among students who scored a 750 on the SAT, what percentage will earn at least an 
+    <p>Among students who scored a 750 on the SAT Writing, what percentage will earn at least an 
       A- (GPA > 3.7) in PWR?</p>
 
     <item type="Short Answer" points="6">
-      <answer type="range">[18,20]</answer>
-      <answer type="range">19.5</answer>
+      <answer type="range">[18, 20]</answer>
+      <answer type="exact">19.5</answer>
     </item>%
   </question>
 
@@ -289,7 +289,7 @@ which of the following was the correlation?
             <option>1.65</option>
           </options>
         </item>
-      </li>`
+      </li>
       <li>Given your answer to part (b), what is a plausible value for the 
 	regression coefficient?
         <item type="Multiple Choice" points="2">
@@ -343,10 +343,5 @@ which of the following was the correlation?
       </solution>
     </item>
   </question>
-
-  <question>
-    
-  </question>
-
 
 </hw>
