@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 import options
 
 Base = declarative_base()
-engine = create_engine('sqlite:///' + options.db, echo=False)
+engine = create_engine(options.db, echo=False)
 
 Session = sessionmaker(bind=engine)
 session = Session()
