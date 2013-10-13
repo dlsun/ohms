@@ -65,7 +65,7 @@ var OHMS = (function(OHMS) {
 		for (var i=0; i<data.solution.length; i++) {
 		    this.items[i].set_solution(data.solution[i]);
 		}
-	    MathJax.Hub.Typeset()
+	    MathJax.Hub.Typeset(this.element)
 	}
 
 	Question.prototype.load_response_error = function (xhr) {
