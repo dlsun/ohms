@@ -17,26 +17,20 @@ import options
 # Configuration based on deploy target
 if options.target == "local":
     app = Flask(__name__, static_url_path="/static", static_folder="../static")
+    sunet = "parkerp1"
+    user = User(sunet=sunet,
+                name="Test User",
+                type="student")
 else:
     app = Flask(__name__)
-
-app.debug = (options.target != "prod")
-
-if options.target != "local":
+    app.debug = (options.target != "prod")
     sunet = os.environ.get("WEBAUTH_USER")
     try:
         user = get_user(sunet)
     except:
-        user = User(sunet=sunet,
-                    name=os.environ.get("WEBAUTH_LDAP_DISPLAYNAME"),
-                    type="student")
         session.add(user)
         session.commit()
-else:
-    sunet = "parkerp1"
-    user = User(sunet=sunet,
-                name="Guest User",
-                type="student")
+
 
 # special JSON encoder to handle dates and Response objects
 class NewEncoder(json.JSONEncoder):

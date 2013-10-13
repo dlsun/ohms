@@ -4,6 +4,7 @@ objects.py
 Defines the database objects.
 """
 
+from __future__ import division
 import os
 import elementtree.ElementTree as ET
 import re
@@ -58,19 +59,30 @@ class Question(Base):
         question = Question()
         question.name = node.attrib['name'] if 'name' in node.attrib else ""
         question.points = 0
-        for i, item in enumerate(node.iter('item')):
-            # get item object and order
-            item_object = Item.from_xml(item)
-            item_object.order = i
-            # add items to question
-            question.points += item_object.points
-            question.items.append(item_object)
-            # replace items by corresponding html
-            item.clear()
-            item.append(item_object.to_html())
+        # get dict that maps children to their parents
+        parent_map = dict((c, p) for p in node.getiterator() for c in p)
+        # iterate over items
+        i = 0
+        for parent in node.getiterator():
+            for child in parent:
+                if child.tag == 'item':
+                    # get item object and its order
+                    item_object = Item.from_xml(child)
+                    item_object.order = i
+                    i += 1
+                    # add items to question
+                    question.points += item_object.points
+                    question.items.append(item_object)
+                    # replace items by corresponding html, saving the tail
+                    new_child = item_object.to_html()
+                    new_child.tail = child.tail
+                    parent.remove(child)
+                    parent.append(new_child)
+            
         # include raw html
         question.html = ET.tostring(node, method="html")
         session.add(question)
+        session.commit()
 
         return question
 
@@ -198,20 +210,19 @@ class ShortAnswerItem(Item):
 
     def from_xml(self, node):
         short_answer = None
+        solutions = []
         for answer in node.findall("answer"):
             short_answer = ShortAnswer()
             short_answer.from_xml(answer)
             short_answer.item = self
             session.add(short_answer)
-        solution = node.find('solution')
-        if solution is not None:
-            self.solution = ET.tostring(solution)
-        elif short_answer and short_answer.type == "range":
-            self.solution = 0.5*(short_answer.lb + short_answer.ub)
+            if short_answer.type in ["exact", "expression"]:
+                solutions.append(short_answer.exact)
+        self.solution = ", ".join(solutions)
 
     def to_html(self):
         attrib = {"type": "text",
-                  "class": "item input-medium",
+                  "class": "item input-small",
                   "itemtype": "short-answer",
                   "disabled": "disabled"}
         return ET.Element("input", attrib=attrib)
@@ -240,11 +251,22 @@ class ShortAnswer(Base):
             lb, ub = data.split(",")
             self.lb = float(lb.strip().lstrip("["))
             self.ub = float(ub.strip().rstrip("]"))
-        elif self.type == "exact":
+        elif self.type == "exact" or self.type == "expression":
             self.exact = data.strip().lower()
         else:
             raise NotImplementedError("ShortAnswer type=%s is not implemented"
-                                      % self.type)
+                                      % self.type)        
+
+    @staticmethod
+    def preprocess(expr):
+        pattern = re.compile("^[0-9.\+\-\*/\^\(\)]*$")
+        expr = "".join(expr.split())
+        if bool(pattern.match(expr)):
+            # replace ^ with **
+            expr = expr.replace("^", "**")
+            # convert parentheses to explicit multiplications
+            expr = ")*(".join(expr.split(")("))
+        return expr
 
     def is_correct(self, response):
         if self.type == "range":
@@ -257,6 +279,13 @@ class ShortAnswer(Base):
             str_response = response.strip().lower()
             # TODO: make this an edit distance comparison
             return str_response == self.exact
+        elif self.type == "expression":
+            try:
+                resp = eval(self.preprocess(response),{"__builtins__": None})
+                ans = eval(self.preprocess(self.exact),{"__builtins__": None})
+                return abs(resp - ans) < 1e-15 
+            except:
+                return False
         else:
             raise NotImplementedError("ShortAnswer type=%s is not implemented"
                                       % self.type)

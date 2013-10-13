@@ -1,11 +1,11 @@
-<hw name="Homework 1" due_date="9/28/2013 17:00:00">
+<hw name="Homework 1" due_date="10/28/2013 17:00:00">
   <question>
     <p>
       The figure below is a histogram showing the distribution of blood
       pressure for all 14,148 women in a drug study. Use the histogram to
       answer the following questions:
     </p>
-    <div align="center"><img src="/class/stats60/img/hw1-ch3-prob4.png"/></div>
+    <div align="center"><img src="http://stats60.stanford.edu/static/img/hw1-ch3-prob4.png"/></div>
     <ol type="a">
       <li>The percentage of women with blood pressures above 130mm is around:
         <item type="Multiple Choice" points="1">

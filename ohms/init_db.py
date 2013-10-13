@@ -10,9 +10,9 @@ import objects
 
 
 def testing_init():
-    from base import Base, session, engine  # creates ohms.db
+    from base import Base, session, create_engine  # creates ohms.db
 
-    Base.metadata.create_all(engine)
+    Base.metadata.create_all(engine)    
     h = objects.Homework()
     h.from_xml('hws/example.xml')
     session.add(h)
@@ -86,31 +86,15 @@ officia deserunt mollit anim id est laborum.
     session.commit()
 
 
-def prod_init_db():
+def prod_init_db(file):
 
-    from base import Base, session, engine  # creates ohms.db
+    from base import Base, session, engine
 
     Base.metadata.create_all(engine)
     h = objects.Homework()
-    h.from_xml('hws/hw1.xml')
+    h.from_xml(file)
     session.add(h)
-
-    naftali = objects.User(sunet="naftali",
-                           name="Naftali Harris",
-                           type="admin")
-    dennis = objects.User(sunet="dlsun",
-                          name="Dennis Sun",
-                          type="admin")
-
-    # Create the fake sample user
-    # His sunet is okay since real sunets have no spaces
-    # Use type=sample for identifying sample submissions,
-    sample_sam = objects.User(sunet="Sample Sam",
-                              name="Sample Sam",
-                              type="sample")
-
-    session.add_all([naftali, dennis, sample_sam])
     session.commit()
 
 if __name__ == "__main__":
-    prod_init_db()
+    prod_init_db(sys.argv[1])
