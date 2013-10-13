@@ -27,7 +27,7 @@ def make_grading_assignments(q_id, sunets):
     for r in responses:
         gp = GradingPermission(sunet=r.sunet, question_id=q_id,
                                permissions=0,
-                               due_date=datetime(2013, 10, 9, 17, 0, 0))
+                               due_date=datetime(2013, 10, 15, 17, 0, 0))
         session.add(gp)
 
     # This scheme guarantees that no pair of students is ever assigned to grade
@@ -75,7 +75,8 @@ def selective_peer_grading(hw_id, user_file):
     questions = get_long_answer_qs(hw_id)
     for q in questions:
         make_grading_assignments(q.id, sunets)
+        make_grader_assignments(q.id)
 
 
 if __name__ == "__main__":
-    selective_peer_grading(2, "assignments_week_2.dat")
+    selective_peer_grading(3, "assignments_week_2.dat")
