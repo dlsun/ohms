@@ -1,0 +1,232 @@
+<hw name="Homework 4" due_date="10/19/2013 17:00:00">
+
+  <question>
+    <p><strong>For this problem, please enter an exact 
+      expression for the answer. For example, 1-(1/3)^2 or 8/9 
+      would be acceptable, but not 0.88889. You do not need 
+      to simplify expressions.</strong></p> 
+    <p>A die is rolled four times. What is the chance that</p>
+    <ol type="a">
+      <li>all of the rolls show 3 or more spots? 
+        <item type="Short Answer" points="2">
+          <answer type="expression">(2/3)^4</answer>
+        </item>
+      </li>
+      <li>none of the rolls show 3 or more spots? 
+        <item type="Short Answer" points="2">
+          <answer type="expression">(1/3)^4</answer>
+        </item>
+      </li>
+      <li>not all of the rolls show 3 or more spots?
+        <item type="Short Answer" points="2">
+          <answer type="expression">1-(2/3)^4</answer>
+        </item>
+      </li>
+    </ol>
+  </question>
+
+  <question>
+    <p><strong>For this problem, please enter an exact 
+      expression for the answer. For example, 1-(1/3)^2 or 8/9 
+      would be acceptable, but not 0.88889. You do not need 
+      to simplify expressions.</strong></p> 
+    <p>In a certain corporation, there are 300 male 
+employees and 100 female employees.  It is known that 
+25% of the male employees have advanced degrees and 
+40% of the females have advanced degrees. One 
+employee is chosen at random.</p>
+    <ol type="a">
+      <li>What is the chance that the employee has 
+	an advanced degree and is female?
+        <item type="Short Answer" points="1">
+          <answer type="expression">40/400</answer>
+        </item>
+      </li>
+      <li>What is the chance that the employee has 
+	an advanced degree or is female?
+        <item type="Short Answer" points="1">
+          <answer type="expression">175/400</answer>
+        </item>
+      </li>
+      <li>If it is known that the employee selected 
+is female, what is the chance that 
+the employee has an advanced degree?
+        <item type="Short Answer" points="2">
+          <answer type="expression">40/100</answer>
+        </item>
+      </li>
+      <li>If it is known that the employee selected 
+has an advanced degree, what is the chance that 
+the employee is female?
+        <item type="Short Answer" points="2">
+          <answer type="expression">40/115</answer>
+        </item>
+      </li>
+    </ol>
+  </question>
+
+  <question>
+    <p>A box contains 2 red marbles and 98 blue ones. Draws
+are made at random with replacement. What's the fewest number 
+of draws I have to make in order to have better than a 70% 
+chance for a red marble to appear at least once?</p>
+
+    <item type="Long Answer" points="6">
+    </item>
+  </question>
+
+  <question>
+    <p><strong>For this problem, please enter an exact 
+      expression for the answer. For example, 1-(1/3)^2 or 8/9 
+      would be acceptable, but not 0.88889. You do not need 
+      to simplify expressions.</strong></p> 
+    <p>A coin will be tossed 10 times.</p>
+    <ol type="a">
+      <li>Without doing any calculations, which chance 
+	is greater: that there will be exactly 6 heads total, or that 
+	there will be exactly 2 heads among the first 5 
+	tosses and exactly 4 heads among the last 5?
+	<item type="Multiple Choice" points="2">
+	  <option correct="true">6 heads total</option>
+	  <option>2 heads among first 5 tosses, 4 heads among last 5</option>
+	  <option>The chances are the same.</option>
+	</item>
+      </li>
+      <li>What is the chance that there will be exactly 6 heads total?
+	<item type="Short Answer" points="2">
+	  <answer type="expression">210*(1/2)^10</answer>
+	</item>
+      </li>
+      <li>What is the chance that there will be exactly 2 heads 
+	among the first 5 tosses and exactly 4 heads among the last 5?
+	<item type="Short Answer" points="2">
+	  <answer type="expression">10*5*(1/2)^10</answer>
+	</item>
+      </li>
+    </ol>
+  </question>
+
+  <question>
+    <p><strong>For this problem, please enter an exact 
+      expression for the answer. For example, 1-(1/3)^2 or 8/9 
+      would be acceptable, but not 0.88889. You do not need 
+      to simplify expressions.</strong></p> 
+    <p>At the first full moon of fall quarter, a group of three
+      seniors walk to the Main Quad to kiss freshmen. Each senior 
+      asks 5 freshmen for permission to kiss.
+      There is a 60% chance a freshman wants to be kissed, and a 40% 
+      chance the freshman refuses. Assume independence thoughout.</p>
+    <ol type="a">
+      <li>First consider only one of the three seniors. 
+	What are the chances that this senior will kiss 
+	at least one freshman?
+	<item type="Short Answer" points="3">
+	  <answer type="expression">1-(.4)^5</answer>
+	  <answer type="exact">.98976</answer>
+	</item>
+      </li>
+      <li>What are the chances that at least one in the group
+	of three seniors has to go home without having kissed anybody?
+	<item type="Short Answer" points="3">
+	  <answer type="expression">1-(.98976)^3</answer>
+	</item>
+      </li>
+    </ol>
+  </question>
+
+  <question>
+    <p>You are participating in a game show. The host offers you a choice 
+      of 3 doors. He has chosen one of the doors at random and placed a 
+      brand new Ferrari behind that door. Behind the other two doors are 
+      used Cal sweatshirts.</p>
+
+    <p>The game works as follows: you pick a door, but 
+      before the host opens it, he opens one of the other two 
+      doors to reveal a Cal sweatshirt. He 
+      then offers you the opportunity to switch to the remaining 
+      door. Should you switch? Or does it not matter?
+    </p>
+
+    <item type="Long Answer" points="6">
+    </item>
+  </question>
+
+  <question>
+    <p><strong>For this problem, please enter an exact 
+      expression for the answer. For example, 1-(1/3)^2 or 8/9 
+      would be acceptable, but not 0.88889. You do not need 
+      to simplify expressions.</strong></p> 
+
+    <p>You are writing an 8 page paper. There is a 40% chance you make 
+      no errors on a page, a 30% chance you make 1 error, a 20% chance you 
+      make 2 errors, and a 10% chance you make 3 or more errors. Assume 
+      the numbers of errors on pages are independent.</p>
+
+    <ol type="a">
+      <li>What is the chance that you make errors on fewer than 2 pages?
+	<item type="Short Answer" points="3">
+	  <answer type="expression">8*(.6)^1*(.4)^7 + (.4)^8</answer>
+	</item>	
+      </li>
+      <li>What is the chance you make no more than 1 error on at least 7 of the pages?
+	<item type="Short Answer" points="3">
+	  <answer type="expression">8*(.7)^7*(.3)^1 + (.7)^8</answer>
+	</item>
+      </li>
+    </ol>
+  </question>
+  
+  <question>
+    <p>The ELISA test screens donated blood for the presence of the AIDS
+      virus. The test works by detecting antibodies, substances that the 
+      body produces when the virus is present, but it makes some mistakes. 
+      ELISA was designed so that when a given blood sample
+      is in fact contaminated with AIDS, the test gives a positive result 
+      (that is, ELISA reports that in its opinion this blood sample has 
+      AIDS in it) 99% of the time, whereas when the blood being
+      tested is not contaminated with the virus ELISA will announce a 
+      negative result 94% of the time. The prevalence of AIDS in the 
+      population of people who donate blood is thought to be about 1%.
+      Suppose someone comes in, donates blood, and the ELISA test comes 
+      out positive. What is the chance that they actually have AIDS?</p>
+
+    <p><strong>You can round your answer to this problem. We are looking 
+	for a percentage.</strong></p>
+
+      <item type="Short Answer" points="6">
+	<answer type="range">[14, 14.5]</answer>
+	<answer type="exact">14.3</answer>
+      </item>%
+  </question>
+
+  <question>
+    <p><strong>For this problem, please enter an exact 
+      expression for the answer. For example, 1-(1/3)^2 or 8/9 
+      would be acceptable, but not 0.88889. You do not need 
+      to simplify expressions.</strong></p> 
+    <p>A multiple choice exam has 10
+      questions. Each question has 4 possible answers, of which one 
+      is correct. A student knows the answers to 3 of the questions 
+      and answers them correctly. The student guesses the answers 
+      to the remaining 7 questions at random.</p>
+
+    <ol type="a">
+      <li>What is the chance the student answers exactly 7 of the 10 
+	questions correctly?
+	<item type="Short Answer" points="3">
+	  <answer type="expression">35*(1/4)^4*(3/4)^3</answer>
+	  <answer type="range">[.057,.06]</answer>
+	</item>
+      </li>
+      <li>Given that an answer is correct, what is the chance 
+	the student was merely guessing the answer?
+	<item type="Short Answer" points="3">
+	  <answer type="expression">(.7*.25)/(.7*.25+.3*1)</answer>
+	  <answer type="range">[.36,.37]</answer>
+	</item>
+      </li>
+    </ol>
+
+  </question>
+
+</hw>

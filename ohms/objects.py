@@ -147,7 +147,7 @@ class MultipleChoiceItem(Item):
                            backref="item")
 
     def from_xml(self, node):
-        for i, option in enumerate(node.find('options').findall('option')):
+        for i, option in enumerate(node.iter('option')):
             match = re.match("<option.*?>(?P<inner>.*)</option>",
                              ET.tostring(option), re.DOTALL)
             text = match.group('inner') if match else ""
@@ -259,9 +259,11 @@ class ShortAnswer(Base):
 
     @staticmethod
     def preprocess(expr):
-        pattern = re.compile("^[0-9.\+\-\*/\^\(\)]*$")
+        pattern = re.compile("^[x0-9.\+\-\*/\^\(\)]*$")
         expr = "".join(expr.split())
         if bool(pattern.match(expr)):
+            # replace x with *
+            expr = expr.replace("x", "*")
             # replace ^ with **
             expr = expr.replace("^", "**")
             # convert parentheses to explicit multiplications
