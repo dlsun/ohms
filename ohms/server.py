@@ -325,7 +325,7 @@ def staff():
 
 @app.route("/handouts")
 def handouts():
-    handouts = os.listdir("/afs/ir/class/stats60/WWW/handouts")
+    handouts = sorted(os.listdir("/afs/ir/class/stats60/WWW/handouts"))
     return render_template("handouts.html", handouts=handouts, options=options)
 
 
