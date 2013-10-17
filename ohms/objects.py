@@ -291,12 +291,9 @@ class ShortAnswer(Base):
             # TODO: make this an edit distance comparison
             return str_response == self.exact
         elif self.type == "expression":
-            try:
-                resp = eval(self.preprocess(response),{"__builtins__": None})
-                ans = eval(self.preprocess(self.exact),{"__builtins__": None})
-                return abs(resp - ans) < 1e-15 
-            except:
-                return False
+            resp = eval(self.preprocess(response),{"__builtins__": None})
+            ans = eval(self.preprocess(self.exact),{"__builtins__": None})
+            return abs(resp - ans) < 1e-15 
         else:
             raise NotImplementedError("ShortAnswer type=%s is not implemented"
                                       % self.type)
