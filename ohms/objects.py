@@ -229,9 +229,16 @@ class ShortAnswerItem(Item):
 
     def check(self, response):
         for answer in self.answers:
-            if answer.is_correct(response):
-                return self.points, ""
-        return 0, ""
+            try:
+                if answer.is_correct(response):
+                    return self.points, ""
+                else:
+                    return 0, ""
+            except:
+                return 0, r'''
+There was an error submitting your response. Perhaps you 
+used an unrecognized symbol, like ! or %?
+'''
 
 
 class ShortAnswer(Base):
@@ -267,7 +274,9 @@ class ShortAnswer(Base):
             # replace ^ with **
             expr = expr.replace("^", "**")
             # convert parentheses to explicit multiplications
-            expr = ")*(".join(expr.split(")("))
+            expr = expr.replace(")(", ")*(")
+            for i in range(10):
+                expr = expr.replace("%d(" % i, "%d*(" % i)
         return expr
 
     def is_correct(self, response):
