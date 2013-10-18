@@ -238,7 +238,7 @@ class ShortAnswerItem(Item):
                 return 0, r'''
 There was an error submitting your response. Perhaps you 
 used an unrecognized symbol, like ! or %, or perhaps you 
-did not close parentheses () properly?
+did not close parentheses (...) properly?
 '''
 
 
