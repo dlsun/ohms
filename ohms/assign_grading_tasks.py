@@ -6,7 +6,7 @@ import sys
 import random
 
 from base import session
-from objects import User, GradingTask, GradingPermission
+from objects import Homework, User, GradingTask, GradingPermission
 from queries import get_recent_question_responses, get_long_answer_qs
 from datetime import datetime, timedelta
 
@@ -78,7 +78,7 @@ def make_admin_assignments(q_id):
 
 
 
-def selective_peer_grading(hw_id, hw_number):
+def selective_peer_grading(hw_number):
 
     treatments = {
         0: [1,1,1,0,0,1,1,0,0],
@@ -86,6 +86,9 @@ def selective_peer_grading(hw_id, hw_number):
         2: [1,1,1,0,0,0,0,1,1],
         3: [1,0,0,1,1,1,1,0,0]
         }
+
+    homework = session.query(Homework).filter_by(name="Homework %d" % hw_number).one()
+    hw_id = homework.id
 
     groups = []
     for i in range(4):
@@ -99,10 +102,10 @@ def selective_peer_grading(hw_id, hw_number):
     # single Item, with a "Long Answer" type
     questions = get_long_answer_qs(hw_id)
     for q in questions:
-        make_grading_assignments(q.id, sunets)
-        make_grader_assignments(q.id)
+        #make_grading_assignments(q.id, sunets)
+        #make_grader_assignments(q.id)
         make_admin_assignments(q.id)
 
 
 if __name__ == "__main__":
-    selective_peer_grading(int(sys.argv[1]), int(sys.argv[2]))
+    selective_peer_grading(int(sys.argv[1]))
