@@ -266,7 +266,11 @@ class ShortAnswer(Base):
         allowed_chars.extend([".", "+", "-", "*", "/", "(", ")"])
         diff = set(expr)-set(allowed_chars)
         if diff:
-            raise Exception("You have the following illegal characters in your expression: %s" % ", ".join(diff))
+            non_ascii = [c for c in diff if ord(c)>=128]
+            if non_ascii:
+                raise Exception('''The character %s is not an ASCII character. Perhaps you copied and pasted from Microsoft Word, or have confused it with a similar character?''' % non_ascii[0])
+            else:
+                raise Exception("You have the following illegal characters in your expression: %s" % ", ".join(diff))
         return True
 
     @staticmethod
@@ -298,8 +302,11 @@ class ShortAnswer(Base):
             if response:
                 processed_response = self.preprocess(response)
                 self.validate(processed_response)
-                resp = eval(processed_response, {"__builtins__": None})
-                ans = eval(self.preprocess(self.exact), {"__builtins__": None})
+                try:
+                    resp = eval(processed_response, {"__builtins__": None})
+                    ans = eval(self.preprocess(self.exact), {"__builtins__": None})
+                except:
+                    raise Exception("I'm sorry, but I did not understand the expression you typed in. Please check the expression and try again.")
                 return abs(resp - ans) < 1e-15 
             else:
                 return False

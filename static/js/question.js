@@ -69,7 +69,10 @@ var OHMS = (function(OHMS) {
 	}
 
 	Question.prototype.load_response_error = function (xhr) {
-	    alert(xhr.responseText);
+	    if(xhr.responseText)
+		alert(xhr.responseText);
+	    else
+		alert("Unknown error");
 	}
 
 	Question.prototype.submit_response = function () {
@@ -105,7 +108,10 @@ var OHMS = (function(OHMS) {
 
 	Question.prototype.submit_response_error = function (xhr) {
 	    this.unlock();
-	    alert(xhr.responseText);
+	    if(xhr.responseText)
+		alert(xhr.responseText);
+	    else
+		alert("Unknown error");
 	}
 
 	Question.prototype.lock = function () {
