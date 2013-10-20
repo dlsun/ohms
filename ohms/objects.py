@@ -222,9 +222,13 @@ class ShortAnswerItem(Item):
 
     def to_html(self):
         attrib = {"type": "text",
-                  "class": "item input-small",
                   "itemtype": "short-answer",
                   "disabled": "disabled"}
+        types = [answer.type for answer in self.answers]
+        if "range" in types:
+            attrib['class'] = "item input-mini"
+        else:
+            attrib['class'] = "item input-medium"
         return ET.Element("input", attrib=attrib)
 
     def check(self, response):
@@ -240,7 +244,7 @@ class ShortAnswer(Base):
 
     id = Column(Integer, primary_key=True)
     short_answer_id = Column(Integer, ForeignKey('items.id'))
-    type = Column(String)  # "range" or "exact"
+    type = Column(String)  # "range" or "exact" or "expression"
     lb = Column(Float)
     ub = Column(Float)
     exact = Column(String)
