@@ -262,9 +262,11 @@ class ShortAnswer(Base):
     def validate(expr):
         if expr.count("(") != expr.count(")"):
             raise Exception("You have mismatched parentheses (...) in your expression.")
-        pattern = re.compile("^[x0-9.\+\-\*/\^\(\)]*$")
-        if not bool(pattern.match(expr)):
-            raise Exception("You have an illegal character, such as ! or % in your expression.")
+        allowed_chars = [str(n) for n in range(10)]
+        allowed_chars.extend([".", "+", "-", "*", "/", "(", ")"])
+        diff = set(expr)-set(allowed_chars)
+        if diff:
+            raise Exception("You have the following illegal characters in your expression: %s" % ", ".join(diff))
         return True
 
     @staticmethod
