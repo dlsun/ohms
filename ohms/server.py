@@ -3,7 +3,7 @@ OHMS: Online Homework Management System
 """
 
 import os
-from flask import Flask, request, render_template, abort
+from flask import Flask, request, render_template, make_response
 import json
 from datetime import datetime, timedelta
 
@@ -25,9 +25,14 @@ else:
     app = Flask(__name__)
     app.debug = (options.target != "prod")
     sunet = os.environ.get("WEBAUTH_USER")
+    if not sunet:
+        raise Exception("You are no longer logged in. Please refresh the page.")
     try:
         user = get_user(sunet)
     except:
+        user = User(sunet=sunet,
+                    name=os.environ.get(""),
+                    type="student")
         session.add(user)
         session.commit()
 
@@ -121,7 +126,7 @@ def rate():
     # check that student is the one who submitted this QuestionResponse
     question_response = session.query(QuestionResponse).get(question_response_id)
     if question_response.sunet != sunet:
-        abort(403)
+        raise Exception("You are not authorized to rate this response.")
 
     # fetch all peers that were assigned to grade this QuestionResponse
     grading_tasks = session.query(GradingTask).\
@@ -240,7 +245,7 @@ def submit():
             is_locked = check_if_locked(question.hw.due_date, submissions)
 
         else:
-            abort(403)
+            raise Exception("The deadline for submitting this homework has passed.")
 
     # Sample question grading submission
     elif submit_type == "s":
@@ -274,7 +279,7 @@ def submit():
         # Make sure student was assigned this grading task
         task = session.query(GradingTask).get(id)
         if task.grader != sunet:
-            abort(403)
+            raise Exception("You are not authorized to grade this response.")
 
         score = float(responses[0])
         comments = responses[1]
@@ -301,7 +306,7 @@ def submit():
         if entry.one().grading_task.question_response.sunet == sunet:
             entry.update({"rating": rating})
         else:
-            abort(403)
+            raise Exception("You are not authorized to rate this grade.")
         session.commit()
 
         question_response.comments = "Rating submitted successfully!"
@@ -309,7 +314,7 @@ def submit():
 
     # Wrong submit_type
     else:
-        abort(500)
+        raise Exception("Invalid submission.")
 
     # add response to what to return to the user
     return json.dumps({
@@ -327,6 +332,11 @@ def staff():
 def handouts():
     handouts = sorted(os.listdir("/afs/ir/class/stats60/WWW/handouts"))
     return render_template("handouts.html", handouts=handouts, options=options)
+
+
+@app.errorhandler(Exception)
+def handle_exceptions(error):
+    return make_response(error.message, 403)
 
 
 # For local development--this does not run in prod or test

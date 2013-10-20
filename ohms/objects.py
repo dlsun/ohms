@@ -229,17 +229,10 @@ class ShortAnswerItem(Item):
 
     def check(self, response):
         for answer in self.answers:
-            try:
-                if answer.is_correct(response):
-                    return self.points, ""
-                else:
-                    return 0, ""
-            except:
-                return 0, r'''
-There was an error submitting your response. Perhaps you 
-used an unrecognized symbol, like ! or %, or perhaps you 
-did not close parentheses (...) properly?
-'''
+            if answer.is_correct(response):
+                return self.points, ""
+            else:
+                return 0, ""
 
 
 class ShortAnswer(Base):
@@ -266,18 +259,26 @@ class ShortAnswer(Base):
                                       % self.type)        
 
     @staticmethod
-    def preprocess(expr):
+    def validate(expr):
+        if expr.count("(") != expr.count(")"):
+            raise Exception("You have mismatched parentheses (...) in your expression.")
         pattern = re.compile("^[x0-9.\+\-\*/\^\(\)]*$")
+        if not bool(pattern.match(expr)):
+            raise Exception("You have an illegal character, such as ! or % in your expression.")
+        return True
+
+    @staticmethod
+    def preprocess(expr):
+        # remove all whitespace
         expr = "".join(expr.split())
-        if bool(pattern.match(expr)):
-            # replace x with *
-            expr = expr.replace("x", "*")
-            # replace ^ with **
-            expr = expr.replace("^", "**")
-            # convert parentheses to explicit multiplications
-            expr = expr.replace(")(", ")*(")
-            for i in range(10):
-                expr = expr.replace("%d(" % i, "%d*(" % i)
+        # replace x with *
+        expr = expr.replace("x", "*")
+        # replace ^ with **
+        expr = expr.replace("^", "**")
+        # convert parentheses to explicit multiplications
+        expr = expr.replace(")(", ")*(")
+        for i in range(10):
+            expr = expr.replace("%d(" % i, "%d*(" % i)
         return expr
 
     def is_correct(self, response):
@@ -293,8 +294,10 @@ class ShortAnswer(Base):
             return str_response == self.exact
         elif self.type == "expression":
             if response:
-                resp = eval(self.preprocess(response),{"__builtins__": None})
-                ans = eval(self.preprocess(self.exact),{"__builtins__": None})
+                processed_response = self.preprocess(response)
+                self.validate(processed_response)
+                resp = eval(processed_response, {"__builtins__": None})
+                ans = eval(self.preprocess(self.exact), {"__builtins__": None})
                 return abs(resp - ans) < 1e-15 
             else:
                 return False

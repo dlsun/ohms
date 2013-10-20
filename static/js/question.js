@@ -69,7 +69,7 @@ var OHMS = (function(OHMS) {
 	}
 
 	Question.prototype.load_response_error = function (xhr) {
-	    console.log(xhr.responseText);
+	    alert(xhr.responseText);
 	}
 
 	Question.prototype.submit_response = function () {
@@ -105,7 +105,7 @@ var OHMS = (function(OHMS) {
 
 	Question.prototype.submit_response_error = function (xhr) {
 	    this.unlock();
-	    console.log(xhr.responseText);
+	    alert(xhr.responseText);
 	}
 
 	Question.prototype.lock = function () {
