@@ -340,6 +340,7 @@ class User(Base):
     sunet = Column(String, primary_key=True)
     name = Column(String)
     type = Column(String)
+    group = Column(Integer)
 
 
 class QuestionResponse(Base):
@@ -347,12 +348,14 @@ class QuestionResponse(Base):
     id = Column(Integer, primary_key=True)
     sunet = Column(String, ForeignKey('users.sunet'))
     question_id = Column(Integer, ForeignKey('questions.id'))
+    question = relationship("Question")
     time = Column(DateTime)
     item_responses = relationship("ItemResponse",
                                   order_by="ItemResponse.id",
                                   backref="question")
     score = Column(Float)
     comments = Column(String)
+    sample = Column(Integer)
 
     def __str__(self):
         if len(self.item_responses) == 1:

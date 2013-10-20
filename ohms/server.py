@@ -10,7 +10,12 @@ from datetime import datetime, timedelta
 from base import session
 from objects import Homework, Question, Item, QuestionResponse, ItemResponse
 from objects import GradingTask, QuestionGrade, GradingPermission, User
-from queries import get_question_responses, get_question_grades, get_grading_permissions, get_user
+from queries import get_user, get_homework, get_question, \
+    get_question_response, get_question_responses, \
+    question_grade_query, get_question_grade, get_question_grades, \
+    get_grading_permissions, set_grading_permissions, \
+    get_grading_task, get_grading_tasks_for_grader, get_grading_tasks_for_response, \
+    get_sample_responses
 import options
 
 
@@ -59,13 +64,18 @@ class NewEncoder(json.JSONEncoder):
 
 @app.route("/")
 def index():
-    hws = session.query(Homework).all()
+    hws = get_homework()
     
-    # get list of whether user was assigned to peer grading or not
-    from treatment_assignments import treatments, group_assignments
-    if sunet in group_assignments:
-        group = group_assignments[sunet]
-        peer_grading = treatments[group]
+    # determine user's group
+    treatments = {
+        0: [1,1,1,0,0,1,1,0,0],
+        1: [1,0,0,1,1,0,0,1,1],
+        2: [1,1,1,0,0,0,0,1,1],
+        3: [1,0,0,1,1,1,1,0,0]
+        }
+
+    if user.group is not None:
+        peer_grading = treatments[user.group]
     elif user.type == "admin" or user.type == "grader":
         peer_grading = [1,1,1,1,1,1,1,1,1]
     else:
@@ -80,7 +90,7 @@ def index():
 @app.route("/hw", methods=['GET'])
 def hw():
     hw_id = request.args.get("id")
-    homework = session.query(Homework).filter_by(id=hw_id).one()
+    homework = get_homework(hw_id)
     return render_template("hw.html",
                            homework=homework,
                            user=user,
@@ -90,20 +100,20 @@ def hw():
 @app.route("/grade", methods=['GET'])
 def grade():
     hw_id = request.args.get("id")
-    permissions = session.query(GradingPermission).\
-        filter_by(sunet=sunet).join(Question).\
-        filter(Question.hw_id == hw_id).all()
+    homework = get_homework(hw_id)
+    permissions = []
+    for q in homework.questions:
+        try:
+            permissions.append(get_grading_permissions(q.id, sunet))
+        except:
+            pass
     questions = []
     for permission in permissions:
         question = permission.question
         if permission.permissions:
-            tasks = session.query(GradingTask).\
-                filter_by(grader=sunet).join(QuestionResponse).\
-                filter(QuestionResponse.question_id == question.id).all()
+            tasks = get_grading_tasks_for_grader(question.id, sunet)
         else:
-            qrs = session.query(QuestionResponse).\
-                filter_by(sunet="Sample Sam").\
-                filter_by(question_id=question.id).all()
+            qrs = get_sample_responses(question.id)
             tasks = [{"id": qr.id, "question_response": qr} for qr in qrs]
 
         questions.append({
@@ -124,18 +134,16 @@ def rate():
     question_response_id = request.args.get("id")
 
     # check that student is the one who submitted this QuestionResponse
-    question_response = session.query(QuestionResponse).get(question_response_id)
+
+    question_response = get_question_response(question_response_id)
     if question_response.sunet != sunet:
         raise Exception("You are not authorized to rate this response.")
 
     # fetch all peers that were assigned to grade this QuestionResponse
-    grading_tasks = session.query(GradingTask).\
-        filter_by(question_response_id=question_response_id).all()
+    grading_tasks = get_grading_tasks_for_response(question_response_id)
     question_grades = []
     for task in grading_tasks:
-        submissions = session.query(QuestionGrade).\
-            filter_by(grading_task_id=task.id).\
-            order_by(QuestionGrade.time).all()
+        submissions = question_grade_query(task.id).all()
         if submissions:
             question_grades.append(submissions[-1])
 
@@ -163,7 +171,7 @@ def load():
     # if loading a student response to a question
     if q_id[0] == "q":
         question_id = q_id[1:]
-        question = session.query(Question).get(question_id)
+        question = get_question(question_id)
         submissions = get_question_responses(question_id, sunet)
         out['submission'] = submissions[-1] if submissions else None
         out['locked'] = check_if_locked(question.hw.due_date, submissions)
@@ -173,8 +181,11 @@ def load():
     # if loading a student's peer grade for an actual student's response
     elif q_id[0] == "g":
         grading_task_id = q_id[1:]
-        question_id = session.query(GradingTask).get(grading_task_id).question_response.question_id
         question_grades = get_question_grades(grading_task_id, sunet)
+        if question_grades:
+            question_id = question_grades[0].grading_task.question_response.question_id
+        else:
+            question_id = get_grading_task(grading_task_id).question_response.question_id
         if question_grades:
             out['submission'] = {
                 "time": datetime.now(),
@@ -195,7 +206,7 @@ def load():
     # if loading a student rating to a peer grade
     elif q_id[0] == "r":
         question_grade_id = q_id[1:]
-        question_grade = session.query(QuestionGrade).get(question_grade_id)
+        question_grade = get_question_grade(question_grade_id)
         if question_grade.rating:
             out['submission'] = {
                 "item_responses": [ {"response": question_grade.rating} ]
@@ -221,8 +232,8 @@ def submit():
 
     # Question submission
     if submit_type == "q":
-        question = session.query(Question).filter_by(id=id).one()
         submissions = get_question_responses(id, sunet)
+        question = submissions[0].question if submissions else get_question(id)
 
         is_locked = check_if_locked(question.hw.due_date, submissions)
 
@@ -251,19 +262,13 @@ def submit():
     elif submit_type == "s":
         is_locked = False
 
-        sample_responses = session.query(QuestionResponse).\
-            filter_by(sunet="Sample Sam").\
-            filter_by(question_id=id).all()
+        sample_responses = get_sample_responses(id)
 
         assigned_scores = [float(resp) for resp in responses]
         true_scores = [float(resp.score) for resp in sample_responses]
 
         if assigned_scores == true_scores:
-            session.query(GradingPermission).\
-                filter_by(sunet=sunet).\
-                filter_by(question_id=id).\
-                update({"permissions": 1})
-            session.commit()
+            set_grading_permissions(id, sunet, 1)
             question_response.comments = "Congratulations! You are now "\
                 "qualified to grade this question. Please refresh the "\
                 "page to see the student responses."
@@ -277,7 +282,7 @@ def submit():
         is_locked = False
 
         # Make sure student was assigned this grading task
-        task = session.query(GradingTask).get(id)
+        task = get_grading_task(id)
         if task.grader != sunet:
             raise Exception("You are not authorized to grade this response.")
 
@@ -302,12 +307,12 @@ def submit():
 
         # Make sure student was assigned to rate this
         rating = request.form.getlist('responses')[0]
-        entry = session.query(QuestionGrade).filter_by(id=id)
-        if entry.one().grading_task.question_response.sunet == sunet:
-            entry.update({"rating": rating})
+        question_grade = get_question_grade(id)
+        if question_grade.grading_task.question_response.sunet == sunet:
+            question_grade.rating = rating
+            session.commit()
         else:
             raise Exception("You are not authorized to rate this grade.")
-        session.commit()
 
         question_response.comments = "Rating submitted successfully!"
         

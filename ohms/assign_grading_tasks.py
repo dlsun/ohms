@@ -7,7 +7,7 @@ import random
 
 from base import session
 from objects import User, GradingTask, GradingPermission
-from queries import get_recent_question_responses, get_long_answer_qs, get_user
+from queries import get_recent_question_responses, get_long_answer_qs
 from datetime import datetime
 
 
@@ -62,13 +62,22 @@ def make_grader_assignments(q_id):
     session.commit()
 
 
-def selective_peer_grading(hw_id, user_file):
-    with open(user_file) as f:
-        sunets = [line.strip() for line in f]
+def selective_peer_grading(hw_id, hw_number):
 
-    # Check validity of sunets, just in case
-    for sunet in sunets:
-        get_user(sunet)
+    treatments = {
+        0: [1,1,1,0,0,1,1,0,0],
+        1: [1,0,0,1,1,0,0,1,1],
+        2: [1,1,1,0,0,0,0,1,1],
+        3: [1,0,0,1,1,1,1,0,0]
+        }
+
+    groups = []
+    for i in range(4):
+        if treatments[i][hw_number-1]==1:
+            groups.append(i)
+
+    users = session.query(User).filter((User.group == groups[0]) | (User.group == groups[1])).all()
+    sunets = [user.sunet for user in users]
 
     # XXX: Make sure all homework questions you want graded are composed of a
     # single Item, with a "Long Answer" type
@@ -79,4 +88,4 @@ def selective_peer_grading(hw_id, user_file):
 
 
 if __name__ == "__main__":
-    selective_peer_grading(3, "assignments_week_2.dat")
+    selective_peer_grading(int(sys.argv[1]), int(sys.argv[2]))

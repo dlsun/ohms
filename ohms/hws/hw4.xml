@@ -1,4 +1,4 @@
-<hw name="Homework 4" due_date="10/19/2013 17:00:00">
+<hw name="Homework 4" due_date="11/19/2013 17:00:00">
 
   <question>
     <p><strong>For this problem, please enter an exact 
@@ -200,10 +200,6 @@ chance for a red marble to appear at least once?</p>
   </question>
 
   <question>
-    <p><strong>For this problem, please enter an exact 
-      expression for the answer. For example, 1-(1/3)^2 or 8/9 
-      would be acceptable, but not 0.88889. You do not need 
-      to simplify expressions.</strong></p> 
     <p>A multiple choice exam has 10
       questions. Each question has 4 possible answers, of which one 
       is correct. A student knows the answers to 3 of the questions 
