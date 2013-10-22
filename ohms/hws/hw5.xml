@@ -1,0 +1,338 @@
+<hw name="Homework 5" due_date="10/26/2013 17:00:00">
+
+  <question>
+    <p>There are 52 cards in a deck, and 13 of them are hearts. Consider the following two scenarios and calculate their probabilities. Explain briefly and show your work if applicable.</p>
+    <ul>
+      <li>Scenario A: Four cards are dealt, one at a time, off the top of a well-shuffled deck. What is the probability that a heart turns up on the fourth card, but not before?</li>
+      <li>Scenario B: A deck of cards is shuffled. You have to deal one card at a time until a heart turns up. You have dealt 3 cards, and still have not seen a heart. What is the probability of getting a heart on the 4th card?</li>
+    </ul>
+    <p>Are the two scenarios different? If so, why?</p>
+    <item type="Long Answer" points="6">
+      <solution>
+        <h4>Sample Correct Solution</h4>
+        <p>
+          Scenario A: The probability the first three cards are not hearts is $\frac{39}{52} \times \frac{38}{51} \times \frac{37}{50}$. Then, the probability the fourth card is a heart is $\frac{13}{49}$.
+          Overall, this gives us a probability of $\frac{39}{52} \times \frac{38}{51} \times \frac{37}{50} \times \frac{13}{49} = \frac{9139}{83300} \approx 0.1097 = 10.97\%$.
+        </p>
+        <p>
+          Scenario B: We've already seen the first three cards, and they are not hearts. This leaves us with 49 cards left, of which 13 are hearts. Thus, the probability is $\frac{13}{49} \approx 0.2653 = 26.53\%$.
+        </p>
+        <p>
+          The difference is that scenario A asks for the probability "cards 1-3 are not hearts and card 4 is a heart", while scenario B asks for the probability "card 4 is a heart given cards 1-3 are not hearts."
+          Scenario B is conditional on the first three cards, while scenario A is not (it's a joint probability).
+        </p>
+        <h4>Grading Rubric</h4>
+        <p>Please grade this question out of 6 points following these guidelines.</p>
+        <ul>
+          <li>2 points for correctly calculating scenario A's probability (with work). 
+          1 point if they made just one of these errors: arithmetic mistake (but fundamentally correct work), forgetting that these draws are not with replacement (but otherwise correct work), or no work at all (but with correct answer).</li>
+          <li>2 points for correctly calculating scenario B's probability (with work).
+            1 point if they made just one of these errors: arithmetic mistake (but fundamentally correct work), forgetting that these draws are not with replacement (but otherwise correct work), or no work at all (but with correct answer).
+            If the work is as short as the sample solution, that's fine. Invoking Bayes' rule correctly is also acceptable.</li>
+          <li>2 points for correcting pointing out the distinction between the conditional probability in scenario B and the joint probability in scenario A.
+          No points for simply pointing out that the two values are different without a correct explanation.</li>
+        </ul>
+      </solution>
+    </item>
+  </question>
+  
+
+
+  <question>
+    <p>A box contains 10,000 tickets: 4,000 $\boxed{0}$'s and 6,000 $\boxed{1}$'s.</p>
+
+    <ol type="a">
+      <li>
+        Suppose 10,000 draws will be made at random with replacement from this box. Which of the following options best describes the situation?
+        <item type="Multiple Choice" points="3">
+          <options>
+            <option>The number of 1's will be 6,000 exactly.</option>
+            <option>The number of 1's is very likely to equal 6,000, but there is also some small chance that it will not be equal to 6,000.</option>
+            <option correct="true">The number of 1's is likely to be different from 6,000, but the difference is likely to be small compared to 10,000.</option>
+          </options>
+        </item>
+      </li>
+
+      <li>
+        Now, suppose 10,000 draws will be made at random without replacement from this box. Which of the following options best describes the situation?
+        <item type="Multiple Choice" points="3">
+          <options>
+            <option correct="true">The number of 1's will be 6,000 exactly.</option>
+            <option>The number of 1's is very likely to equal 6,000, but there is also some small chance that it will not be equal to 6,000.</option>
+            <option>The number of 1's is likely to be different from 6,000, but the difference is likely to be small compared to 10,000.</option>
+          </options>
+        </item>
+      </li>
+    </ol>
+  </question>
+
+  
+  
+  
+  <question>
+    <p>A fair 6-sided die is rolled some number of times.</p>
+
+    <ol type="a">
+      <li>
+        Suppose you win a dollar if it shows a 6 more than 20% of the time. What's better, 60 rolls or 600 rolls?
+        <item type="Multiple Choice" points="1">
+          <option correct="true">60 rolls</option>
+          <option>600 rolls</option>
+          <option>They are equally good.</option>
+        </item>
+      </li>
+
+      <li>
+        Suppose you win a dollar if it shows a 6 more than 15% of the time. What's better, 60 rolls or 600 rolls?
+        <item type="Multiple Choice" points="1">
+          <option>60 rolls</option>
+          <option correct="true">600 rolls</option>
+          <option>They are equally good.</option>
+        </item>
+      </li>
+
+      <li>
+        Suppose you win a dollar if it shows a 6 between 15% and 20% of the time. What's better, 60 rolls or 600 rolls?
+        <item type="Multiple Choice" points="2">
+          <option>60 rolls</option>
+          <option correct="true">600 rolls</option>
+          <option>They are equally good.</option>
+        </item>
+      </li>
+
+      <li>
+        Suppose you win a dollar if it shows a 6 exactly $16 \frac{2}{3} \%$ of the time. What's better, 60 rolls or 600 rolls?
+        <item type="Multiple Choice" points="2">
+          <option correct="true">60 rolls</option>
+          <option>600 rolls</option>
+          <option>They are equally good.</option>
+        </item>
+      </li>
+
+    </ol>
+  </question>
+
+  
+   
+
+  <question>
+    <p>
+      A quiz has 10 multiple choice questions. Each question has 5 possible answers,
+      one of which is correct. A correct answer is worth 4 points, but a point
+      is taken off for each incorrect answer. A student answers all the questions by
+      guessing at random. The score will be like the sum of 
+      <item type="Short Answer" points="1">
+        <answer type="range">[10, 10]</answer>
+      </item>
+      draws from the box:
+
+      <item type="Multiple Choice" points="2">
+	<option>$\boxed{1}, \boxed{0}$</option>
+	<option>$\boxed{1}, \boxed{0}, \boxed{0}, \boxed{0}$</option>
+	<option>$\boxed{1}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}$</option>
+	<option>$\boxed{1}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}$</option>
+	<option>$\boxed{4},\boxed{-1}$</option>
+	<option>$\boxed{4},\boxed{-1},\boxed{-1},\boxed{-1}$</option>
+	<option correct="true">$\boxed{4},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1}$</option>
+	<option>$\boxed{4},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1}$</option>
+      </item>
+    </p>
+      
+    <p>
+      A gambler will play roulette 50 times, betting a dollar on four joining numbers each time. If one of these four numbers comes up, 
+      she gets the dollar back, together with winnings of $8. If any other number comes up, she loses the dollar. So this bet pays 8 to 1, 
+      and there are 4 chances in 38 of winning. Her net gain in 50 plays is like the sum of 
+      <item type="Short Answer" points="1">
+        <answer type="range">[50, 50]</answer>
+      </item>
+      draws from the box containing:
+
+      <item type="Multiple Choice" points="2">
+	<option correct="true">17 $\boxed{-1}$'s and 2 $\boxed{8}$'s</option>
+	<option>17 $\boxed{-1}$'s and 2 $\boxed{9}$'s</option>
+	<option>38 $\boxed{-1}$'s and 4 $\boxed{8}$'s</option>
+	<option>38 $\boxed{-1}$'s and 4 $\boxed{9}$'s</option>
+	<option>48 $\boxed{-1}$'s and 2 $\boxed{8}$'s</option>
+	<option>48 $\boxed{-1}$'s and 2 $\boxed{9}$'s</option>
+      </item>
+    </p>
+
+  </question>
+
+
+  <question>
+    <p><strong>A gambler plays roulette 100 times, betting a dollar on a column each time. The bet pays 2 to 1, and there are 12 chances in 38 to win. Fill in the blanks.</strong></p> 
+    <ol type="a">
+      <li>In 100 plays,the gambler's net gain will be around 
+	\$<item type="Short Answer" points="1">
+	  <answer type="range">[-5.3001,-5.1999]</answer>
+	  <answer type="exact">-5.26</answer>
+	  </item>, 
+	give or take 
+	\$<item type="Short Answer" points="1">
+	  <answer type="range">[13.899, 14]</answer> 
+	  <answer type="exact">13.94</answer>
+	</item> or so.
+      </li>
+
+      <li>In 100 plays,the gambler should win  
+	<item type="Short Answer" points="1">
+	  <answer type="range">[31.5, 32]</answer>
+	  <answer type="exact">31.57</answer>
+	</item> times, 
+	give or take 
+	<item type="Short Answer" points="1">
+	  <answer type="range">[4.6, 4.7]</answer> 
+	  <answer type="exact">4.65</answer>
+	</item> or so.
+      </li>
+
+      <li>The gambler also has the choice to play Keno and bet a dollar on a single number. There is a 1 in 4 chance of winning, and when you win, they give you the dollar back and two dollars more. In 100 plays, the gambler's net gain should be 
+	\$<item type="Short Answer" points="1">
+	  <answer type="range">[-25, -25]</answer>
+	  </item>, give or take 
+	\$<item type="Short Answer" points="1">
+	  <answer type="range">[12.98, 13]</answer> 
+	  <answer type="exact">13</answer>
+	  </item> or so, making this a 
+	<item type="Multiple Choice" points="0">
+          <option correct="true">less</option>
+          <option>more</option>
+        </item> favorable bet than the roulette bet.
+      </li>
+    </ol>
+  </question>
+  
+
+ <question>
+    <p><strong>Four hundred draws will be made at random with replacement from the box $\boxed{1} \boxed{3} \boxed{5} \boxed{7}$.</strong></p>
+
+    <ol type="a">
+      <li>Estimate the chance that the sum of the draws will be more than 1,500.
+        <item type="Short Answer" points="3">
+          <answer type="range">[98.6,99]</answer>
+	  <answer type="exact">98.78</answer>
+        </item>%
+      </li>
+
+      <li>
+       Estimate the chance that there will be fewer than 90 $\boxed{3}$'s.
+         <item type="Short Answer" points="3">
+          <answer type="range">[12.4, 12.52]</answer>
+	  <answer type="exact">12.50</answer>
+        </item>%
+      </li>
+    </ol>
+  </question>
+  
+
+ <question>
+    <p><strong>A fair coin is tossed 25 times. Calculate the chance of getting 17 heads and 8 tails.</strong></p>
+    <ol type="a">
+      <li>First, use the normal approximation to calculate the chance. (Round to two decimal places.)
+	<item type="Short Answer" points="2">
+	  <answer type="range">[3.20, 3.21]</answer>
+          <answer type="exact">3.21</answer>
+	</item>%
+      </li>
+      
+      <li>Use the binomial formula to calculate the exact chance. (Round to two decimal places.)
+	<item type="Short Answer" points="2">
+	  <answer type="range">[3.22, 3.224]</answer>
+          <answer type="exact">3.22</answer>
+	</item>%
+      </li>
+      
+      <li>By how much is the normal approximation off? (Again, round to two decimal places.)
+	<item type="Short Answer" points="1">
+	  <answer type="range">[.01, .024]</answer>
+          <answer type="exact">.01</answer>
+	</item>%
+      </li>
+
+      <li>Would you expect the normal approximation to be more or less accurate if the coin instead 
+had probability 0.8 of coming up heads?
+	<item type="Multiple Choice" points="1">
+          <option>more accurate</option>
+          <option correct="true">less accurate</option>
+          <option>equally as accurate</option>
+	</item>
+      </li>
+    
+    </ol>
+
+ </question>
+ 
+
+
+  <question>
+    <p>
+      A programmer is working on a new program to simulate tossing a
+      coin. As a preliminary test, he sets up the program to do one million tosses.
+      The program returns with a count of 502,015 heads. The programmer looks
+      at this and thinks:
+    </p>
+    
+    <blockquote>
+      "Hmmm. Two thousand and fifteen off. That's a lot. No, wait. Compare it to
+      the million. Two thousand -- forget the fifteen -- out of a million is two out
+      of a thousand. That's one in five hundred. One fifth of a percent. Very small.
+      The program works!"
+    </blockquote>
+
+    <p>
+      Do you agree with the programmer's analysis? Explain.
+    </p>
+    
+    <item type="Long Answer" points="6">
+      <solution>
+        <h4>Sample Correct Solution</h4>
+
+        <p>The programmer is correct that he should compare the error to a million instead of looking at it in absolute terms.</p>
+        <p>However, while one fifth of a percent is small, it also needs to be taken in context. The deviation in percentage terms is expected to decrease
+        as the number of flips increases. The standard deviation of the proportion of heads is $\frac{0.5}{\sqrt{n}}$, where $n$ is the number of tosses.</p>
+        <p>At $n = 1,000,000$, this is $0.0005 = 0.05\%$. The programmer's error was about $0.2\%$, which is an unlikely event if COIN were really fair.</p>
+
+
+      <h4>Grading Rubric</h4>
+        <p>Please grade this question out of 6 points following these guidelines.</p>
+        <ul>
+          <li>2 points for saying that COIN is not fair, or express disagreement with the programmer.</li>
+          <li>2 points for calculating that the number of heads for a fair coin should be around 500,000 give or take 500 or so.</li>
+          <li>2 points for stating that the SE for COIN is too high, or gives the exact answer that the SE for COIN is 4 times the SE of a fair coin.</li>
+        </ul>
+      </solution>
+    </item>
+  </question>
+
+
+  <question>
+    <p>
+      A box contains ten tickets, four marked with a positive number and six with a negative number. All the numbers are between $-10$ and $10$. One thousand draws will be made at random with replacement from the box. For each of the following quantities, say (a) whether it is possible to approximate it based on the information already given, and (b) if not, whether it is possible to approximate it if you were also told the average and SD of the numbers in the box but not the numbers themselves.
+    </p>
+    
+    <ol>
+      <li>the chance the sum is positive</li>
+      <li>the chance of getting 100 or more $\boxed{3}$'s</li>
+      <li>the chance of getting 425 or more positive numbers</li>
+    </ol>
+
+    <p>Explain, but please do not include any calculations.</p>
+    
+    <item type="Long Answer" points="6">
+      <solution>
+        <h4>Sample Correct Solution</h4>
+
+	<ol>
+	  <li>(a) Can't be done with the information given, but (b) can be done using the normal approximation if the average and SD were known. This is like 1000 draws from a box, and we want to know the chance the sum > 0.</li>
+	  <li>(a) Can't be done with the information given, and (b) can't be done even if the average and SD were known. We need to know how many 3's are in the box.</li>
+	  <li>(a) Can be done! We know there are four positive and six negative numbers. So consider a box with 4 tickets marked $\boxed{1}$ and 6 marked $\boxed{0}$. We want to know the chance the sum of 1000 draws is $\geq 425$. (The average and SD are irrelevant.)</li>
+	</ol>
+
+	<h4>Grading Rubric</h4>
+        <p>Please grade this question out of 6 points. Award 2 points for each of the three answers with appropriate explanation.</p>
+      </solution>
+    </item>
+  </question>
+
+</hw>

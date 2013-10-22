@@ -38,7 +38,8 @@ class Homework(Base):
                                               "%m/%d/%Y %H:%M:%S")
         else:
             self.due_date = None
-        for q in root.iter('question'):
+        for i, q in enumerate(root.iter('question')):
+            print 'Processing Question %d' % (i+1)
             q_object = Question.from_xml(q)
             q_object.hw = self
             session.add(q_object)
@@ -64,7 +65,7 @@ class Question(Base):
         # iterate over items
         i = 0
         for parent in node.getiterator():
-            for child in parent:
+            for j, child in enumerate(parent):
                 if child.tag == 'item':
                     # get item object and its order
                     item_object = Item.from_xml(child)
@@ -77,8 +78,8 @@ class Question(Base):
                     new_child = item_object.to_html()
                     new_child.tail = child.tail
                     parent.remove(child)
-                    parent.append(new_child)
-            
+                    parent.insert(j, new_child)
+                
         # include raw html
         question.html = ET.tostring(node, method="html")
         session.add(question)
@@ -297,7 +298,7 @@ class ShortAnswer(Base):
                 num_response = float(response)
             except ValueError:
                 return False
-            return self.lb <= num_response <= self.ub
+            return self.lb - 1e-10 <= num_response <= self.ub + 1e-10
         elif self.type == "exact":
             str_response = response.strip().lower()
             # TODO: make this an edit distance comparison
