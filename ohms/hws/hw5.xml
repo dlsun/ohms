@@ -1,12 +1,12 @@
 <hw name="Homework 5" due_date="10/26/2013 17:00:00">
 
   <question>
-    <p>There are 52 cards in a deck, and 13 of them are hearts. Consider the following two scenarios and calculate their probabilities. Explain briefly and show your work if applicable.</p>
+    <p>There are 52 cards in a deck, and 13 of them are hearts. Consider the following two scenarios:</p>
     <ul>
       <li>Scenario A: Four cards are dealt, one at a time, off the top of a well-shuffled deck. What is the probability that a heart turns up on the fourth card, but not before?</li>
       <li>Scenario B: A deck of cards is shuffled. You have to deal one card at a time until a heart turns up. You have dealt 3 cards, and still have not seen a heart. What is the probability of getting a heart on the 4th card?</li>
     </ul>
-    <p>Are the two scenarios different? If so, why?</p>
+    <p>Calculate the probabilities of the two scenarios and show your work. Are the two scenarios different? Explain.</p>
     <item type="Long Answer" points="6">
       <solution>
         <h4>Sample Correct Solution</h4>
@@ -116,68 +116,71 @@
    
 
   <question>
-    <p>
-      A quiz has 10 multiple choice questions. Each question has 5 possible answers,
-      one of which is correct. A correct answer is worth 4 points, but a point
-      is taken off for each incorrect answer. A student answers all the questions by
-      guessing at random. The score will be like the sum of 
-      <item type="Short Answer" points="1">
-        <answer type="range">[10, 10]</answer>
-      </item>
-      draws from the box:
-
-      <item type="Multiple Choice" points="2">
-	<option>$\boxed{1}, \boxed{0}$</option>
-	<option>$\boxed{1}, \boxed{0}, \boxed{0}, \boxed{0}$</option>
-	<option>$\boxed{1}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}$</option>
-	<option>$\boxed{1}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}$</option>
-	<option>$\boxed{4},\boxed{-1}$</option>
-	<option>$\boxed{4},\boxed{-1},\boxed{-1},\boxed{-1}$</option>
-	<option correct="true">$\boxed{4},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1}$</option>
-	<option>$\boxed{4},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1}$</option>
-      </item>
-    </p>
+    <ol type="a">
+      <li>
+	A quiz has 10 multiple choice questions. Each question has 5 possible answers,
+	one of which is correct. A correct answer is worth 4 points, but a point
+	is taken off for each incorrect answer. A student answers all the questions by
+	  guessing at random. The score will be like the sum of 
+	<item type="Short Answer" points="1">
+          <answer type="range">[10, 10]</answer>
+	</item>
+	draws from the box:
+	
+	<item type="Multiple Choice" points="2">
+	  <option>$\boxed{1}, \boxed{0}$</option>
+	  <option>$\boxed{1}, \boxed{0}, \boxed{0}, \boxed{0}$</option>
+	  <option>$\boxed{1}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}$</option>
+	  <option>$\boxed{1}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}, \boxed{0}$</option>
+	  <option>$\boxed{4},\boxed{-1}$</option>
+	  <option>$\boxed{4},\boxed{-1},\boxed{-1},\boxed{-1}$</option>
+	  <option correct="true">$\boxed{4},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1}$</option>
+	  <option>$\boxed{4},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1},\boxed{-1}$</option>
+	</item>
+      </li>
       
-    <p>
-      A gambler will play roulette 50 times, betting a dollar on four joining numbers each time. If one of these four numbers comes up, 
-      she gets the dollar back, together with winnings of $8. If any other number comes up, she loses the dollar. So this bet pays 8 to 1, 
-      and there are 4 chances in 38 of winning. Her net gain in 50 plays is like the sum of 
-      <item type="Short Answer" points="1">
-        <answer type="range">[50, 50]</answer>
-      </item>
-      draws from the box containing:
-
-      <item type="Multiple Choice" points="2">
-	<option correct="true">17 $\boxed{-1}$'s and 2 $\boxed{8}$'s</option>
-	<option>17 $\boxed{-1}$'s and 2 $\boxed{9}$'s</option>
-	<option>38 $\boxed{-1}$'s and 4 $\boxed{8}$'s</option>
-	<option>38 $\boxed{-1}$'s and 4 $\boxed{9}$'s</option>
-	<option>48 $\boxed{-1}$'s and 2 $\boxed{8}$'s</option>
-	<option>48 $\boxed{-1}$'s and 2 $\boxed{9}$'s</option>
-      </item>
-    </p>
+      <li>
+	A gambler will play roulette 50 times, betting a dollar on four joining numbers each time. If one of these four numbers comes up, 
+	she gets the dollar back, together with winnings of $8. If any other number comes up, she loses the dollar. So this bet pays 8 to 1, 
+	and there are 4 chances in 38 of winning. Her net gain in 50 plays is like the sum of 
+	<item type="Short Answer" points="1">
+          <answer type="range">[50, 50]</answer>
+	</item>
+	draws from the box containing:
+	
+	<item type="Multiple Choice" points="2">
+	  <option correct="true">17 $\boxed{-1}$'s and 2 $\boxed{8}$'s</option>
+	  <option>17 $\boxed{-1}$'s and 2 $\boxed{9}$'s</option>
+	  <option>38 $\boxed{-1}$'s and 4 $\boxed{8}$'s</option>
+	  <option>38 $\boxed{-1}$'s and 4 $\boxed{9}$'s</option>
+	  <option>48 $\boxed{-1}$'s and 2 $\boxed{8}$'s</option>
+	  <option>48 $\boxed{-1}$'s and 2 $\boxed{9}$'s</option>
+	</item>
+      </li>
+    </ol>
 
   </question>
 
 
   <question>
-    <p><strong>A gambler plays roulette 100 times, betting a dollar on a column each time. The bet pays 2 to 1, and there are 12 chances in 38 to win. Fill in the blanks.</strong></p> 
+    <p>A gambler plays roulette 100 times, betting a dollar on a column each time. The bet pays 2 to 1, and there are 12 chances in 38 to win. Fill in the blanks.</p>
+    <p><strong>Note: the EV and SE don't have to be whole numbers, so don't round to the nearest whole number!</strong></p>
     <ol type="a">
       <li>In 100 plays,the gambler's net gain will be around 
 	\$<item type="Short Answer" points="1">
-	  <answer type="range">[-5.3001,-5.1999]</answer>
+	  <answer type="range">[-5.3,-5.2]</answer>
 	  <answer type="exact">-5.26</answer>
 	  </item>, 
 	give or take 
 	\$<item type="Short Answer" points="1">
-	  <answer type="range">[13.899, 14]</answer> 
+	  <answer type="range">[13.9, 14]</answer> 
 	  <answer type="exact">13.94</answer>
 	</item> or so.
       </li>
 
       <li>In 100 plays,the gambler should win  
 	<item type="Short Answer" points="1">
-	  <answer type="range">[31.5, 32]</answer>
+	  <answer type="range">[31.5, 31.6]</answer>
 	  <answer type="exact">31.57</answer>
 	</item> times, 
 	give or take 
@@ -202,11 +205,51 @@
       </li>
     </ol>
   </question>
+
+
+  <question>
+    <p>
+      A programmer is working on a new program to simulate tossing a
+      coin. As a preliminary test, he sets up the program to do one million tosses.
+      The program returns with a count of 502,015 heads. The programmer looks
+      at this and thinks:
+    </p>
+    
+    <blockquote>
+      "Hmmm. It's off by 2,015. That's a lot. No, wait. Compared to 1 million, 
+      it's only about 2,015/1,000,000, which is about .002 or 0.2%. That's very small, 
+      so the program seems to be fine!"
+    </blockquote>
+
+    <p>
+      Do you agree with the programmer's analysis? Explain.
+    </p>
+    
+    <item type="Long Answer" points="6">
+      <solution>
+        <h4>Sample Correct Solution</h4>
+
+        <p>The programmer is correct that he should compare the error to a million instead of looking at it in absolute terms.</p>
+        <p>However, while one fifth of a percent is small, it also needs to be taken in context. The deviation in percentage terms is expected to decrease
+        as the number of flips increases. The standard deviation of the proportion of heads is $\frac{0.5}{\sqrt{n}}$, where $n$ is the number of tosses.</p>
+        <p>At $n = 1,000,000$, this is $0.0005 = 0.05\%$. The programmer's error was about $0.2\%$, which is an unlikely event if the program were really fair.</p>
+
+
+      <h4>Grading Rubric</h4>
+        <p>Please grade this question out of 6 points following these guidelines.</p>
+        <ul>
+          <li>2 points for saying that the program is not fair, or express disagreement with the programmer.</li>
+          <li>2 points for calculating that the number of heads for a fair coin should be around $500,000 \pm 500$, or that the percentage of heads is $50% \pm 0.05%$.</li>
+          <li>2 points for realizing that the observed number of heads is about 4 SE's above average.</li>
+        </ul>
+      </solution>
+    </item>
+  </question>
   
 
- <question>
+  <question>
     <p><strong>Four hundred draws will be made at random with replacement from the box $\boxed{1} \boxed{3} \boxed{5} \boxed{7}$.</strong></p>
-
+    
     <ol type="a">
       <li>Estimate the chance that the sum of the draws will be more than 1,500.
         <item type="Short Answer" points="3">
@@ -214,19 +257,19 @@
 	  <answer type="exact">98.78</answer>
         </item>%
       </li>
-
+      
       <li>
-       Estimate the chance that there will be fewer than 90 $\boxed{3}$'s.
-         <item type="Short Answer" points="3">
-          <answer type="range">[12.4, 12.52]</answer>
-	  <answer type="exact">12.50</answer>
+	Estimate the chance that there will be fewer than 90 $\boxed{3}$'s.
+        <item type="Short Answer" points="3">
+          <answer type="range">[11.1, 12.52]</answer>
+	  <answer type="exact">11.3</answer>
         </item>%
       </li>
     </ol>
   </question>
   
-
- <question>
+  
+  <question>
     <p><strong>A fair coin is tossed 25 times. Calculate the chance of getting 17 heads and 8 tails.</strong></p>
     <ol type="a">
       <li>First, use the normal approximation to calculate the chance. (Round to two decimal places.)
@@ -264,75 +307,33 @@ had probability 0.8 of coming up heads?
  </question>
  
 
-
-  <question>
-    <p>
-      A programmer is working on a new program to simulate tossing a
-      coin. As a preliminary test, he sets up the program to do one million tosses.
-      The program returns with a count of 502,015 heads. The programmer looks
-      at this and thinks:
-    </p>
-    
-    <blockquote>
-      "Hmmm. Two thousand and fifteen off. That's a lot. No, wait. Compare it to
-      the million. Two thousand -- forget the fifteen -- out of a million is two out
-      of a thousand. That's one in five hundred. One fifth of a percent. Very small.
-      The program works!"
-    </blockquote>
-
-    <p>
-      Do you agree with the programmer's analysis? Explain.
-    </p>
-    
-    <item type="Long Answer" points="6">
-      <solution>
-        <h4>Sample Correct Solution</h4>
-
-        <p>The programmer is correct that he should compare the error to a million instead of looking at it in absolute terms.</p>
-        <p>However, while one fifth of a percent is small, it also needs to be taken in context. The deviation in percentage terms is expected to decrease
-        as the number of flips increases. The standard deviation of the proportion of heads is $\frac{0.5}{\sqrt{n}}$, where $n$ is the number of tosses.</p>
-        <p>At $n = 1,000,000$, this is $0.0005 = 0.05\%$. The programmer's error was about $0.2\%$, which is an unlikely event if COIN were really fair.</p>
-
-
-      <h4>Grading Rubric</h4>
-        <p>Please grade this question out of 6 points following these guidelines.</p>
-        <ul>
-          <li>2 points for saying that COIN is not fair, or express disagreement with the programmer.</li>
-          <li>2 points for calculating that the number of heads for a fair coin should be around 500,000 give or take 500 or so.</li>
-          <li>2 points for stating that the SE for COIN is too high, or gives the exact answer that the SE for COIN is 4 times the SE of a fair coin.</li>
-        </ul>
-      </solution>
-    </item>
-  </question>
-
-
-  <question>
-    <p>
-      A box contains ten tickets, four marked with a positive number and six with a negative number. All the numbers are between $-10$ and $10$. One thousand draws will be made at random with replacement from the box. For each of the following quantities, say (a) whether it is possible to approximate it based on the information already given, and (b) if not, whether it is possible to approximate it if you were also told the average and SD of the numbers in the box but not the numbers themselves.
-    </p>
-    
-    <ol>
-      <li>the chance the sum is positive</li>
-      <li>the chance of getting 100 or more $\boxed{3}$'s</li>
-      <li>the chance of getting 425 or more positive numbers</li>
-    </ol>
-
-    <p>Explain, but please do not include any calculations.</p>
-    
-    <item type="Long Answer" points="6">
-      <solution>
-        <h4>Sample Correct Solution</h4>
-
-	<ol>
-	  <li>(a) Can't be done with the information given, but (b) can be done using the normal approximation if the average and SD were known. This is like 1000 draws from a box, and we want to know the chance the sum > 0.</li>
-	  <li>(a) Can't be done with the information given, and (b) can't be done even if the average and SD were known. We need to know how many 3's are in the box.</li>
-	  <li>(a) Can be done! We know there are four positive and six negative numbers. So consider a box with 4 tickets marked $\boxed{1}$ and 6 marked $\boxed{0}$. We want to know the chance the sum of 1000 draws is $\geq 425$. (The average and SD are irrelevant.)</li>
-	</ol>
-
-	<h4>Grading Rubric</h4>
-        <p>Please grade this question out of 6 points. Award 2 points for each of the three answers with appropriate explanation.</p>
-      </solution>
-    </item>
-  </question>
-
+ <question>
+   <p>
+     A box contains ten tickets, four marked with a positive number and six with a negative number. All the numbers are between $-10$ and $10$. One thousand draws will be made at random with replacement from the box. For each of the following quantities, say (a) whether it is possible to approximate it based on the information already given, and (b) if not, whether it is possible to approximate it if you were also told the average and SD of the numbers in the box but not the numbers themselves.
+   </p>
+   
+   <ol>
+     <li>the chance the sum is positive</li>
+     <li>the chance of getting 100 or more $\boxed{3}$'s</li>
+     <li>the chance of getting 425 or more positive numbers</li>
+   </ol>
+   
+   <p>Explain, but please do not include any calculations.</p>
+   
+   <item type="Long Answer" points="6">
+     <solution>
+       <h4>Sample Correct Solution</h4>
+       
+       <ol>
+	 <li>(a) Can't be done with the information given, but (b) can be done using the normal approximation if the average and SD were known. This is like 1000 draws from a box, and we want to know the chance the sum > 0.</li>
+	 <li>(a) Can't be done with the information given, and (b) can't be done even if the average and SD were known. We need to know how many 3's are in the box.</li>
+	 <li>(a) Can be done! We know there are four positive and six negative numbers. So consider a box with 4 tickets marked $\boxed{1}$ and 6 marked $\boxed{0}$. We want to know the chance the sum of 1000 draws is $\geq 425$. (The average and SD are irrelevant.)</li>
+       </ol>
+       
+       <h4>Grading Rubric</h4>
+       <p>Please grade this question out of 6 points. Award 2 points for each of the three answers with appropriate explanation.</p>
+     </solution>
+   </item>
+ </question>
+ 
 </hw>
