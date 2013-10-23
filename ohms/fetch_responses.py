@@ -36,8 +36,10 @@ if __name__ == '__main__':
         id = raw_input('Enter ID of response you would like to make a sample response: ')
         response = session.query(QuestionResponse).get(id)
         response.sample = 1
-        score = raw_input('Now enter its score: ')
+        score = raw_input('Enter a score: ')
         response.score = score
+        comments = raw_input('Enter some comments: ')
+        response.comments = comments
         session.commit()
         print 'Update successful!'
 
