@@ -19,10 +19,9 @@ No responses to peer grade at the moment. Please check back again later.
 
 <h3>Peer Grading Item #{{loop.index}}</h3>
 
-<p>Shown in the box below is the question to be graded, along with your 
-response and the correct solution.</p>
+<p><strong>Shown below is the question to be graded, along with your 
+response and the correct solution.</strong></p>
 
-<div class='alert'>
 <div class='question' id='q{{q.question.id}}' points='{{q.question.points}}'>
 
   <table class='frame'>
@@ -31,7 +30,6 @@ response and the correct solution.</p>
     </td></tr>
   </table>
 
-</div>
 </div>
 
   {% if q.permission == 0 %}
@@ -68,18 +66,18 @@ response and the correct solution.</p>
 	{% endif %}
 	
         <table class='table table-condensed'>
-	  <tr class='danger'>
+	  <tr>
 	    <td class='span2'><strong>Response {{loop.index}}</strong></td>
 	    <td class='span5' style="white-space: pre-wrap;">{{task.question_response}}</td>
 	  </tr>
-	  <tr class='warning'>
+	  <tr class='info'>
 	    <td><strong>Score</strong></td>
 	    <td>
 	      <input type='text' class='item input-mini' itemtype='short-answer' disabled='disabled'/> 
 	      out of {{q.question.points}} points
 	    </td>
 	  </tr>
-	  <tr class='success'>
+	  <tr class='info'>
 	    <td><strong>Comments</strong></td>
 	    <td>
 	      {% if q.permission == 1 %}
@@ -110,6 +108,11 @@ response and the correct solution.</p>
     <tr>
       <td>
 	<button class='submit' disabled>Submit Grades</button>
+      </td>
+    </tr>
+    <tr>
+      <td class='alert'>
+	<strong>Feedback:</strong>
 	<p class='comments'></p>
       </td>
     </tr>

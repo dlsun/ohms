@@ -255,13 +255,12 @@ qualified to grade this question. Please refresh the
 page to see the student responses.</p>'''
         else:
             summary_comment = '''
-<p>Sorry, but there is still a 
-discrepancy between your grades and the grades for this 
-sample response. Please try again.</p>'''
+<p>Sorry, but there's a discrepancy between your score and the 
+instructor scores for these sample responses. Please try again.</p>'''
 
         summary_comment += '''
 <p>Instructor comments for each response should now appear 
-above. They may help you determine why each response earned 
+above. They are intended to help you determine why each response earned 
 the score it did.</p>'''
 
         question_response.comments = [r.comments for r in sample_responses]
