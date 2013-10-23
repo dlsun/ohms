@@ -150,7 +150,15 @@ var OHMS = (function(OHMS) {
 	    }
 
 	    // update comments
-	    this.element.find(".comments").html(data.submission.comments);
+	    var comment_elements = this.element.find(".comments");
+	    var comments = data.submission.comments;
+	    if (comments instanceof Array) {
+		for (var i=0; i<comments.length; i++) {
+		    comment_elements.eq(i).html(comments[i]);
+		}
+	    } else {
+		comment_elements.html(comments);
+	    }
 
 	    // update time
 	    this.element.find(".time").html("Last submission at " +

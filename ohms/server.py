@@ -5,11 +5,11 @@ OHMS: Online Homework Management System
 import os
 from flask import Flask, request, render_template, make_response
 import json
+from utils import NewEncoder
 from datetime import datetime, timedelta
 
 from base import session
-from objects import Homework, Question, Item, QuestionResponse, ItemResponse
-from objects import GradingTask, QuestionGrade, GradingPermission, User
+from objects import QuestionResponse, ItemResponse, QuestionGrade, User
 from queries import get_user, get_homework, get_question, \
     get_question_response, get_question_responses, \
     question_grade_query, get_question_grade, get_question_grades, \
@@ -40,26 +40,6 @@ else:
                     type="student")
         session.add(user)
         session.commit()
-
-
-# special JSON encoder to handle dates and Response objects
-class NewEncoder(json.JSONEncoder):
-
-    def default(self, obj):
-        if isinstance(obj, datetime):
-            return datetime.strftime(obj, "%m/%d/%Y %H:%M:%S")
-        elif isinstance(obj, QuestionResponse):
-            d = {}
-            for column in obj.__table__.columns:
-                d[column.name] = getattr(obj, column.name)
-            d['item_responses'] = obj.item_responses
-            return d
-        elif isinstance(obj, ItemResponse):
-            d = {}
-            for column in obj.__table__.columns:
-                d[column.name] = getattr(obj, column.name)
-            return d
-        return json.JSONEncoder.default(self, obj)
 
 
 @app.route("/")
@@ -269,13 +249,24 @@ def submit():
 
         if assigned_scores == true_scores:
             set_grading_permissions(id, sunet, 1)
-            question_response.comments = "Congratulations! You are now "\
-                "qualified to grade this question. Please refresh the "\
-                "page to see the student responses."
+            summary_comment = '''
+<p>Congratulations! You are now
+qualified to grade this question. Please refresh the 
+page to see the student responses.</p>'''
         else:
-            question_response.comments = "Sorry, but there is still a "\
-                "discrepancy between your grades and the grades for this "\
-                "sample response. Please try again."
+            summary_comment = '''
+<p>Sorry, but there is still a 
+discrepancy between your grades and the grades for this 
+sample response. Please try again.</p>'''
+
+        summary_comment += '''
+<p>Instructor comments for each response should now appear 
+above. They may help you determine why each response earned 
+the score it did.</p>'''
+
+        question_response.comments = [r.comments for r in sample_responses]
+        question_response.comments.append(summary_comment)
+
 
     # Grading student questions
     elif submit_type == "g":

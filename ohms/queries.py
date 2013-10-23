@@ -30,7 +30,7 @@ def get_question_responses(question_id, sunet):
         filter_by(sunet=sunet).\
         filter_by(question_id=question_id).\
         order_by(QuestionResponse.time).all()
-
+        
 
 def get_recent_question_responses(q_id):
     """Returns each student's most recent response to a question"""
@@ -74,7 +74,8 @@ def get_grading_tasks_for_response(question_response_id):
 
 def get_sample_responses(question_id):
     return session.query(QuestionResponse).filter_by(sample=1).\
-        filter_by(question_id=question_id).all()
+        filter_by(question_id=question_id).\
+        order_by(QuestionResponse.id).all()
 
 
 def question_grade_query(grading_task_id):
