@@ -1,0 +1,85 @@
+<hw name="Homework 6" due_date="11/2/2013 17:00:00">
+
+  <question>
+    <p>(This is from Review Exercises 9 and 10 of Chapter 18).</p>
+    <p>
+    One hundred draws are made at random with replacement from a box with
+    ninety-nine tickets marked &quot;0&quot; and one ticket marked &quot;1&quot;. True or false, and explain:
+    </p>
+    <ol type="a">
+      <li>The sum will be around 1, give or take 1 or so.</li>
+      <li>There is about a 68% chance that the sum will be in the range 0 to 2.</li>
+    </ol>
+    <p>
+     Now, suppose that instead of drawing 100 draws from this box with replacement, you draw a ten thousand times with replacement. True or false, and explain:
+    </p>
+     <ol type="a">
+       <li>The sum will be around 100, give or take 10 or so.</li>
+       <li>There is about a 68% chance that the sum will be in the range 90 to 110.</li>
+     </ol>
+     <item type="Long Answer" points="6">
+       <solution>
+         <h4>Sample Correct Solution</h4>
+         <p>If you draw n times from the box, then the SD of the sum is sqrt((1/100)*(99/100)*n). So when you draw 100 times, the SD is 0.99, and when you draw 10000 times, the SD is 9.9. And of course, the expected value of the sum is n * 1/100, so you expect the sum to be 1 and 100 when you draw 100 and 10000 times, respectively.
+         </p>
+         <p>Thus, (a) is correct for both 100 and 10000 draws, since the quoted ranges are the expected values of the draws plus or minus the SDs.</p>
+         <p>(b) is based on the idea of using a normal approximation. When you draw 10000 times, this normal approximation is reasonable, since the expected number of draws is so large. But when you draw only 100 times, the expected number of draws is too small to use the normal approximation. So for 100 draws, (b) is false, but for 10000 draws, (b) is true.</p>
+         <h4>Grading Rubric</h4>
+         <p>Please grade this question out of six points. Award one point each for getting each of the four parts correct, and award the remaining two points for correct explainations<p>
+       </solution>
+     </item>
+ </question>
+
+ <question>
+   <p>(This is from Review Exercise 12 of Chapter 20).</p>
+   <p>
+     There are 50,000 households in a certain city. The average number of persons
+     age 16 and over living in each household is known to be 2.38; the SD is 1.87. A
+     survey organization plans to take a simple random sample of 400 households,
+     and interview all persons age 16 and over living in the sample households.
+   </p>
+   <p>The total number of interviews will be around
+     <item type="Short Answer" points="3">
+       <answer type="range">[952,952]</answer>
+       <answer type="exact">952</answer>
+     </item>
+     give or take
+     <item type="Short Answer" points="3">
+       <answer type="range">[37,37.5]</answer>
+       <answer type="exact">37.4</answer>
+     </item>
+     or so.
+   </p>
+ </question>
+
+ <question>
+   <p>(This is from Review Exercise 8 of Chapter 21).</p>
+   <p>
+     A simple random sample of 3,500 people age 18 or over is taken in a large
+     town to estimate the percentage of people (age 18 and over in that town) who
+     read newspapers. It turns out that 2,487 people in the sample are newspaper
+     readers. The population percentage is estimated as 2,487/3,500 * 100%, which is about 71%.
+   </p>
+   <ol type="a">
+     <li>Calculate the SE of the estimate, (in percentage points):
+       <item type="Short Answer" points="2">
+         <answer type="range">[0.76,0.77]</answer>
+         <answer type="exact">0.767</answer>
+       </item>%
+     </li>
+     <li>71% plus or minus 1.5% is a confidence interval for the percentage of people (aged 18 or over)
+       <item type="Multiple Choice" points="2">
+         <option correct="true">in the town who read newspapers</option>
+         <option correct="false">in the sample who read newspapers</option>
+       </item>
+     </li>
+     <li>Not satisfied with the confidence level, the pollsters decide to conduct another poll of the town. They want to be able to estimate the percentage to within +/- 1% with 95% confidence. They would need a simple random sample of at least
+       <item type="Short Answer" points="2">
+         <answer type="range">[2057,2059]</answer>
+         <answer type="exact">2057</answer>
+       </item> people to achieve this.
+     </li>
+   </ol>
+ </question>
+
+</hw>
