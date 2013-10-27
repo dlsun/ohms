@@ -225,11 +225,11 @@ class ShortAnswerItem(Item):
         attrib = {"type": "text",
                   "itemtype": "short-answer",
                   "disabled": "disabled"}
-        types = [answer.type for answer in self.answers]
-        if "range" in types:
-            attrib['class'] = "item input-mini"
-        else:
-            attrib['class'] = "item input-medium"
+        size = "medium"
+        for answer in self.answers:
+            if answer.type == "range" or answer.exact.isdigit():
+                size = "mini"
+        attrib['class'] = "item input-%s" % size
         return ET.Element("input", attrib=attrib)
 
     def check(self, response):
