@@ -82,4 +82,228 @@
    </ol>
  </question>
 
+  <question>
+
+    <p>(Chapter 20, Review Exercise 3) A group of 50,000 tax forms has an average gross income of $37,000, with a SD of $20,000. Furthermore, 20% of the forms have a gross income over $50,000. A group of 900 forms is chosen at random for audit. To estimate the chance that between 19% and 21% of the forms chosen for audit have gross incomes over $50,000, a box model is needed.</p>
+
+    <ol type="a">
+
+      <li>Should the number of tickets in the box be 900 or 50,000?
+	<item type="Multiple Choice" points="1">
+	  <options>
+	    <option>900</option>
+	    <option correct="true">50,000</option>
+	  </options>
+	</item>
+      </li>
+	
+	 <li>Each ticket in the box shows
+	<item type="Multiple Choice" points="1">
+	  <options>
+	    <option correct="true">a zero or a one</option>
+	    <option>a gross income</option>
+	  </options>
+	</item>
+      </li>
+
+      <li>True or false: the SD of the box is $20,000.
+	<item type="Multiple Choice" points="1">
+	  <options>
+	    <option>True</option>
+	    <option correct="true">False</option>
+	  </options>
+	</item>
+      </li>
+
+      <li>True or false: the number of draws is 900.
+	<item type="Multiple Choice" points="1">
+	  <options>
+	    <option correct="true">True</option>
+	    <option>False</option>
+	  </options>
+	</item>
+      </li>
+
+	 <li>Find the chance (approximately) that between 19% and 21% of the forms chosen for audit have gross incomes over $50,000.
+	<item type="Short Answer" points="1">
+	  <answer type="range">[54,55]</answer>
+	  <answer type="exact">54.67</answer>
+	</item>%
+      </li>
+
+      <li>With the information given, can you find the chance (approximately) that between 9% and 11% of the forms chosen for audit have gross incomes over $75,000?
+	<item type="Multiple Choice" points="1">
+	  <options>
+	    <option>Yes</option>
+	    <option correct="true">No</option>
+	  </options>
+	</item>
+      </li>
+    </ol>
+  </question>
+
+  <question>
+
+    <p>(Chapter 20, Review Exercise 7) Five hundred draws are made at random from a box of 60,000 zeros and 20,000 ones. True or False:</p>
+
+    <ol type="a">
+
+      <li>The expected value for the percentage of ones among the draws is exactly 25%.
+	<item type="Multiple Choice" points="1">
+	  <options>
+	    <option correct="true">True</option>
+	    <option>False</option>
+	  </options>
+	</item>
+      </li>
+
+      <li>The expected value for the percentage of ones among the draws is around 25%, give or take 2% or so.
+	<item type="Multiple Choice" points="1">
+	  <options>
+	    <option>True</option>
+	    <option correct="true">False</option>
+	  </options>
+	</item>
+      </li>
+
+      <li>The percentage of ones among the draws will be around 25%, give or take 2% or so.
+	<item type="Multiple Choice" points="1">
+	  <options>
+	    <option correct="true">True</option>
+	    <option>False</option>
+	  </options>
+	</item>
+      </li>
+
+      <li>The percentage of ones among the draws will be exactly 25%.
+	<item type="Multiple Choice" points="1">
+	  <options>
+	    <option>True</option>
+	    <option correct="true">False</option>
+	  </options>
+	</item>
+      </li>
+
+      <li>The percentage of ones in the box is exactly 25%.
+	<item type="Multiple Choice" points="1">
+	  <options>
+	    <option correct="true">True</option>
+	    <option>False</option>
+	  </options>
+	</item>
+      </li>
+
+      <li>The percentage of ones in the box is around 25%, give or take 2% or so.
+	<item type="Multiple Choice" points="1">
+	  <options>
+	    <option>True</option>
+	    <option correct="true">False</option>
+	  </options>
+	</item>
+      </li>
+
+    </ol>
+  </question>
+
+  <question>
+
+    <ol type="a">
+    <p>(Chapter 21, Review Exercise 2) The Residential Energy Consumption Survey found in 2001 that 47% of American households had internet access. A market survey organization repeated this study in a certain town with 25,000 households, using a simple random sample of 500 households: 239 of the sample households had internet access.</p>
+
+    <ol type="i">
+	 <li>The percentage of households in the town with internet access is estimated as 
+	<item type="Short Answer" points="0.5">
+	  <answer type="range">[47.5,48]</answer>
+	  <answer type="exact">47.8</answer>
+	</item>%; this estimate is likely to be off by
+	<item type="Short Answer" points="0.5">
+	  <answer type="range">[2.1,2.3]</answer>
+	  <answer type="exact">2.2</answer>
+	</item>% or so.
+      </li>
+
+	 <li>Find a 95%-confidence interval for the percentage of all 25,000 households with internet access. 
+	<item type="Short Answer" points="0.5">
+	  <answer type="range">[43.2,43.6]</answer>
+	  <answer type="exact">43.4</answer>
+	</item>% - 
+	<item type="Short Answer" points="0.5">
+	  <answer type="range">[52,52.4]</answer>
+	  <answer type="exact">52.2</answer>
+	</item>%
+      </li>
+    </ol>
+
+    <p>(Chapter 21, Review Exercise 3) Of the 500 sample households in the previous exercise, 4 had three or more large-screen TVs.</p>
+
+    <ol type="i">
+	 <li>The percentage of households in the town with three or more large-screen TVs is estimated as 
+	<item type="Short Answer" points="0.5">
+	  <answer type="range">[1.35,1.45]</answer>
+	  <answer type="exact">1.4</answer>
+	</item>%; this estimate is likely to be off by
+	<item type="Short Answer" points="0.5">
+	  <answer type="range">[0.45,0.55]</answer>
+	  <answer type="exact">0.5</answer>
+	</item>% or so.
+      </li>
+
+      <li>Is it possible to find a good approximate 95%-confidence interval for the percentage of all 25,000 households with three or more large-screen TVs?
+	<item type="Multiple Choice" points="1">
+	  <options>
+	    <option>Yes</option>
+	    <option correct="true">No</option>
+	  </options>
+	</item>
+      </li>
+    </ol>
+
+    <p>(Chapter 21, Review Exercise 4) Among the sample households, 121 had no car, 172 had one car, and 207 had two or more cars.</p>
+
+    <ol type="i">
+	 <li>Estimate the percentage of households in the town with one or more cars: 
+	<item type="Short Answer" points="1">
+	  <answer type="range">[75.5,79]</answer>
+	  <answer type="exact">75.8</answer>
+	</item>%; attach a standard error to the estimate: 
+	<item type="Short Answer" points="1">
+	  <answer type="range">[1.8,2.0]</answer>
+	  <answer type="exact">1.9</answer>
+	</item>%
+      </li>
+
+    </ol>
+    </ol>
+  </question>
+
+  <question>
+    (Chapter 23, Special Review Exercise 28) NAEP (National Assessment of Educational Progress) periodically tests scientific knowledge in U.S. schools. In a test administered to 12th graders, there was one straightforward question about reading a thermometer. Only 64% of the students who were tested could answer this question correctly. The superintendent of education in a certain state cannot believe these data. To check, he takes a simple random sample of 100 high schools in the state, and tests 10 randomly selected students from grade 12 in each school. 661 out of the 1,000 students who take the test, or 66.1%, can do the problem. With the information above, can you put a standard error on the 66.1%? Find the SE, or say why this can't be done.
+    <item type="Long Answer" points="6">
+      <solution>
+	<h4>Sample Correct Solution</h4>
+	<p>This can't be done with the information given, because it is a cluster sample. That is, the 1,000 students' answers to the question are not independent, since some of them came from the same school and thus are likely to have been educated similarly. The following is not part of the question asked (and thus not worth any points), but is also worth noting. Since the superintendent only sampled students from his state, even if he did somehow obtain a sample of independent students and thus could compute a SE and thus a confidence interval for his estimate, that confidence interval would only apply within his state. Therefore he couldn't really compare it to the (presumably national) figure of 64%.</p>
+	<h4>Grading Rubric</h4>
+	<p>Please grade this question out of 6 points following these guidelines.</p>
+	<ul>
+          <li>3 points for saying the SE cannot be computed</li>
+          <li>3 points for stating that it is a cluster sample, or explaining why the observations aren't independent</li>
+          <li>Feel free to give partial credit or to use your good judgement if you think the case merits it</li>
+	</ul>
+      </solution>
+    </item>
+  </question>
+
+  <question>
+
+    <p>(Chapter 23, Special Review Exercise 30) A survey research company uses random digit dialing. They have a contract, to estimate the percentage of people watching Spanish-language television in several Southwestern cities. They took a sample of 1,000 in Austin, Texas--which has about 600,000 residents. They are satisfied with the accuracy of the estimates for Austin. Dallas has about twice the population of Austin, but similar demographics. To get about the same accuracy in Dallas as in Austin, how large a sample size should the company use?</p>
+
+	<item type="Multiple Choice" points="6">
+	  <options>
+	    <option correct="true">1,000</option>
+	    <option>1,414</option>
+	    <option>2,000</option>
+	  </options>
+	</item>
+
+  </question>
 </hw>
