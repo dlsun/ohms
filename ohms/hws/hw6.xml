@@ -25,7 +25,7 @@
          <p>Thus, (a) is correct for both 100 and 10000 draws, since the quoted ranges are the expected values of the draws plus or minus the SDs.</p>
          <p>(b) is based on the idea of using a normal approximation. When you draw 10000 times, this normal approximation is reasonable, since the expected number of draws is so large. But when you draw only 100 times, the expected number of draws is too small to use the normal approximation. So for 100 draws, (b) is false, but for 10000 draws, (b) is true.</p>
          <h4>Grading Rubric</h4>
-         <p>Please grade this question out of six points. Award one point each for getting each of the four parts correct, and award the remaining two points for correct explainations<p>
+         <p>Please grade this question out of six points. Award one point each for getting each of the four parts correct, and award the remaining two points for correct explainations</p>
        </solution>
      </item>
  </question>
@@ -305,5 +305,17 @@
 	  </options>
 	</item>
 
+  </question>
+
+  <question>
+    <p>It has been said for many years (or even decades) that there is not much dating going on at Stanford. Some time ago the Stanford Daily did a study to find out the truth. Read the article <a href="/static/html/sexonfarm">&quot;Sex on the Farm&quot;</a> by Ben Friedland. The article describes a survey and concludes that there is an active dating scene at Stanford. Does the survey indeed disprove the myth?</p>
+    <item type="Long Answer" points="6">
+      <solution>
+        <h4>Sample Correct Solution</h4>
+        <p>The Daily interviewed students who happened to pass by White Plaza. This is a sample of convenience, not a random sample. Therefore, there is selection bias. For example, studious students may not be walking around White Plaza as much, and these students may also date less. There may also be some response bias because students are more likely to exaggerate their romantic life. Because the sample is not representative of the population, this survey does not disprove the myth.</p>
+        <h4>Grading Rubric</h4>
+        <p>Please grade this question out of six points. Award three points each for pointing out that there could be substantial selection bias and response bias, and for offering plausible guesses for how they would affect the results.</p>
+      </solution>
+    </item>
   </question>
 </hw>
