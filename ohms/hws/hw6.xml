@@ -1,17 +1,16 @@
 <hw name="Homework 6" due_date="11/2/2013 17:00:00">
 
   <question>
-    <p>(This is from Review Exercises 9 and 10 of Chapter 18).</p>
     <p>
     One hundred draws are made at random with replacement from a box with
-    ninety-nine tickets marked &quot;0&quot; and one ticket marked &quot;1&quot;. True or false, and explain:
+    ninety-nine tickets marked $\fbox{0}$ and one ticket marked $\fbox{1}$. True or false, and explain:
     </p>
     <ol type="a">
       <li>The sum will be around 1, give or take 1 or so.</li>
       <li>There is about a 68% chance that the sum will be in the range 0 to 2.</li>
     </ol>
     <p>
-     Now, suppose that instead of drawing 100 draws from this box with replacement, you draw a ten thousand times with replacement. True or false, and explain:
+     Now, suppose that instead of drawing 100 draws from this box with replacement, you draw 10,000 times with replacement. True or false, and explain:
     </p>
      <ol type="a">
        <li>The sum will be around 100, give or take 10 or so.</li>
@@ -20,10 +19,10 @@
      <item type="Long Answer" points="6">
        <solution>
          <h4>Sample Correct Solution</h4>
-         <p>If you draw n times from the box, then the SD of the sum is sqrt((1/100)*(99/100)*n). So when you draw 100 times, the SD is 0.99, and when you draw 10000 times, the SD is 9.9. And of course, the expected value of the sum is n * 1/100, so you expect the sum to be 1 and 100 when you draw 100 and 10000 times, respectively.
+         <p>If you draw $n$ times from the box, the SE of the sum is $\sqrt{n} \times \sqrt{\frac{1}{100}\cdot\frac{99}{100}}$. So when you draw 100 times, the SE is 0.995, and when you draw 10,000 times, the SE is 9.95. And of course, the expected value of the sum is $n \cdot 1/100$, so you expect the sum to be 1 and 100 when you draw 100 and 10000 times, respectively.
          </p>
-         <p>Thus, (a) is correct for both 100 and 10000 draws, since the quoted ranges are the expected values of the draws plus or minus the SDs.</p>
-         <p>(b) is based on the idea of using a normal approximation. When you draw 10000 times, this normal approximation is reasonable, since the expected number of draws is so large. But when you draw only 100 times, the expected number of draws is too small to use the normal approximation. So for 100 draws, (b) is false, but for 10000 draws, (b) is true.</p>
+         <p>Thus, (a) is correct for both 100 and 10000 draws, since the quoted ranges are the expected values of the draws plus or minus the SEs.</p>
+         <p>(b) is based on the idea of using a normal approximation. When you draw 10,000 times, this normal approximation is reasonable, since the expected number of draws is so large. But when you draw only 100 times, the expected number of draws is too small to use the normal approximation. So for 100 draws, (b) is false, but for 10000 draws, (b) is true.</p>
          <h4>Grading Rubric</h4>
          <p>Please grade this question out of six points. Award one point each for getting each of the four parts correct, and award the remaining two points for correct explainations</p>
        </solution>
@@ -31,7 +30,6 @@
  </question>
 
  <question>
-   <p>(This is from Review Exercise 12 of Chapter 20).</p>
    <p>
      There are 50,000 households in a certain city. The average number of persons
      age 16 and over living in each household is known to be 2.38; the SD is 1.87. A
@@ -40,12 +38,11 @@
    </p>
    <p>The total number of interviews will be around
      <item type="Short Answer" points="3">
-       <answer type="range">[952,952]</answer>
        <answer type="exact">952</answer>
      </item>
      give or take
      <item type="Short Answer" points="3">
-       <answer type="range">[37,37.5]</answer>
+       <answer type="range">[37,37.4]</answer>
        <answer type="exact">37.4</answer>
      </item>
      or so.
@@ -53,30 +50,34 @@
  </question>
 
  <question>
-   <p>(This is from Review Exercise 8 of Chapter 21).</p>
    <p>
      A simple random sample of 3,500 people age 18 or over is taken in a large
      town to estimate the percentage of people (age 18 and over in that town) who
      read newspapers. It turns out that 2,487 people in the sample are newspaper
-     readers. The population percentage is estimated as 2,487/3,500 * 100%, which is about 71%.
+     readers. The population percentage is estimated as 
+     $$\frac{2487}{3500} \times 100\% \approx 71\%.$$
    </p>
    <ol type="a">
-     <li>Calculate the SE of the estimate, (in percentage points):
-       <item type="Short Answer" points="2">
+     <li>By how much is this estimate likely off? 
+       <item type="Short Answer" points="1">
          <answer type="range">[0.76,0.77]</answer>
          <answer type="exact">0.767</answer>
        </item>%
      </li>
-     <li>71% plus or minus 1.5% is a confidence interval for the percentage of people (aged 18 or over)
-       <item type="Multiple Choice" points="2">
-         <option correct="true">in the town who read newspapers</option>
-         <option correct="false">in the sample who read newspapers</option>
+     <li>$71\% \pm 1.5\%$ is a 
+       <item type="Short Answer" points="2">
+	 <answer type="range">[94.8, 95.2]</answer>
+	 <answer type="exact">95</answer>
+       </item>% confidence interval for the percentage of people (aged 18 or over) 
+       <item type="Multiple Choice" points="1">
+         <option correct="true">in the town who read newspapers.</option>
+         <option correct="false">in the sample who read newspapers.</option>
        </item>
      </li>
-     <li>Not satisfied with the confidence level, the pollsters decide to conduct another poll of the town. They want to be able to estimate the percentage to within +/- 1% with 95% confidence. They would need a simple random sample of at least
+     <li>The pollsters feel that the confidence interval is too wide and decide to conduct another poll of the town. They want to be able to estimate the percentage to within $\pm 1\%$ with 95% confidence. They would need a simple random sample of at least
        <item type="Short Answer" points="2">
-         <answer type="range">[2057,2059]</answer>
-         <answer type="exact">2057</answer>
+         <answer type="range">[7829, 8236]</answer>
+         <answer type="exact">8236</answer>
        </item> people to achieve this.
      </li>
    </ol>
@@ -84,47 +85,39 @@
 
   <question>
 
-    <p>(Chapter 20, Review Exercise 3) A group of 50,000 tax forms has an average gross income of $37,000, with a SD of $20,000. Furthermore, 20% of the forms have a gross income over $50,000. A group of 900 forms is chosen at random for audit. To estimate the chance that between 19% and 21% of the forms chosen for audit have gross incomes over $50,000, a box model is needed.</p>
+    <p>A group of 50,000 tax forms has an average gross income of \$37,000, with a SD of \$20,000. Furthermore, 20% of the forms have a gross income over \$50,000. A group of 900 forms is chosen at random for audit. To estimate the chance that between 19% and 21% of the forms chosen for audit have gross incomes over \$50,000, a box model is needed.</p>
 
     <ol type="a">
 
       <li>Should the number of tickets in the box be 900 or 50,000?
 	<item type="Multiple Choice" points="1">
-	  <options>
-	    <option>900</option>
-	    <option correct="true">50,000</option>
-	  </options>
+	  <option>900</option>
+	  <option correct="true">50,000</option>
 	</item>
       </li>
 	
-	 <li>Each ticket in the box shows
+      <li>Each ticket in the box shows
 	<item type="Multiple Choice" points="1">
-	  <options>
-	    <option correct="true">a zero or a one</option>
-	    <option>a gross income</option>
-	  </options>
+	  <option correct="true">a zero or a one</option>
+	  <option>a gross income</option>
 	</item>
       </li>
 
       <li>True or false: the SD of the box is $20,000.
 	<item type="Multiple Choice" points="1">
-	  <options>
-	    <option>True</option>
-	    <option correct="true">False</option>
-	  </options>
+	  <option>True</option>
+	  <option correct="true">False</option>
 	</item>
       </li>
 
       <li>True or false: the number of draws is 900.
 	<item type="Multiple Choice" points="1">
-	  <options>
-	    <option correct="true">True</option>
-	    <option>False</option>
-	  </options>
+	  <option correct="true">True</option>
+	  <option>False</option>
 	</item>
       </li>
 
-	 <li>Find the chance (approximately) that between 19% and 21% of the forms chosen for audit have gross incomes over $50,000.
+      <li>Find the chance (approximately) that between 19% and 21% of the forms chosen for audit have gross incomes over $50,000.
 	<item type="Short Answer" points="1">
 	  <answer type="range">[54,55]</answer>
 	  <answer type="exact">54.67</answer>
@@ -133,10 +126,10 @@
 
       <li>With the information given, can you find the chance (approximately) that between 9% and 11% of the forms chosen for audit have gross incomes over $75,000?
 	<item type="Multiple Choice" points="1">
-	  <options>
-	    <option>Yes</option>
-	    <option correct="true">No</option>
-	  </options>
+	  <option>Yes. All information necessary to calculate this has been given.</option>
+	  <option>Yes. We can assume that gross incomes follow the normal curve.</option>
+	  <option correct="true">No. We could if we assumed that gross incomes followed the normal curve, but they likely do not in this case. 
+	  <option>No. We cannot calculate it, and the distribution of gross incomes is irrelevant.</option>
 	</item>
       </li>
     </ol>
@@ -144,74 +137,10 @@
 
   <question>
 
-    <p>(Chapter 20, Review Exercise 7) Five hundred draws are made at random from a box of 60,000 zeros and 20,000 ones. True or False:</p>
-
-    <ol type="a">
-
-      <li>The expected value for the percentage of ones among the draws is exactly 25%.
-	<item type="Multiple Choice" points="1">
-	  <options>
-	    <option correct="true">True</option>
-	    <option>False</option>
-	  </options>
-	</item>
-      </li>
-
-      <li>The expected value for the percentage of ones among the draws is around 25%, give or take 2% or so.
-	<item type="Multiple Choice" points="1">
-	  <options>
-	    <option>True</option>
-	    <option correct="true">False</option>
-	  </options>
-	</item>
-      </li>
-
-      <li>The percentage of ones among the draws will be around 25%, give or take 2% or so.
-	<item type="Multiple Choice" points="1">
-	  <options>
-	    <option correct="true">True</option>
-	    <option>False</option>
-	  </options>
-	</item>
-      </li>
-
-      <li>The percentage of ones among the draws will be exactly 25%.
-	<item type="Multiple Choice" points="1">
-	  <options>
-	    <option>True</option>
-	    <option correct="true">False</option>
-	  </options>
-	</item>
-      </li>
-
-      <li>The percentage of ones in the box is exactly 25%.
-	<item type="Multiple Choice" points="1">
-	  <options>
-	    <option correct="true">True</option>
-	    <option>False</option>
-	  </options>
-	</item>
-      </li>
-
-      <li>The percentage of ones in the box is around 25%, give or take 2% or so.
-	<item type="Multiple Choice" points="1">
-	  <options>
-	    <option>True</option>
-	    <option correct="true">False</option>
-	  </options>
-	</item>
-      </li>
-
-    </ol>
-  </question>
-
-  <question>
-
-    <ol type="a">
-    <p>(Chapter 21, Review Exercise 2) The Residential Energy Consumption Survey found in 2001 that 47% of American households had internet access. A market survey organization repeated this study in a certain town with 25,000 households, using a simple random sample of 500 households: 239 of the sample households had internet access.</p>
+    <p>The Residential Energy Consumption Survey found in 2001 that 47% of American households had internet access. A market survey organization repeated this study in a certain town with 25,000 households, using a simple random sample of 500 households: 239 of the sample households had internet access.</p>
 
     <ol type="i">
-	 <li>The percentage of households in the town with internet access is estimated as 
+      <li>The percentage of households in the town with internet access is estimated as 
 	<item type="Short Answer" points="0.5">
 	  <answer type="range">[47.5,48]</answer>
 	  <answer type="exact">47.8</answer>
@@ -221,63 +150,88 @@
 	  <answer type="exact">2.2</answer>
 	</item>% or so.
       </li>
-
-	 <li>Find a 95%-confidence interval for the percentage of all 25,000 households with internet access. 
-	<item type="Short Answer" points="0.5">
+      
+      <li>If possible, find a 95%-confidence interval for the percentage of all 25,000 households with internet access. Otherwise, enter 0 in each blank.
+	[<item type="Short Answer" points="0.5">
 	  <answer type="range">[43.2,43.6]</answer>
 	  <answer type="exact">43.4</answer>
-	</item>% - 
+	</item>%, 
 	<item type="Short Answer" points="0.5">
 	  <answer type="range">[52,52.4]</answer>
 	  <answer type="exact">52.2</answer>
-	</item>%
+	</item>%]
       </li>
     </ol>
 
-    <p>(Chapter 21, Review Exercise 3) Of the 500 sample households in the previous exercise, 4 had three or more large-screen TVs.</p>
+    <p>Of the 500 sample households in the previous exercise, 7 had three or more large-screen TVs.</p>
 
     <ol type="i">
-	 <li>The percentage of households in the town with three or more large-screen TVs is estimated as 
+      <li>The percentage of households in the town with three or more large-screen TVs is estimated as 
 	<item type="Short Answer" points="0.5">
-	  <answer type="range">[1.35,1.45]</answer>
+	  <answer type="range">[1.4, 1.4]</answer>
 	  <answer type="exact">1.4</answer>
 	</item>%; this estimate is likely to be off by
 	<item type="Short Answer" points="0.5">
-	  <answer type="range">[0.45,0.55]</answer>
+	  <answer type="range">[0.5, 0.55]</answer>
 	  <answer type="exact">0.5</answer>
 	</item>% or so.
       </li>
 
-      <li>Is it possible to find a good approximate 95%-confidence interval for the percentage of all 25,000 households with three or more large-screen TVs?
-	<item type="Multiple Choice" points="1">
-	  <options>
-	    <option>Yes</option>
-	    <option correct="true">No</option>
-	  </options>
-	</item>
+      <li>If possible, find a 95%-confidence interval for the percentage of all 25,000 households with three or more large-screen TVs. Otherwise enter 0 in each blank.
+	[<item type="Short Answer" points="0.5">
+	  <answer type="exact">0</answer>
+	</item>%, 
+	<item type="Short Answer" points="0.5">
+	  <answer type="exact">0</answer>
+	</item>%]
       </li>
+
     </ol>
 
-    <p>(Chapter 21, Review Exercise 4) Among the sample households, 121 had no car, 172 had one car, and 207 had two or more cars.</p>
+    <p>Among the sample households, 121 had no car, 172 had one car, and 207 had two or more cars.</p>
 
     <ol type="i">
-	 <li>Estimate the percentage of households in the town with one or more cars: 
-	<item type="Short Answer" points="1">
+      <li>The percentage of households in the town with one or more cars is etimated as 
+	<item type="Short Answer" points="0.5">
 	  <answer type="range">[75.5,79]</answer>
 	  <answer type="exact">75.8</answer>
-	</item>%; attach a standard error to the estimate: 
-	<item type="Short Answer" points="1">
+	</item>%; this estimate is likely to be off by 
+	<item type="Short Answer" points="0.5">
 	  <answer type="range">[1.8,2.0]</answer>
 	  <answer type="exact">1.9</answer>
-	</item>%
+	</item>% or so.
       </li>
 
-    </ol>
+      <li>If possible, find a 95%-confidence interval for the percentage of all 25,000 households with one or more cars. Otherwise enter 0 in each blank below.
+	[<item type="Short Answer" points="0.5">
+	  <answer type="range">[71.9, 72.1]</answer>
+	  <answer type="exact">71.9</answer>
+	</item>%, 
+	<item type="Short Answer" points="0.5">
+	  <answer type="range">[79.5, 79.7]</answer>
+	  <answer type="exact">79.6</answer>
+	</item>%]
+      </li>
+      
     </ol>
   </question>
 
   <question>
-    (Chapter 23, Special Review Exercise 28) NAEP (National Assessment of Educational Progress) periodically tests scientific knowledge in U.S. schools. In a test administered to 12th graders, there was one straightforward question about reading a thermometer. Only 64% of the students who were tested could answer this question correctly. The superintendent of education in a certain state cannot believe these data. To check, he takes a simple random sample of 100 high schools in the state, and tests 10 randomly selected students from grade 12 in each school. 661 out of the 1,000 students who take the test, or 66.1%, can do the problem. With the information above, can you put a standard error on the 66.1%? Find the SE, or say why this can't be done.
+    NAEP (National Assessment of Educational Progress) periodically tests scientific knowledge in U.S. schools. Here is one question on the test, administered to students in grade 12.
+
+    <blockquote>
+      The diagram below shows a thermometer. On the diagram, fill in the 
+thermometer so that it reads 37.5 degrees Celsius. 
+      <div align='center'><img src="/static/img/thermometer.png"/></div>
+    </blockquote>
+
+    Only 64% of the students who were tested could answer this question correctly. 
+    The superintendent of education in a certain state cannot believe these data. 
+    To check, he takes a simple random sample of 100 high schools in the state, and 
+    tests 10 randomly selected students from grade 12 in each school. 661 out of 
+    the 1,000 students who take the test, or 66.1%, can do the problem. With the 
+    information above, can you put a standard error on the 66.1%? Find the SE, 
+    or say why this can't be done.
     <item type="Long Answer" points="6">
       <solution>
 	<h4>Sample Correct Solution</h4>
@@ -293,17 +247,83 @@
     </item>
   </question>
 
+
   <question>
 
-    <p>(Chapter 23, Special Review Exercise 30) A survey research company uses random digit dialing. They have a contract, to estimate the percentage of people watching Spanish-language television in several Southwestern cities. They took a sample of 1,000 in Austin, Texas--which has about 600,000 residents. They are satisfied with the accuracy of the estimates for Austin. Dallas has about twice the population of Austin, but similar demographics. To get about the same accuracy in Dallas as in Austin, how large a sample size should the company use?</p>
+    <p>100 draws are made at random with replacement from the box
+$\fbox{$\fbox{1}\fbox{1}\fbox{2}\fbox{4}$}$. One of the graphs below is the probability histogram for
+the average of the draws. Another is the histogram for the numbers drawn.
+And the third is the histogram for the contents of the box. Which is which?</p>
 
-	<item type="Multiple Choice" points="6">
-	  <options>
-	    <option correct="true">1,000</option>
-	    <option>1,414</option>
-	    <option>2,000</option>
-	  </options>
+    <img src="/static/img/hw6_1.png"/>
+
+    <ol type="i">
+
+      <li>
+	<item type="Multiple Choice" points="1.5">
+	  <option>probability histogram for the average of the draws</option>
+	  <option correct="true">histogram for the numbers drawn</option>
+	  <option>histogram for the contents of the box</option>
 	</item>
+      </li>
+
+      <li>
+	<item type="Multiple Choice" points="1.5">
+	  <option>probability histogram for the average of the draws</option>
+	  <option correct="true">histogram for the numbers drawn</option>
+	  <option>histogram for the contents of the box</option>
+	</item>
+      </li>
+
+      <li>
+	<item type="Multiple Choice" points="1.5">
+	  <option>probability histogram for the average of the draws</option>
+	  <option correct="true">histogram for the numbers drawn</option>
+	  <option>histogram for the contents of the box</option>
+	</item>
+      </li>
+
+    </ol>
+
+    <p>Your friend claims to have drawn the probability histogram for the average of 
+      25 draws made at random with replacement from the box 
+      $\fbox{$\fbox{1}\fbox{2}\fbox{3}\fbox{4}\fbox{5}$}$. The picture is shown below. 
+      Does it seem reasonable?
+
+      <div align="center"><img src="/static/img/hw6_2.png"/></div>
+
+      <item type="Multiple Choice" points="1.5">
+	<option>Yes, with 25 draws, the probability histogram will look roughly normal.</option>
+	<option>No, 25 draws is not enough for the probability histogram to look normal.</option>
+	<option>No, the expected value is incorrect.</option>
+	<option correct="true">No, there are too many bins.</option>
+      </item>
+
+    </p>
+
+  </question>
+
+
+  <question>
+
+    <p>A survey research company uses random digit dialing. They have a contract, to estimate the percentage of people watching Spanish-language television in several Southwestern cities. They took a sample of 1,000 in Austin, Texas--which has about 600,000 residents. They are satisfied with the accuracy of the estimates for Austin. Dallas has about twice the population of Austin, but similar demographics. To get about the same accuracy in Dallas as in Austin, how large a sample size should the company use?</p>
+
+    <item type="Multiple Choice" points="3">
+      <option>$1000/2 = 500$</option>
+      <option>$1000/\sqrt{2} = 707$</option>
+      <option correct="true">$1000$</option>
+      <option>$\sqrt{2} \times 1000 = 1414$</option>
+      <option>$2 \times 1000 = 2000$</option>
+    </item>
+
+
+    <p>The Census Bureau is planning to take a sample amounting to 1/10 of 1% of the population in each state in order to estimate the percentage of the population in that state earning over \$100,000 a year. Other things being equal:</p>
+
+    <item type="Multiple Choice" points="3">
+      <option>The accuracy to be expected in California (population 35 million) is about the same as the accuracy to be expected in Nevada (population 2 million).</option>
+      <option correct="true">The accuracy to be expected in California is quite a bit higher than in Nevada.</option>
+      <option>The accuracy to be expected in California is quite a bit lower than in Nevada.</option>
+    </item>
 
   </question>
 
