@@ -49,39 +49,6 @@
    </p>
  </question>
 
- <question>
-   <p>
-     A simple random sample of 3,500 people age 18 or over is taken in a large
-     town to estimate the percentage of people (age 18 and over in that town) who
-     read newspapers. It turns out that 2,487 people in the sample are newspaper
-     readers. The population percentage is estimated as 
-     $$\frac{2487}{3500} \times 100\% \approx 71\%.$$
-   </p>
-   <ol type="a">
-     <li>By how much is this estimate likely off? 
-       <item type="Short Answer" points="1">
-         <answer type="range">[0.76,0.77]</answer>
-         <answer type="exact">0.767</answer>
-       </item>%
-     </li>
-     <li>$71\% \pm 1.5\%$ is a 
-       <item type="Short Answer" points="2">
-	 <answer type="range">[94.8, 95.2]</answer>
-	 <answer type="exact">95</answer>
-       </item>% confidence interval for the percentage of people (aged 18 or over) 
-       <item type="Multiple Choice" points="1">
-         <option correct="true">in the town who read newspapers.</option>
-         <option correct="false">in the sample who read newspapers.</option>
-       </item>
-     </li>
-     <li>The pollsters feel that the confidence interval is too wide and decide to conduct another poll of the town. They want to be able to estimate the percentage to within $\pm 1\%$ with 95% confidence. They would need a simple random sample of at least
-       <item type="Short Answer" points="2">
-         <answer type="range">[7829, 8236]</answer>
-         <answer type="exact">8236</answer>
-       </item> people to achieve this.
-     </li>
-   </ol>
- </question>
 
   <question>
 
@@ -134,6 +101,7 @@
       </li>
     </ol>
   </question>
+
 
   <question>
 
@@ -251,6 +219,41 @@ thermometer so that it reads 37.5 degrees Celsius.
   </question>
 
 
+ <question>
+   <p>
+     A simple random sample of 3,500 people age 18 or over is taken in a large
+     town to estimate the percentage of people (age 18 and over in that town) who
+     read newspapers. It turns out that 2,487 people in the sample are newspaper
+     readers. The population percentage is estimated as 
+     $$\frac{2487}{3500} \times 100\% \approx 71\%.$$
+   </p>
+   <ol type="a">
+     <li>By how much is this estimate likely off? 
+       <item type="Short Answer" points="1">
+         <answer type="range">[0.76,0.77]</answer>
+         <answer type="exact">0.767</answer>
+       </item>%
+     </li>
+     <li>$71\% \pm 1.5\%$ is a 
+       <item type="Short Answer" points="2">
+	 <answer type="range">[94.8, 95.2]</answer>
+	 <answer type="exact">95</answer>
+       </item>% confidence interval for the percentage of people (aged 18 or over) 
+       <item type="Multiple Choice" points="1">
+         <option correct="true">in the town who read newspapers.</option>
+         <option correct="false">in the sample who read newspapers.</option>
+       </item>
+     </li>
+     <li>The pollsters feel that the confidence interval is too wide and decide to conduct another poll of the town. They want to be able to estimate the percentage to within $\pm 1\%$ with 95% confidence. They would need a simple random sample of at least
+       <item type="Short Answer" points="2">
+         <answer type="range">[7829, 8236]</answer>
+         <answer type="exact">8236</answer>
+       </item> people to achieve this.
+     </li>
+   </ol>
+ </question>
+
+
   <question>
 
     <p>100 draws are made at random with replacement from the box
@@ -298,8 +301,9 @@ And the third is the histogram for the contents of the box. Which is which?</p>
       <item type="Multiple Choice" points="1.5">
 	<option>Yes, with 25 draws, the probability histogram will look roughly normal.</option>
 	<option>No, 25 draws is not enough for the probability histogram to look normal.</option>
-	<option>No, the expected value is incorrect.</option>
-	<option correct="true">No, there are too many bins.</option>
+	<option>No, it should be uniformly spread between 1 and 5.</option>.
+	<option>No, it is not centered at the right number.</option>
+	<option correct="true">No, it is too spread out.</option>
       </item>
 
     </p>
