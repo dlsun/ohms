@@ -222,7 +222,7 @@
     <blockquote>
       The diagram below shows a thermometer. On the diagram, fill in the 
 thermometer so that it reads 37.5 degrees Celsius. 
-      <img src="/static/img/thermometer.png" class="span4"/></div>
+      <img src="http://stats60.stanford.edu/static/img/thermometer.png" class="span4"/></div>
     </blockquote>
 
     <p>
@@ -258,7 +258,7 @@ $\fbox{$\fbox{1}\fbox{1}\fbox{2}\fbox{4}$}$. One of the graphs below is the prob
 the average of the draws. Another is the histogram for the numbers drawn.
 And the third is the histogram for the contents of the box. Which is which?</p>
 
-    <img src="/static/img/hw6_1.png" class="span6"/>
+    <img src="http://stats60.stanford.edu/static/img/hw6_1.png" class="span8"/>
 
     <ol type="i">
 
@@ -272,8 +272,8 @@ And the third is the histogram for the contents of the box. Which is which?</p>
 
       <li>
 	<item type="Multiple Choice" points="1.5">
-	  <option>probability histogram for the average of the draws</option>
-	  <option correct="true">histogram for the numbers drawn</option>
+	  <option correct="true">probability histogram for the average of the draws</option>
+	  <option>histogram for the numbers drawn</option>
 	  <option>histogram for the contents of the box</option>
 	</item>
       </li>
@@ -281,8 +281,8 @@ And the third is the histogram for the contents of the box. Which is which?</p>
       <li>
 	<item type="Multiple Choice" points="1.5">
 	  <option>probability histogram for the average of the draws</option>
-	  <option correct="true">histogram for the numbers drawn</option>
-	  <option>histogram for the contents of the box</option>
+	  <option>histogram for the numbers drawn</option>
+	  <option correct="true">histogram for the contents of the box</option>
 	</item>
       </li>
 
@@ -293,7 +293,7 @@ And the third is the histogram for the contents of the box. Which is which?</p>
       $\fbox{$\fbox{1}\fbox{2}\fbox{3}\fbox{4}\fbox{5}$}$. The picture is shown below. 
       Does it seem reasonable?
 
-      <img src="/static/img/hw6_2.png" class="span4">
+      <img src="http://stats60.stanford.edu/static/img/hw6_2.png" class="span4">
 
       <item type="Multiple Choice" points="1.5">
 	<option>Yes, with 25 draws, the probability histogram will look roughly normal.</option>
@@ -331,7 +331,7 @@ And the third is the histogram for the contents of the box. Which is which?</p>
   </question>
 
   <question>
-    <p>It has been said for many years (or even decades) that there is not much dating going on at Stanford. Some time ago the Stanford Daily did a study to find out the truth. Read the article <a href="/static/html/sexonfarm">&quot;Sex on the Farm&quot;</a> by Ben Friedland. The article describes a survey and concludes that there is an active dating scene at Stanford. Does the survey indeed disprove the myth?</p>
+    <p>It has been said for many years (or even decades) that there is not much dating going on at Stanford. Some time ago the Stanford Daily did a study to find out the truth. Read the article <a href="http://stats60.stanford.edu/static/html/SexOnFarm.html">&quot;Sex on the Farm&quot;</a> by Ben Friedland. The article describes a survey and concludes that there is an active dating scene at Stanford. Does the survey indeed disprove the myth?</p>
     <item type="Long Answer" points="6">
       <solution>
         <h4>Sample Correct Solution</h4>
