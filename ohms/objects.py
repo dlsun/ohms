@@ -53,7 +53,7 @@ class Question(Base):
     hw_id = Column(Integer, ForeignKey('hws.id'))
     html = Column(String)
     items = relationship("Item", order_by="Item.id", backref="question")
-    points = Column(Integer)
+    points = Column(Float)
 
     @staticmethod
     def from_xml(node):
@@ -109,7 +109,7 @@ class Item(Base):
 
     id = Column(Integer, primary_key=True)
     question_id = Column(Integer, ForeignKey('questions.id'))
-    points = Column(Integer)
+    points = Column(Float)
     order = Column(Integer)
     type = Column(String)
     solution = Column(String)
