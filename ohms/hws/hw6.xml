@@ -128,7 +128,7 @@
 	<item type="Multiple Choice" points="1">
 	  <option>Yes. All information necessary to calculate this has been given.</option>
 	  <option>Yes. We can assume that gross incomes follow the normal curve.</option>
-	  <option correct="true">No. We could if we assumed that gross incomes followed the normal curve, but they likely do not in this case. 
+	  <option correct="true">No. We could do it if we assumed that gross incomes followed the normal curve, but they most likely do not.</option>
 	  <option>No. We cannot calculate it, and the distribution of gross incomes is irrelevant.</option>
 	</item>
       </li>
@@ -217,14 +217,15 @@
   </question>
 
   <question>
-    NAEP (National Assessment of Educational Progress) periodically tests scientific knowledge in U.S. schools. Here is one question on the test, administered to students in grade 12.
+    <p>NAEP (National Assessment of Educational Progress) periodically tests scientific knowledge in U.S. schools. Here is one question on the test, administered to students in grade 12.</p>
 
     <blockquote>
       The diagram below shows a thermometer. On the diagram, fill in the 
 thermometer so that it reads 37.5 degrees Celsius. 
-      <div align='center'><img src="/static/img/thermometer.png"/></div>
+      <img src="/static/img/thermometer.png" class="span4"/></div>
     </blockquote>
 
+    <p>
     Only 64% of the students who were tested could answer this question correctly. 
     The superintendent of education in a certain state cannot believe these data. 
     To check, he takes a simple random sample of 100 high schools in the state, and 
@@ -232,6 +233,8 @@ thermometer so that it reads 37.5 degrees Celsius.
     the 1,000 students who take the test, or 66.1%, can do the problem. With the 
     information above, can you put a standard error on the 66.1%? Find the SE, 
     or say why this can't be done.
+    </p>
+
     <item type="Long Answer" points="6">
       <solution>
 	<h4>Sample Correct Solution</h4>
@@ -255,7 +258,7 @@ $\fbox{$\fbox{1}\fbox{1}\fbox{2}\fbox{4}$}$. One of the graphs below is the prob
 the average of the draws. Another is the histogram for the numbers drawn.
 And the third is the histogram for the contents of the box. Which is which?</p>
 
-    <img src="/static/img/hw6_1.png"/>
+    <img src="/static/img/hw6_1.png" class="span6"/>
 
     <ol type="i">
 
@@ -290,7 +293,7 @@ And the third is the histogram for the contents of the box. Which is which?</p>
       $\fbox{$\fbox{1}\fbox{2}\fbox{3}\fbox{4}\fbox{5}$}$. The picture is shown below. 
       Does it seem reasonable?
 
-      <div align="center"><img src="/static/img/hw6_2.png"/></div>
+      <img src="/static/img/hw6_2.png" class="span4">
 
       <item type="Multiple Choice" points="1.5">
 	<option>Yes, with 25 draws, the probability histogram will look roughly normal.</option>
