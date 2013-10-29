@@ -21,11 +21,9 @@ def tabulate_grades(q_id):
         scores = [grade.score for grade in question_grades]
         print r.sunet, scores
 
-        session.query(QuestionResponse).filter_by(id=r.id).\
-            update({
-                "score": np.median(scores),
-                "comments": "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments." % r.id
-                })
+        if r.score is None:
+            r.score = np.median(scores)
+            r.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments." % r.id
     
     session.commit()
 

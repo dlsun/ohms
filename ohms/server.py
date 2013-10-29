@@ -41,19 +41,17 @@ else:
         session.add(user)
         session.commit()
 
+treatments = {
+    0: [1,1,1,0,0,1,1,0,0],
+    1: [1,0,0,1,1,0,0,1,1],
+    2: [1,1,1,0,0,0,0,1,1],
+    3: [1,0,0,1,1,1,1,0,0]
+    }
 
 @app.route("/")
 def index():
     hws = get_homework()
     
-    # determine user's group
-    treatments = {
-        0: [1,1,1,0,0,1,1,0,0],
-        1: [1,0,0,1,1,0,0,1,1],
-        2: [1,1,1,0,0,0,0,1,1],
-        3: [1,0,0,1,1,1,1,0,0]
-        }
-
     if user.group is not None:
         peer_grading = treatments[user.group]
     elif user.type == "admin" or user.type == "grader":
@@ -317,6 +315,41 @@ the score it did.</p>'''
         "submission": question_response,
     }, cls=NewEncoder)
 
+
+@app.route("/admin")
+def admin():
+
+    if user.type != 'admin':
+        raise Exception("You are not authorized to view this page.")
+
+    hw = int(request.args['hw'])
+    q = int(request.args['q'])
+
+    from objects import Homework, Question, QuestionResponse
+    homework = session.query(Homework).filter_by(name="Homework %d" % hw).one()
+    questions = session.query(Question).filter_by(hw_id=homework.id).order_by(Question.id).all()
+
+    question = questions[q-1]
+    groups = []
+    for i in range(4):
+        if treatments[i][hw-1]==0:
+            groups.append(i)
+    
+    responses = session.query(QuestionResponse).\
+        filter_by(question_id=question.id).join(User).\
+        filter((User.group == groups[0]) | (User.group == groups[1])).all()
+
+    return render_template("admin.html", responses=responses, options=options)
+    
+@app.route("/admin/submit/<int:response_id>", methods=['POST'])
+def submit_sample(response_id):
+    from objects import QuestionResponse
+    response = session.query(QuestionResponse).get(response_id)
+    response.sample = 1
+    response.score = int(request.form['score'])
+    response.comments = request.form['comments']
+    session.commit()
+    return 'Successfully updated response %d' % response.id
 
 @app.route("/staff")
 def staff():

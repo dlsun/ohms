@@ -55,6 +55,8 @@ class Question(Base):
     items = relationship("Item", order_by="Item.id", backref="question")
     points = Column(Integer)
 
+    homework = relationship("Homework")
+
     @staticmethod
     def from_xml(node):
         question = Question()
