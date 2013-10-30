@@ -102,8 +102,8 @@ def selective_peer_grading(hw_number):
     # single Item, with a "Long Answer" type
     questions = get_long_answer_qs(hw_id)
     for q in questions:
-        #make_grading_assignments(q.id, sunets)
-        #make_grader_assignments(q.id)
+        make_grading_assignments(q.id, sunets)
+        make_grader_assignments(q.id)
         make_admin_assignments(q.id)
 
 
