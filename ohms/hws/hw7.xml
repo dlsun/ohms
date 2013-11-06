@@ -1,0 +1,353 @@
+<hw name="Homework 7" due_date="11/9/2013 17:00:00">  
+
+
+<question>
+  
+  <p>
+    A laboratory makes 25 repeated measurements on the molecular weight of a
+    protein (in "kilo-Daltons"). The average is 119, and the SD is 15. The lab now
+    wants to estimate the likely size of certain chance errors. You may assume the
+    Gauss model, with no bias. Explain your answers.
+  </p>
+  
+  <ol type="a">
+    <li> The chance error in one measurement is about 
+      <item type="Short Answer" points="3"> 
+	<answer type="range">[15, 15]</answer>
+	<answer type="exact">15</answer> 
+      </item>
+    </li>
+    <li> The chance error in the average of the measurements is about 
+      <item type="Multiple Choice" points="3"> 
+	<option>$\frac{15}{25}$</option> 
+	<option correct="true">$\frac{15}{\sqrt{25}}$</option> 
+        <option>$15$</option>
+        <option>$15\times \sqrt{25}$</option> 
+        <option>$15\times 25$</option>  
+      </item>
+    </li>
+  </ol>
+</question>
+
+
+<question> 
+
+  <p> 
+    A real estate office wants to make a survey in a certain town, which has 50,000
+    households, to determine how far the head of household has to commute to
+    work. A simple random sample of 1,000 households is chosen.
+  </p>  
+  
+  <ol type="a"> 
+    
+    <li>It is found that on average, the heads of the sample
+      households commuted 8.7 miles to work; the SD of the distances was 9.0
+      miles. (All distances are one-way; if someone isn't working, the commute
+      distance is defined to be 0.) If possible, find a 90%-confidence interval for the average 
+      commute distance of all heads of households in the town; otherwise, 
+      enter 0 in each blank.
+      [<item type="Short Answer" points="1">
+	<answer type="range">[8.2, 8.25]</answer>
+	<answer type="exact">8.23</answer>
+      </item>, 
+      <item type="Short Answer" points="1">
+	<answer type="range">[9.15, 9.2]</answer>
+	<answer type="exact">9.17</answer>
+      </item>]
+    </li>
+
+    <li>The real estate office in fact interviewed all persons age 16 and over in the 
+      sample households; there were 2500 such persons. On the average, these 2,500 
+      people commuted 7.1 miles to work, and the SD of the distances was 10.2 miles. (Again, 
+      if someone isn't working the commute distance is defined to be 0; and all distances are 
+      one-way.) If possible, find a 90%-confidence interval for all people  
+      age 16 and over in the town. Otherwise, 
+      enter 0 in each blank.
+      [<item type="Short Answer" points="1">
+	<answer type="exact">0</answer>
+      </item>, 
+      <item type="Short Answer" points="1">
+	<answer type="exact">0</answer>
+      </item>]
+    </li>
+
+    <li>
+      In 721 of the sample households, the head of the household commuted by car. If possible, 
+      find a 90% confidence interval for the percentage of all households in the town where 
+      the head of the household commutes by car. Otherwise, enter 0 in each blank.
+      [<item type="Short Answer" points="1">
+	<answer type="range">[69.7, 69.8]</answer>
+	<answer type="exact">69.76</answer>
+      </item>%, 
+      <item type="Short Answer" points="1">
+	<answer type="range">[74.4, 74.5]</answer>
+	<answer type="exact">74.44</answer>
+      </item>%]
+    </li>
+
+  </ol>
+
+</question>
+
+
+<question> 
+
+  <p>
+    A survey organization takes a simple random sample of 625 households from
+    a city of 80,000 households. On the average, there are 2.30 persons per sample
+    household, and the SD is 1.75. Say whether each of the following statements
+    is true or false. 
+  </p>
+
+  <ol type="a">  
+    
+    <li> The SE for the sample average is 0.07. 
+      <item type="Multiple Choice" points="1"> 
+	<option correct="true">True</option> 
+	<option>False</option> 
+      </item> 
+    </li> 
+    <li>  A 95%-confidence interval for the average household size in the sample
+      is 2.16 to 2.44.
+      <item type="Multiple Choice" points="1"> 
+	<option>True</option> 
+	<option correct="true">False</option> 
+      </item> 
+    </li>
+    <li> A 95%-confidence interval for the average household size in the city is
+      2.16 to 2.44.
+      <item type="Multiple Choice" points="1"> 
+	<option correct="true">True</option> 
+	<option>False</option> 
+      </item> 
+    </li> 
+    <li> 95% of the households in the city contain between 2.16 and 2.44 persons.
+      <item type="Multiple Choice" points="1"> 
+	<option>True</option> 
+	<option correct="true">False</option> 
+      </item> 
+    </li>
+    <li>The 95%-confidence level is about right because household size follows
+      the normal curve
+      <item type="Multiple Choice" points="1"> 
+	<option>True</option> 
+	<option correct="true">False</option> 
+      </item> 
+    </li>
+    <li>The 95%-confidence level is about right because, with 625 draws from
+      the box, the probability histogram for the average of the draws follows
+      the normal curve.
+      <item type="Multiple Choice" points="1"> 
+	<option correct="true">True</option> 
+	<option>False</option> 
+      </item> 
+    </li>
+  </ol>
+</question> 
+
+
+<question> 
+
+  <p>
+    Laser altimeters can measure elevation to within a few inches, without bias,
+    and with no trend or pattern to the measurements. The Gauss model holds. 
+    As part of an experiment,
+    25 readings were made on the elevation of a mountain peak. These averaged
+    out to 81,411 inches, and their SD was 30 inches.
+  </p>
+
+  <p>
+    For each of the following 
+    statements, say whether it is true or false, and explain. If the statement 
+    is false, change the statement to make it true.
+  </p>
+
+  <ol type="a">
+    <li> $81,411 \pm 12$ inches is a 95%-confidence interval for the average of the
+      25 readings.
+    </li>
+    <li>About 95% of the readings were in the range $81,411 \pm 12$ inches.
+    </li>
+    <li> If another 25 readings are made, there is about a 95% chance that their
+      average will be in the range $81,411 \pm 12$ inches.
+    </li>
+  </ol>
+
+  <item type="Long Answer" points="6">
+
+    <solution>
+    <p>All 3 statements are false.</p>
+    <ol type="a">
+      <li> We don't need a confidence interval for the average of the 25 readings; 
+	we already know that it's 81,411! This is a 95% confidence interval for the true height 
+	of the mountain peak.</li>
+      <li> 12 is the SE, the variability in the average of 25 readings. The variability in 
+      the readings is the SD, so about 95% of readings should be in the range $81,411 \pm 30$, 
+	assuming the measurements follow the normal curve.</li>
+      <li> It's true to say that there's a 95% chance that the average of another 25 readings will fall within 2 SE's of 
+      the true mean, but 81,411 is not the true mean.</li>
+    </ol>
+
+    <p>Award 2 points for each statement: 1 point for a valid explanation and 1 point for 
+    correcting the statement. No points for saying "false" without a valid explanation.
+    </p>
+    </solution>
+      
+  </item>
+
+</question> 
+
+<question>
+  <p>
+    A calibration laboratory has been measuring a one-kilogram checkweight by
+    the same procedure for several years. They have accumulated several hundred
+    measurements, and the SD of these measurements is 18 micrograms. Someone
+    now sends in a one-kilogram weight to be calibrated by the same procedure.
+    The lab makes 50 measurements on the new weight, which average 78.1 micrograms
+    above a kilogram, and their SD is 20 micrograms. 
+  </p>
+  <p>If possible, find a 90%-confidence interval for the value of this new weight. Otherwise enter 0 
+    in both blanks. (You may assume the Gauss model, with no bias.)
+    [<item type="Short Answer" points="3"> 
+      <answer type="range">[73.88, 73.92]</answer> 
+      <answer type="exact">73.9</answer> 
+    </item>, 
+    <item type="Short Answer" points="3"> 
+      <answer type="range">[82.28,82.31]</answer> 
+      <answer type="exact">82.3</answer> 
+    </item>]
+  </p>
+</question>
+
+
+<question> 
+
+  <p>
+    A machine makes sticks of butter whose average weight is 4.0 ounces; the SD
+    of the weights is 0.05 ounces. There is no trend or pattern in the data. There
+    are 4 sticks to a package.
+  </p>
+  <ol type="a">
+    <li> A package weighs 
+      <item type="Short Answer" points="2"> 
+	<answer type="range">[16, 16]</answer>
+	<answer type="exact">16</answer> 
+      </item>oz., give or take 
+      <item type="Short Answer" points="2">
+	<answer type="range">[.1, .1]</answer>
+	<answer type="exact">0.1</answer> 
+      </item> oz. or so. 
+    </li>
+    <li> A store buys 100 packages. Estimate the chance that they get 100
+      pounds of butter, to within 2 ounces. 
+      <item type="Short Answer" points="2"> 
+	<answer type="range">[95, 95.45]</answer> 
+        <answer type="exact">95</answer>   
+      </item>%
+    </li>    
+  </ol>
+
+</question>
+
+
+<question>
+
+  <p>You want to estimate the average starting salary of Stanford graduates. You 
+    call a random sample of 200 students who graduated in the last two years. 
+    After collecting the data, you are about to calculate the 95% confidence interval 
+    when suddenly you remember (from Stats 60!) that incomes are skewed to the right, 
+    whereas a normal curve is necessary for a 95% confidence interval. 
+    Was all your work in vain? Explain.
+  </p>
+
+  <item type="Long Answer" points="6">
+    <solution>
+      <p>No, you're fine. Even if incomes are skewed to the right, when you sample 200 
+      students and take the average, the probability histogram of the average 
+      approximately follows 
+      the normal curve. To be able to construct a confidence interval, 
+      you only need the probability histogram to follow the normal curve.
+      </p>
+
+      <p>Award points as follows.</p>
+      <ul>
+	<li>3 points for realizing that the probability histogram is different from the 
+	  histogram of the incomes. (The student doesn't have to mention the term "probability 
+	histogram" if they clearly understand what's going on.)</li>
+	<li>3 points for realizing that the probability histogram will be normal with 
+	200 draws, and therefore the confidence interval is valid..</li>
+      </ul>
+    </solution>
+  </item>
+
+</question>
+
+
+<question> 
+
+  <p>
+    An airline does a market research survey on travel patterns. It takes a simple
+    random sample of 225 people aged 18 and over in a certain city, and works
+    out the 95%-confidence interval for the average distance they travelled on vacations
+    in the previous year. This was 488 to 592 miles. Say whether each
+    statement below is true or false.
+  </p>
+  <ol type="a">
+    <li> The average of the 225 distances is about 
+      <item type="Short Answer" points="2"> 
+	<answer type="range">[540, 540]</answer>
+	<answer type="exact">540</answer>
+      </item> miles.
+    </li>
+    <li> The SD of the 225 distances is about 
+      <item type="Short Answer" points="2"> 
+	<answer type="range">[390, 398]</answer>
+	<answer type="exact">390</answer>
+      </item> miles.
+    </li>
+    <li> A 95%-confidence interval based on a sample of 450 people will be
+      about half as wide as one based on a sample of 225 people.
+      <item type="Multiple Choice" points="2"> 
+	<option>True</option> 
+	<option correct="true">False</option> 
+      </item>
+    </li>
+  </ol>
+
+</question> 
+
+
+<question>
+  
+  <p>
+    According to the Stanford University Common Data Set 2012-13, 69.46% of Stanford freshmen 
+    had an SAT Reading score of at least 700. (The number of freshmen who took the SAT 
+    was 1,552.) The Stanford Daily happens to be doing a survey and takes a simple random sample of 100 
+    students. 75 of these students report getting an SAT Reading score $\geq 700$.
+  </p>
+
+  <p>Answer the following questions, and explain.</p>
+
+  <ol type="a">
+    <li>What is the SE (exact, not approximate) of the percentage of Stanford students with an SAT Reading score $\geq 700$ in the sample?</li>
+    <li>True or false: There is about a 95% chance that if the Daily were to take another random sample of 100 students that the percentage with a score $\geq 700$ would be in the range $75\% \pm 2\cdot SE$.</li>
+    <li>True or false: There is about a 95% chance that if the Daily were to take another random sample of 100 students that the percentage with a score $\geq 700$ would be in the range $69.46\% \pm 2\cdot SE$.</li>
+  </ol>
+
+  <item type="Long Answer" points="6">
+    <solution>
+      <ol>
+	<li>The exact SE is $\frac{\sqrt{.6946(1-.6946)}}{\sqrt{100}}$. (Technically, you should also include the correction factor $\sqrt{\frac{1552-100}{1552-1}}$, but this is optional.) We use 69.46% because that is the percentage of 1's in the box. 75% would be the bootstrap estimate, but there's no need to 
+	  bootstrap when we know the exact number.</li>
+	<li>False. This is the confidence interval, but we can't interpret it in this way. The percentage with a score of at least 700 in the sample will follow the normal curve with EV equal to the average of the box, not 75%.</li>
+	<li>True. The Central Limit Theorem tells us that the average of 100 draws will follow the normal curve with EV 69.46% and this SE.</li>
+      </ol>
+
+      <p>Award two points per item.</p>
+
+    </solution>
+  </item>
+
+</question>
+
+</hw>
