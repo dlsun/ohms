@@ -361,6 +361,13 @@ def handouts():
     handouts = sorted(os.listdir("/afs/ir/class/stats60/WWW/handouts"))
     return render_template("handouts.html", handouts=handouts, options=options)
 
+@app.route("/tips")
+def tips():
+    return render_template("tips.html", options=options)
+
+@app.route("/grading")
+def grading():
+    return render_template("grading.html", options=options)
 
 @app.errorhandler(Exception)
 def handle_exceptions(error):
