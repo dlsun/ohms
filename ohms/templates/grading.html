@@ -1,0 +1,44 @@
+{% extends "page.html" %}
+
+{% block content %}
+<h3>Grading</h3>
+
+<ul>
+
+  <li><b>Homework: 10%</b></li>
+  <li><b>Peer Grading: 10%</b>
+    <ul>
+      <li>4% for completing the peer reviews.</li>
+      <li>2% for completing the rating.</li>
+      <li>4% for quality of the reviews. This is subjective, but we will glance at the comments you provided, 
+	and take into account students' ratings of your comments and the accuracy of your scores. To measure accuracy, 
+	we will fit a statistical model to the peer grades at the end of the quarter.</li>
+    </ul>
+  </li>
+  <li><b>Quizzes: 40%</b>
+    <ul>
+      <li>We don't want to foster competition, so the grades will not be "curved". (That is, 
+      if everyone does well, then everyone can earn an A.)</li>
+      <li>However, the grades will be adjusted upwards as follows: we will determine a 
+	mastery score $M$ for each quiz. This score 
+	is guaranteed to earn you a solid A (not an A-). The mastery score for the quizzes are:
+	<ul>
+	  <li>Quiz 1: $M=32$ out of 36</li>
+	  <li>Quiz 2: $M=35$ out of 42</li>
+	  <li>Quiz 3: $M=30$ out of 42</li>
+	  <li>Quiz 4: $M\approx 32$ out of 36</li>
+	  <li>Quiz 5: $M\approx 32$ out of 36</li>
+	</ul>
+	If your score was $S$, then your adjusted score is computed as:
+	$$\text{adjusted score} = \sqrt{0.9 \cdot \frac{S}{M}} \times 100\%.$$
+	Typically, an adjusted score of 87% or higher is some form of A, and an 
+	adjusted score of 70% of higher is some form of B, but the exact 
+	cutoffs will be determined at the end of the quarter.
+      </li>
+    </ul>
+  </li>
+  <li><b>Final: 40%</b></li>
+
+</ul>
+
+{% endblock %}
