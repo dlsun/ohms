@@ -29,7 +29,7 @@ up on one of its roulette wheels too often. It records the results of 3,800 play
         </ol>
       </li>
 
-      <li>
+      <li> What are the null and alternative hypotheses?
         <ol type = "i">
           <li>
             The null says that the percentage of reds in the box is
@@ -49,9 +49,9 @@ up on one of its roulette wheels too often. It records the results of 3,800 play
         </ol>
       </li>
 
-      <li>
+      <li> Now let's perform the test.
         <ol type = "i">
-          <li>The SE for the number of reds is:
+          <li>Assuming the null hypothesis is correct, the SE for the number of reds is:
             <item type="Multiple Choice" points="0.5">
               <option correct="true">$\sqrt{3800} \times \sqrt{\frac{18}{38} \times \frac{20}{38}}$</option>
               <option>
@@ -82,11 +82,10 @@ up on one of its roulette wheels too often. It records the results of 3,800 play
         </ol>
       </li>
 
-      <li>
-        There were too many reds.
+      <li> What should the casino conclude?
         <item type="Multiple Choice" points="1">
-          <option correct="true">True</option>
-          <option>False</option>
+          <option correct="true">The wheel should be replaced; there were too many reds.</option>
+          <option>The wheel is fine; the high number of reds can be explained by chance variation.</option>
         </item>
       </li>
     </ol>
@@ -122,8 +121,7 @@ up on one of its roulette wheels too often. It records the results of 3,800 play
         </ol>
       </li>
 
-      <li>
-        Fill in the blanks.
+      <li> What are the null and alternative hypotheses?
         <ol type = "i">
           <li>
             The null says that the average of the box is
@@ -143,9 +141,9 @@ up on one of its roulette wheels too often. It records the results of 3,800 play
         </ol>
       </li>
 
-      <li>
-        <ol type = "i">
-          <li>
+      <li> Now let's perform the test.
+
+	<p>
             $z = $
             <item type="Short Answer" points="1">
               <answer type="range">[-1,-1]</answer>
@@ -154,29 +152,28 @@ up on one of its roulette wheels too often. It records the results of 3,800 play
             <item type="Short Answer" points="1">
               <answer type="range">[31.6, 32]</answer>
             </item>%
-          </li>
+	</p>
 
-          <li>
-            The difference can be explained by chance.
+      </li>
+
+      <li> What should the administrator conclude?
             <item type="Multiple Choice" points="1">
-              <option correct="true">True</option>
-              <option>False</option>
+              <option>The national figure of 7.5 hours does not apply to her college. The difference is too great to be explained by chance.</option>
+              <option correct="true">The national figure of 7.5 hours applies to her college. The difference can be explained by chance.</option>
             </item>
-          </li>
-        </ol>
       </li>
     </ol>
   </question>
 
 
   <question>
-    <p>One large course has 900 students, broken down into section meetings with 30 students each. The section meetings are led by teaching assistants. On the final, the class average is 63, and the SD is 20. However, in one section the average is only 55. The TA argues this way:</p>
+    <p>One large course has 900 students, broken down into section meetings with 30 students each. The section meetings are led by teaching assistants. On the final, the class average is 63, and the SD is 20. One TA notices that the average in his section is only 55. He argues this way:</p>
 
     <blockquote>
       If you took 30 students at random from the class, there is a pretty good chance they would average below 55 on the final. That's what happened to me — chance variation.
     </blockquote>
     <p>
-      Is this a good defense? Conduct a hypothesis test to examine the TA's claims. Be sure to state the box model and the null hypothesis.
+      Is this a good defense? Conduct a hypothesis test to examine the TA's claims. <b>Be sure to state the box model and the null hypothesis.</b>
     </p>
 
     <item type="Long Answer" points="6">
@@ -254,7 +251,7 @@ and $P \approx 1\%$. The TA’s defense is not good.</p>
     <p>
       On the average, the control animals were heavier and had heavier brains, perhaps because they ate more and 
       got less exercise. However, the treatment group had consistently heavier cortexes (the "grey matter," or 
-      thinking part of the brain). This experiment was repeated many times; results from the first 5 trials 
+      thinking part of the brain). This experiment was repeated many times; results from the first trial 
       are shown in the table: "T" means treatment, and "C" is for control. Each column refers to one pair of animals. 
       In the first pair, the animal in treatment had a cortex weighing 707 milligrams; the one in control had a 
       lighter cortex, weighing only 669 milligrams. And so on.
@@ -346,7 +343,8 @@ and $P \approx 1\%$. The TA’s defense is not good.</p>
 	</item>
 	
 	<p>The null hypothesis says that these differences are like draws made at random with replacement from a box 
-	  whose average is 0 — the treatment has no effect. The sample size is small so make a t-test.</p>
+	  whose average is 0 — the treatment has no effect. The alternative says that the treatment 
+	  results in heavier cortexes, so the difference is greater than 0. The sample size is small so make a t-test.</p>
 	
 	<p>The test statistic is $t = $ 
 	  <item type="Short Answer" points="1">
@@ -447,8 +445,8 @@ and $P \approx 1\%$. The TA’s defense is not good.</p>
 	What do you conclude about the effectiveness of income support for ex-convicts?
 
 	<item type="Multiple Choice" points="1">
-	  <option correct="true">It is detrimental; it doesn't reduce recidivism, and it discourages working.</option>
-	  <option>It is ineffective; it doesn't reduce recidivism, but it also doesn't discourage working.</option>
+	  <option correct="true">It is detrimental; it doesn't reduce recidivism, and it also discourages working.</option>
+	  <option>It is ineffective; it doesn't reduce recidivism, but it doesn't discourage working either.</option>
 	  <option>It is partially effective; it reduces recidivism, but it also discourages working.</option>
 	  <option>It is effective; it reduces recidivism without discouraging working.</option>
 	</item>
@@ -478,7 +476,7 @@ and $P \approx 1\%$. The TA’s defense is not good.</p>
     <p>$$z = 1/0.7 \approx 1.4, P \approx 8\%$$</p>
 
     <p>
-      Do you agree with the investigator's analysis of the data? If not, suggest what he should have done instead.
+      Do you agree with the investigator's analysis of the data? <b>If not, suggest what he should have done with the data instead.</b>
     </p>
     <item type="Long Answer" points="6">
       <solution>
@@ -558,7 +556,6 @@ and $P \approx 1\%$. The TA’s defense is not good.</p>
         <h6>Sample Correct Solution</h6>
 
         <p>The $p$-value of a test is the chance of getting a certain statistic (or something more extreme) assuming the null hypothesis to be right. P is not the chance of the null hypothesis being right; the null hypothesis is either right or it isn't. In this example, the 2.5% represents the probability that 60 or more heads happened by chance assuming 50 is the true average, not the chance that 50 is the true average. </p>
-
 
         <h6>Grading Rubric</h6>
         <p>Please grade this question out of 6 points following these guidelines.</p>
