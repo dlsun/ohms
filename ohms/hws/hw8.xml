@@ -1,0 +1,573 @@
+﻿<hw name="Homework 8" due_date="11/16/2013 17:00:00">
+
+  <question>
+    <p>
+      With a perfectly balanced roulette wheel, in the long run, red numbers should turn up 18 times in 38. A casino suspects that red comes 
+up on one of its roulette wheels too often. It records the results of 3,800 plays on that wheel, finding 1,890 red numbers. Is that too many reds? Or chance variation?
+    </p>
+
+    <ol type="a">
+      <li> Let's set up a box model for this problem.
+        <ol type = "i">
+          <li>
+            The box in this case consists of...
+            <item type="Multiple Choice" points="0.5">
+              <option correct="true">0's and 1's with a 1 indicating red.</option>
+              <option>the numbers on a roulette wheel.</option>
+            </item>
+          </li>
+
+          <li>
+            The number 1,890 represents...
+            <item type="Multiple Choice" points="0.5">
+              <option>the sum of 38 draws from this box.</option>
+              <option>the mean of 38 draws from this box.</option>
+              <option correct="true">the sum of 3,800 draws from this box.</option>
+              <option>the mean of 3,800 draws from this box.</option>
+            </item>
+          </li>
+        </ol>
+      </li>
+
+      <li>
+        <ol type = "i">
+          <li>
+            The null says that the percentage of reds in the box is
+            <item type="Short Answer" points="1">
+              <answer type="range">[47.3, 47.4]</answer>
+            </item>%.
+          </li>
+
+          <li>
+            The alternative says that the percentage of reds in the box is:
+            <item type="Multiple Choice" points="0.5">
+              <option>less than this</option>
+              <option correct="true">more than this</option>
+	      <option>not equal to this</option>
+            </item>
+          </li>
+        </ol>
+      </li>
+
+      <li>
+        <ol type = "i">
+          <li>The SE for the number of reds is:
+            <item type="Multiple Choice" points="0.5">
+              <option correct="true">$\sqrt{3800} \times \sqrt{\frac{18}{38} \times \frac{20}{38}}$</option>
+              <option>
+                $\sqrt{3800} \times \sqrt{\frac{1890}{3800} \times
+                \frac{1910}{3800}}$
+              </option>
+              <option>
+                $\frac{\sqrt{\frac{18}{38} \times
+                \frac{20}{38}}}{\sqrt{3800}}$
+              </option>
+              <option>
+                $\frac{\sqrt{\frac{1890}{3800} \times
+                \frac{1910}{3800}}}{\sqrt{3800}}$
+              </option>
+
+            </item>
+          </li>
+          <li>
+            $z = $
+            <item type="Short Answer" points="1">
+              <answer type="range">[2.9, 2.93]</answer>
+            </item>
+            and $P \approx $
+            <item type="Short Answer" points="1">
+              <answer type="range">[0.158, 0.2]</answer>
+            </item>%
+          </li>
+        </ol>
+      </li>
+
+      <li>
+        There were too many reds.
+        <item type="Multiple Choice" points="1">
+          <option correct="true">True</option>
+          <option>False</option>
+        </item>
+      </li>
+    </ol>
+  </question>
+
+
+
+  <question>
+    <p>A newspaper article says that on the average, college freshmen spend 7.5 hours a week going to parties. One administrator does not believe that these figures apply at her college, which has nearly 3,000 freshmen. She takes a simple random sample of 100 freshmen, and interviews them. On average, they report 6.6 hours a week going to parties, and the SD is 9 hours. Is the difference between 6.6 and 7.5 real?
+    </p>
+
+    <ol type="a">
+      <li>
+        Let's set up a box model for this problem.
+        <ol type = "i">
+          <li>
+            The box in this case consists of...
+            <item type="Multiple Choice" points="0.5">
+              <option>0's and 1's with a 1 indicating that the student went to parties.</option>
+              <option correct="true">the number of hours each student spent going to parties.</option>
+            </item>
+          </li>
+
+          <li>
+            The number 6.6 represents...
+            <item type="Multiple Choice" points="0.5">
+              <option>the sum of 100 draws from this box.</option>
+              <option correct="true">the mean of 100 draws from this box.</option>
+              <option> the sum of 3,000 draws from this box.</option>
+              <option>the mean of 3,000 draws from this box.</option>
+            </item>
+          </li>
+        </ol>
+      </li>
+
+      <li>
+        Fill in the blanks.
+        <ol type = "i">
+          <li>
+            The null says that the average of the box is
+            <item type="Short Answer" points="1">
+              <answer type="range">[7.5, 7.5]</answer>
+            </item> hours.
+          </li>
+
+          <li>
+            The alternative says that the average is:
+            <item type="Multiple Choice" points="1">
+              <option>less than this</option>
+              <option>more than this</option>
+	      <option correct="true">not equal to this</option>
+            </item>
+          </li>
+        </ol>
+      </li>
+
+      <li>
+        <ol type = "i">
+          <li>
+            $z = $
+            <item type="Short Answer" points="1">
+              <answer type="range">[-1,-1]</answer>
+            </item>
+            and $P \approx $
+            <item type="Short Answer" points="1">
+              <answer type="range">[31.6, 32]</answer>
+            </item>%
+          </li>
+
+          <li>
+            The difference can be explained by chance.
+            <item type="Multiple Choice" points="1">
+              <option correct="true">True</option>
+              <option>False</option>
+            </item>
+          </li>
+        </ol>
+      </li>
+    </ol>
+  </question>
+
+
+  <question>
+    <p>One large course has 900 students, broken down into section meetings with 30 students each. The section meetings are led by teaching assistants. On the final, the class average is 63, and the SD is 20. However, in one section the average is only 55. The TA argues this way:</p>
+
+    <blockquote>
+      If you took 30 students at random from the class, there is a pretty good chance they would average below 55 on the final. That's what happened to me — chance variation.
+    </blockquote>
+    <p>
+      Is this a good defense? Conduct a hypothesis test to examine the TA's claims. Be sure to state the box model and the null hypothesis.
+    </p>
+
+    <item type="Long Answer" points="6">
+      <solution>
+        <h6>Sample Correct Solution</h6>
+
+        <p>The scores in the TA's section are like 30 draws at random from a box containing all 900 scores. (There is little difference between drawing with or without replacement, because the box is so big.) The null hypothesis specifies that the average of draws from the box is 63. The alternative hypothesis is that the average of draws form the box is lower than 63. The EV for the average of the draws is 63, and the SE is SD/sqrt(n) = 20/sqrt(900) = 3.65. So 
+$$z = \frac{obs − exp}{SE} = \frac{55 − 63}{3.65} \approx −2.2,$$ 
+and $P \approx 1\%$. The TA’s defense is not good.</p>
+
+
+        <h6>Grading Rubric</h6>
+        <p>Please grade this question out of 6 points following these guidelines.</p>
+        <ul>
+          <li>1 point for stating the scores are the same as making 30 draws at random from a box containing all 900 scores. </li>
+          <li>1 point for stating the null hypothesis is that the average of draws is 63 .</li>
+          <li>1 point for stating the alternative hypothesis is that the average of draws is lower than 63. </li>
+          <li>1 point for calculating the SE to be 3.65.</li>
+          <li>1 point for performing a z-test and calculating that the z score is -2.2.</li>
+          <li>1 point for stating that the $P \approx 1\%$ and that the TA's defense is not good. </li>
+        </ul>
+      </solution>
+    </item>
+  </question>
+
+
+  <question>
+    <p>
+      According to the census, the median household income in Atlanta (1.5 million households) was \$52,000 in 1999.
+      In June 2003, a market research organization takes a simple random sample of 750 households in Atlanta; 56% of the sample households had incomes over $52,000.
+      Did median household income in Atlanta increase over the period 1999 to 2003?
+    </p>
+
+    <ol type="a">
+      <li>What is the box model for this problem under the null hypothesis?
+        <item type="Multiple Choice" points="2">
+	  <option>A box of 1999 incomes with median \$52,000.</option>
+	  <option>A box of 2003 incomes with median \$52,000.</option>
+          <option>A box with 50% $\fbox{1}$'s and 50% $\fbox{0}$'s, with $\fbox{1}$ indicating an income above \$52,000 in 1999.</option>
+          <option correct="true">A box with 50% $\fbox{1}$'s and 50% $\fbox{0}$'s, with $\fbox{1}$ indicating an income above \$52,000 in 2003.</option>
+          <option>A box with 56% $\fbox{1}$'s and 44% $\fbox{0}$'s, with $\fbox{1}$ indicating an income above \$52,000 in 1999.</option>
+          <option>A box with 56% $\fbox{1}$'s and 44% $\fbox{0}$'s, with $\fbox{1}$ indicating an income above \$52,000 in 2003.</option>
+        </item>
+      </li>
+
+      <li>The test statistic is $z = $ 
+        <item type="Short Answer" points="2">
+          <answer type="range">[3.28,3.34]</answer>
+        </item> and the $P$-value is $P \approx $
+        <item type="Short Answer" points="1">
+          <answer type="range">[0.041,0.052]</answer>
+        </item>%.
+      </li>
+      
+      <li>What do you conclude?
+      <item type="Multiple Choice" points="1">
+        <option correct="true">Median family income increased from 1999 to 2003.</option>
+        <option>Median family income did not increase from 1999 to 2003.</option>
+      </item>
+      </li>
+    </ol>
+  </question>
+
+  
+  <question>
+    <p>
+      Does the psychological environment affect the anatomy of the brain? This question was studied experimentally
+      by Mark Rosenzweig and his associates. The subjects for the study came from a genetically pure strain of rats.
+      From each litter, one rat was selected at random for the treatment group, and one for the control group.
+      Both groups got exactly the same kind of food and drink — as much as they wanted. But each animal in the
+      treatment group lived with 11 others in a large cage, furnished with playthings which were changed daily.
+      Animals in the control group lived in isolation, with no toys. After a month, the experimental animals were killed and dissected.
+    </p>
+
+    <p>
+      On the average, the control animals were heavier and had heavier brains, perhaps because they ate more and 
+      got less exercise. However, the treatment group had consistently heavier cortexes (the "grey matter," or 
+      thinking part of the brain). This experiment was repeated many times; results from the first 5 trials 
+      are shown in the table: "T" means treatment, and "C" is for control. Each column refers to one pair of animals. 
+      In the first pair, the animal in treatment had a cortex weighing 707 milligrams; the one in control had a 
+      lighter cortex, weighing only 669 milligrams. And so on.
+    </p>
+
+    <p>
+      Two methods of analyzing the data will be presented in the form of exercises. Both methods take into 
+      account the pairing, which is a crucial feature of the data. (The pairing comes from randomization within litter.)
+    </p>
+
+    <p>
+      Below is a table of cortex weights (in milligrams) for experimental animals. 
+      The treatment group (T) had an enriched environment. The control group (C) had a deprived environment.
+    </p>
+
+    <table class="table">
+      <thead>
+        <th>Pair</th>
+        <th>1</th>
+        <th>2</th>
+        <th>3</th>
+        <th>4</th>
+        <th>5</th>
+        <th>6</th>
+        <th>7</th>
+        <th>8</th>
+        <th>9</th>
+        <th>10</th>
+        <th>11</th>
+        <th>12</th>
+      </thead>
+      <tr>
+        <td>
+          <b>T</b></td>
+        <td>707</td>
+        <td>740</td>
+        <td>745</td>
+        <td>652</td>
+        <td>649</td>
+        <td>676</td>
+        <td>699</td>
+        <td>696</td>
+        <td>712</td>
+        <td>708</td>
+        <td>749</td>
+        <td>690</td>
+      </tr>
+      <tr>
+        <td>
+          <b>C</b></td>
+        <td>669</td>
+        <td>650</td>
+        <td>651</td>
+        <td>627</td>
+        <td>656</td>
+        <td>642</td>
+        <td>698</td>
+        <td>648</td>
+        <td>676</td>
+        <td>657</td>
+        <td>692</td>
+        <td>621</td>
+      </tr>
+    </table>
+
+    <ol type="a">
+      <li>
+        First, we ask: in how many of these pairs did the treatment animal have a heavier cortex? 
+        Suppose treatment had no effect, so each animal of the pair had a 50-50 chance to have the heavier cortex, 
+        independently from pair to pair. Under this assumption, what is the chance that an investigator would get as 
+        many pairs as Rosenzweig did, or more, with the treatment animal having the heavier cortex? In other words, the $P$-value is 
+	<item type="Short Answer" points="2">
+          <answer type="range">[0.3, 0.32]</answer>
+          <answer type="exact">0.32</answer>
+	</item>%.
+      </li>
+      
+      <li><p>Now we look closer at the data. For each pair of animals, compute the difference 
+      in cortex weights "treatment – control." Find the average and SD of all these differences.</p>
+
+	Average difference = 
+	<item type="Short Answer" points=".5">
+          <answer type="range">[44.6, 44.7]</answer>
+	  <answer type="exact">44.7</answer>
+	</item>, SD of differences = 
+	<item type="Short Answer" points=".5">
+          <answer type="range">[29.5,29.6]</answer>
+	  <answer type="exact">29.6</answer>
+	</item>
+	
+	<p>The null hypothesis says that these differences are like draws made at random with replacement from a box 
+	  whose average is 0 — the treatment has no effect. The sample size is small so make a t-test.</p>
+	
+	<p>The test statistic is $t = $ 
+	  <item type="Short Answer" points="1">
+            <answer type="range">[4.9, 5.1]</answer>
+	  </item> with 
+	  <item type="Short Answer" points="1">
+            <answer type="exact">11</answer>
+	  </item> degrees of freedom. According to the $t$-table, 
+	  the $P$-value is between 
+	  <item type="Short Answer" points=".5">
+            <answer type="range">[0, 0]</answer>
+	  </item>% $&lt; P &lt;$ 
+	  <item type="Short Answer" points=".5">
+	    <answer type="range">[.5, .5]</answer>
+	  </item>%.
+	</p>
+      </li>
+    </ol>
+  </question>
+  
+ 
+  
+  <question>
+    <p>
+      When convicts are released from prison, they have no money, and there is a high rate of "recidivism"
+      the released prisoners return to crime and are arrested again. Would providing income support to ex-convicts
+      during the first months after their release from prison reduce recidivism? The Department of Labor ran a
+      randomized controlled experiment to find out. The experiment was done on a selected group of convicts being
+      released from certain prisons in Texas and Georgia. Income support was provided, like unemployment insurance.
+      There was a control group which received no payment, and four different treatment groups (differing slightly in the amounts paid).
+
+      The exercise is on the results for Georgia, and combines the four treatment groups into one. Assume that prisoners were randomized to treatment or control.
+    </p>
+
+    <ol type="a">
+      <li>
+        592 prisoners were assigned to the treatment group, and of them 48.3% were rearrested within a year of release.
+        154 were assigned to the control group, and of them 49.4% were rearrested within a year of release.
+        Does income support reduce recidivism?
+
+	<ol type="i">
+
+	  <li>Which test would be most appropriate for this?
+	    <item type="Multiple Choice" points="0.5">
+              <option>One-tailed, one-sample $z$ test</option>
+              <option>Two-tailed, one-sample $z$ test</option>
+              <option correct="true">One-tailed, two-sample $z$ test</option>
+              <option>Two-tailed, two-sample $z$ test</option>
+	    </item>
+	  </li>
+
+	  <li>$z = $
+	    <item type="Short Answer" points="1">
+              <answer type="range">[.24, .245]</answer>
+              <answer type="range">[-.245, -.24]</answer>
+	      <answer type="exact">-.24</answer>
+	    </item>, $P \approx $
+	    <item type="Short Answer" points="1">
+              <answer type="range">[40, 42.1]</answer>
+	      <answer type="exact">40</answer>
+	    </item>%
+	  </li>
+	</ol>
+      </li>
+
+      <li>
+        In the first year after their release from prison, those assigned to the treatment group averaged 16.8 weeks of paid work; the SD was 15.9 weeks.
+        For those assigned to the control group, the average was 24.3 weeks; the SD was 17.3 weeks.
+        Did income support reduce the amount that the ex-convicts worked?
+
+	<ol type="i">
+
+	  <li>Which test would be most appropriate for this?
+	    <item type="Multiple Choice" points="0.5">
+	      <option>One-tailed, one-sample $z$ test</option>
+	      <option>Two-tailed, one-sample $z$ test</option>
+	      <option correct="true">One-tailed, two-sample $z$ test</option>
+	      <option>Two-tailed, two-sample $z$ test</option>
+	    </item>
+	  </li>
+
+	  <li>$z = $
+	    <item type="Short Answer" points="1">
+              <answer type="range">[4.85, 4.9]</answer>
+	      <answer type="range">[-4.9, -4.85]</answer>
+	      <answer type="exact">-4.87</answer>
+	    </item>, $P \approx $
+	    <item type="Short Answer" points="1">
+              <answer type="range">[0, .0001]</answer>
+	      <answer type="exact">0</answer>
+	    </item>%
+	  </li>
+	</ol>
+      </li>
+
+
+      <li>
+	What do you conclude about the effectiveness of income support for ex-convicts?
+
+	<item type="Multiple Choice" points="1">
+	  <option correct="true">It is detrimental; it doesn't reduce recidivism, and it discourages working.</option>
+	  <option>It is ineffective; it doesn't reduce recidivism, but it also doesn't discourage working.</option>
+	  <option>It is partially effective; it reduces recidivism, but it also discourages working.</option>
+	  <option>It is effective; it reduces recidivism without discouraging working.</option>
+	</item>
+
+      </li>
+
+    </ol>
+
+  </question>
+
+
+  <question>
+    <p>
+      An investigator wants to show that first-born children score higher on IQ tests than second-borns.
+      He takes a simple random sample of 400 two-child families in a school district, both children being enrolled in elementary school.
+      He gives these children the WISC vocabulary test (described in Exercise 7 pp. 507-508), with the following results:
+    </p>
+    <p>
+      <li>The 400 first-borns average 29 and their SD is 10.</li>
+      <li>The 400 second-borns average 28 and their SD is 10.</li>
+    </p>
+
+    <p>(The scores are corrected for age differences.) He then makes a two sample $z$-test: </p>
+    <p>$$\text{SE for first-born average} \approx 0.5$$</p>
+    <p>$$\text{SE for second-born average} \approx 0.5$$</p>
+    <p>$$\text{SE for difference} = \sqrt{0.5^2 + 0.5^2} \approx 0.7$$</p>
+    <p>$$z = 1/0.7 \approx 1.4, P \approx 8\%$$</p>
+
+    <p>
+      Do you agree with the investigator's analysis of the data? If not, suggest what he should have done instead.
+    </p>
+    <item type="Long Answer" points="6">
+      <solution>
+        <h4>Sample Correct Solution</h4>
+        <p>
+          No, this was not the correct test to conduct because there is dependence between first-borns and second-borns. 
+          The data are naturally paired, since pairs of first-born and second-born children are from the same family.
+          Instead, what he should have done is take differences within each family and conduct a one-sample test comparing the difference to 0.
+        </p>
+
+        <h4>Grading Rubric</h4>
+        <p>Please grade this question out of 6 points following these guidelines:</p>
+        <ul>
+          <li>1 point for stating no, it was not the correct test to conduct.</li>
+          <li>2 points for pointing out the data is paired / the dependence between first-borns and second-borns.</li>
+          <li>3 points for suggesting that a one-sample test on the differences and comparing the difference to 0.</li>
+        </ul>
+      </solution>
+    </item>
+  </question>
+
+
+  <question>
+    <p>
+      In the US, there are two sources of national statistics on crime rates: (i) the FBI's Uniform Crime Reporting Program, which publishes summaries on all crimes reported
+      to police agencies in jurisdictions covering virtually 100% of the population; (ii) the National Crime Survey, based on interviews with a nationwide probability sample of households.
+    </p>
+    <p>
+      In 2001, 3% of the households in the sample told the interviewers they had experienced at least one burglary within the past 12 months. The same year, the FBI reported a burglary rate
+      of 20 per 1,000 households, or 2%. Can this difference be explained as chance error? If not, how would you explain it? You may assume that the Survey is based on a
+      simple random sample of 50,000 households out of 100 million households.
+    </p>
+
+    <ol type="a">
+
+      <li>What test is appropriate here?
+	<item type="Multiple Choice" points="2">
+          <option>A 1-sample z-test testing the hypothesis that 3% of households have experienced a burglary in the past year.</option>
+          <option correct="true">A 1-sample z-test testing the hypothesis that 2% of households have experienced a burglary in the past year.</option>
+          <option>A 2-sample z-test testing the hypothesis that there is no difference between the percentage who report a burglary and the percentage who experienced one.</option>
+	</item>
+      </li>
+
+      <li>
+        The test statistic is $z = $
+        <item type="Short Answer" points="2">
+          <answer type="range">[15.9, 16.7]</answer>
+        </item>, corresponding to $P \approx $
+        <item type="Short Answer" points="1">
+          <answer type="range">[0, 0.00000001]</answer>
+        </item>%.
+      </li>
+
+      <li>What do you conclude?
+	<item type="Multiple Choice" points="1">
+          <option>The difference between 2 and 3% is well within the range expected by chance.</option>
+          <option correct="true">The difference between 2 and 3% is almost impossible to explain by chance — many burglaries are not reported to the police.</option>
+	</item>
+      </li>
+    </ol>
+  </question>
+
+
+
+  <question>
+    <p>
+      A statistician tosses a coin 100 times and gets 60 heads. His null hypothesis says that the coin is fair; the alternative, that the coin is biased — the probability of landing heads is not equal to 50%. He calculates the $z$-score as:
+    </p>
+      $$z = \frac{60 - 50}{\sqrt{100} \cdot \sqrt{0.5 \cdot 0.5}} = 2.$$
+
+    <p>
+      For a two-tailed test, he calculates the $P$-value as 5% and concludes that there is a 5% chance that the coin is fair. Do you agree? Explain.
+    </p>
+
+    <item type="Long Answer" points="6">
+      <solution>
+        <h6>Sample Correct Solution</h6>
+
+        <p>The $p$-value of a test is the chance of getting a certain statistic (or something more extreme) assuming the null hypothesis to be right. P is not the chance of the null hypothesis being right; the null hypothesis is either right or it isn't. In this example, the 2.5% represents the probability that 60 or more heads happened by chance assuming 50 is the true average, not the chance that 50 is the true average. </p>
+
+
+        <h6>Grading Rubric</h6>
+        <p>Please grade this question out of 6 points following these guidelines.</p>
+        <ul>
+          <li>3 points for stating the definition of a p-value for the z-test.</li>
+
+          <li>3 points for saying that P is not the chance of the null hypothesis being right. </li>
+        </ul>
+      </solution>
+    </item>
+  </question>
+</hw>
