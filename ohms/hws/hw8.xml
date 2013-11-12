@@ -282,6 +282,8 @@ and $P \approx 1\%$. The TA’s defense is not good.</p>
         <th>10</th>
         <th>11</th>
         <th>12</th>
+	<th>Avg</th>
+	<th>SD</th>
       </thead>
       <tr>
         <td>
@@ -298,6 +300,8 @@ and $P \approx 1\%$. The TA’s defense is not good.</p>
         <td>708</td>
         <td>749</td>
         <td>690</td>
+	<td><i>701.9</i></td>
+	<td><i>31.4</i></td>
       </tr>
       <tr>
         <td>
@@ -314,6 +318,26 @@ and $P \approx 1\%$. The TA’s defense is not good.</p>
         <td>657</td>
         <td>692</td>
         <td>621</td>
+	<td><i>657.3</i></td>
+	<td><i>23.4</i></td>
+      </tr>
+      <tr>
+        <td>
+          <b>Diffs</b></td>
+        <td>+38</td>
+        <td>+90</td>
+        <td>+94</td>
+        <td>+25</td>
+        <td>-7</td>
+        <td>+34</td>
+        <td>+1</td>
+        <td>+48</td>
+        <td>+36</td>
+        <td>+51</td>
+        <td>+57</td>
+        <td>+69</td>
+	<td><i>+44.7</i></td>
+	<td><i>29.6</i></td>
       </tr>
     </table>
 
@@ -330,22 +354,17 @@ and $P \approx 1\%$. The TA’s defense is not good.</p>
       </li>
       
       <li><p>Now we look closer at the data. For each pair of animals, compute the difference 
-      in cortex weights "treatment – control." Find the average and SD of all these differences.</p>
-
-	Average difference = 
-	<item type="Short Answer" points=".5">
-          <answer type="range">[44.6, 44.7]</answer>
-	  <answer type="exact">44.7</answer>
-	</item>, SD of differences = 
-	<item type="Short Answer" points=".5">
-          <answer type="range">[29.5,29.6]</answer>
-	  <answer type="exact">29.6</answer>
-	</item>
-	
-	<p>The null hypothesis says that these differences are like draws made at random with replacement from a box 
+      in cortex weights "treatment – control." The null hypothesis says that these differences are like draws made at random with replacement from a box 
 	  whose average is 0 — the treatment has no effect. The alternative says that the treatment 
 	  results in heavier cortexes, so the difference is greater than 0. The sample size is small so make a t-test.</p>
 	
+	<p>The relevant standard error is $SE = $
+	  <item type="Short Answer" points="1">
+            <answer type="range">[8.9, 8.93]</answer>
+	    <answer type="exact">8.92</answer>
+	  </item>.
+	</p>
+
 	<p>The test statistic is $t = $ 
 	  <item type="Short Answer" points="1">
             <answer type="range">[4.9, 5.1]</answer>
