@@ -238,8 +238,7 @@ class ShortAnswerItem(Item):
         for answer in self.answers:
             if answer.is_correct(response):
                 return self.points, ""
-            else:
-                return 0, ""
+        return 0, ""
 
 
 class ShortAnswer(Base):

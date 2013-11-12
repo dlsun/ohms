@@ -316,8 +316,52 @@ the score it did.</p>'''
     }, cls=NewEncoder)
 
 
-@app.route("/admin")
-def admin():
+@app.route("/reminder_email")
+def reminder_email():
+
+    if user.type != 'admin':
+        raise Exception("You are not authorized to view this page.")
+
+    hw = int(request.args['hw'])
+
+    import smtplib
+    smtpObj = smtplib.SMTP('localhost')
+    sender = 'stats60-aut1314-staff@lists.stanford.edu'
+    recipients = []
+
+    from objects import Homework, GradingPermission, User
+
+    homework = session.query(Homework).filter_by(name="Homework %d" % hw).one()
+
+    for question in homework.questions:
+        entries = session.query(GradingPermission).filter_by(question_id=question.id).filter_by(permissions=0).all()
+        for entry in entries:
+            name = session.query(User).get(entry.sunet).name
+            email = "%s@stanford.edu" % entry.sunet
+            if email not in recipients:
+                message = r'''From: Stats 60 Staff <stats60-aut1314-staff@lists.stanford.edu>
+To: %s <%s>
+Subject: Homework %d Peer Grading Incomplete
+
+Dear %s,
+
+You are receiving this e-mail because you were assigned to peer grading 
+for Homework %d and have not yet completed it. This is a reminder that 
+peer grading is due Tuesday at 5 P.M. Since peer grading counts the same 
+amount as the homework toward your course grade, please ensure that you 
+finish the peer grading before this deadline.
+
+Best,
+Stats 60 Staff
+''' % (name, email, hw, name, hw)
+                smtpObj.sendmail(sender, [email], message)                
+                recipients.append(email)
+
+    return "Successfully sent email to:<br/>" + "<br/>".join(recipients)
+
+
+@app.route("/view_responses")
+def view_responses():
 
     if user.type != 'admin':
         raise Exception("You are not authorized to view this page.")
@@ -327,7 +371,7 @@ def admin():
 
     from objects import Homework, Question, QuestionResponse
     homework = session.query(Homework).filter_by(name="Homework %d" % hw).one()
-    questions = session.query(Question).filter_by(hw_id=homework.id).order_by(Question.id).all()
+    questions = homework.questions
 
     question = questions[q-1]
     groups = []
@@ -339,7 +383,7 @@ def admin():
         filter_by(question_id=question.id).join(User).\
         filter((User.group == groups[0]) | (User.group == groups[1])).all()
 
-    return render_template("admin.html", responses=responses, options=options)
+    return render_template("view_responses.html", responses=responses, options=options)
     
 @app.route("/admin/submit/<int:response_id>", methods=['POST'])
 def submit_sample(response_id):
