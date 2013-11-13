@@ -319,20 +319,20 @@ the score it did.</p>'''
 
 @app.route("/staff")
 def staff():
-    return render_template("office_hours.html", options=options)
+    return render_template("office_hours.html", options=options, user=user)
 
 @app.route("/handouts")
 def handouts():
     handouts = sorted(os.listdir("/afs/ir/class/stats60/WWW/handouts"))
-    return render_template("handouts.html", handouts=handouts, options=options)
+    return render_template("handouts.html", handouts=handouts, options=options, user=user)
 
 @app.route("/tips")
 def tips():
-    return render_template("tips.html", options=options)
+    return render_template("tips.html", options=options, user=user)
 
 @app.route("/grading")
 def grading():
-    return render_template("grading.html", options=options)
+    return render_template("grading.html", options=options, user=user)
 
 @app.errorhandler(Exception)
 def handle_exceptions(error):

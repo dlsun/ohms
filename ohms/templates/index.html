@@ -3,13 +3,6 @@
 {% block content %}
 <h3>Online Homework Management System (OHMS)</h3>
 
-<p id="studentName" class="lead">You are logged in as 
-  <strong>{{user.name}}</strong>. 
-  {% if user.type == "admin" %}
-  You are an <a href="../admin.cgi/">administrator</a>.
-  {% endif %}
-</p>
-
 <table class="table table-striped" id="homeworks">
   <thead>
     <th>Homework</th>

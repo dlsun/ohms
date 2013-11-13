@@ -38,7 +38,7 @@ treatments = {
 
 @app.route("/")
 def index():
-    return render_template("admin/index.html", options=options)
+    return render_template("admin/index.html", options=options, user=user)
 
 
 @app.route("/reminder_email", methods=['POST'])
@@ -98,7 +98,7 @@ def view_responses():
         filter_by(question_id=question.id).join(User).\
         filter((User.group == groups[0]) | (User.group == groups[1])).all()
 
-    return render_template("admin/view_responses.html", responses=responses, options=options)
+    return render_template("admin/view_responses.html", responses=responses, options=options, user=user)
 
     
 @app.route("/update_response/<int:response_id>", methods=['POST'])
