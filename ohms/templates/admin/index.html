@@ -1,0 +1,48 @@
+{% extends "page.html" %}
+
+{% block content %}
+<h3>Administrator Panel</h3>
+
+<h4>Select Calibration Responses</h4>
+
+<p>This shows responses from students <b>not</b> 
+assigned to peer grading. The score and comments that you enter 
+will be used for the calibration stage of peer grading.</p>
+
+<form action="view_responses" method="POST">
+  Homework <input type="text" class="input input-mini" name="hw"/> 
+  Question <input type="text" class="input input-mini" name="q"/> 
+  <input type="submit" value="Get Responses!">
+</form>
+
+<hr/>
+
+<h4>Assign Peer Grading Tasks</h4>
+
+<p>This takes the pool of responses for a given homework and 
+assigns students to peer grade them. This should be done shortly after 
+the homework deadline.</p>
+
+<hr/>
+
+<h4>Tabulate Peer Grading</h4>
+
+<p>The peer feedback does not appear to students until the 
+grades are tabulated. This should be done shortly after the 
+peer grading deadline.</p>
+
+<hr/>
+
+<h4>Peer Grading Reminder E-mail</h4>
+
+<p>This sends out a reminder e-mail to the students who have 
+not completed their peer grading. This should be sent out 
+2 or 3 times as the deadline approaches.</p>
+
+<form action="reminder_email" method="POST">
+  Homework <input type="text" class="input input-mini" name="hw"/> 
+  <input type="submit" value="Send E-mails!">
+</form>
+
+{% endblock %}
+
