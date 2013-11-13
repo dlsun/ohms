@@ -33,6 +33,12 @@ question will be shown above it.
 {% endif %}
   </h3>
 
+  {% if user.type == "admin" %}
+  <form action="../admin.cgi/view_responses/{{ q.id }}" method="POST">
+    <input type="submit" value="View Student Responses"/>
+  </form>
+  {% endif %}
+
   <table class='frame'>
     <tr><td class='score'><strong>This problem is worth {{q.points}} points.</strong></td></tr>
     <tr><td class='alert'><h5>Comments:</h5> <p class='comments'></p></td></tr>

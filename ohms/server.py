@@ -100,6 +100,7 @@ def grade():
             "tasks": tasks})
 
     return render_template("grade.html",
+                           hw_id=hw_id,
                            questions=questions,
                            user=user,
                            options=options)
@@ -114,7 +115,7 @@ def rate():
     # check that student is the one who submitted this QuestionResponse
 
     question_response = get_question_response(question_response_id)
-    if question_response.sunet != sunet:
+    if question_response.sunet != sunet and user.type != "admin":
         raise Exception("You are not authorized to rate this response.")
 
     # fetch all peers that were assigned to grade this QuestionResponse

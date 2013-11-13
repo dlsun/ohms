@@ -8,25 +8,34 @@
 
   <body class='span12'>
 
+    <base href="http://stats60.stanford.edu/cgi-bin/index.cgi/" target="_blank">
+
     <h3>Select Sample Responses</h3>
 
     <table class='table'>
-      {% for response in responses %}
-      <tr><td class='span8'>
+      {% for user_response in user_responses %}
+      <tr>
+	<td class='span2'>  
+	  <p>{{ user_response[1].name }}</p>
+	  <p><tt>{{ user_response[0].sunet }}</tt></p>
+	  <p>{{ user_response[0].time }}</p>
+	</td><td class='span5'>
 	  <ul>
-	  {% for item_response in response.item_responses %}
+	  {% for item_response in user_response[0].item_responses %}
 	  <li><div style="white-space: pre-wrap">{{ item_response.response }}</div></li>
 	  {% endfor %}
 	  </ul>
-	</td><td class='span4'>
-	  <form method='POST' action='update_response/{{ response.id }}'>
+	</td><td class='span5'>
+	  <form method='POST' action='update_response/{{ user_response[0].id }}'>
 	    <table style="border-top: none;">
 	      <tr>
 		<td>Score:</td>
+		<td>{{ user_response[0].score }}</td>
 		<td><input class='input-mini' name='score' type='text'/></td>
 	      </tr>
 	      <tr>
 		<td>Comments:</td>
+		<td>{{ user_response[0].comments|safe }}</td>
 		<td><textarea name='comments'></textarea></td>
 	      </tr>
 	      <tr>

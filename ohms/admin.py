@@ -41,16 +41,24 @@ def index():
     return render_template("admin/index.html", options=options, user=user)
 
 
-@app.route("/reminder_email", methods=['POST'])
-def reminder_email():
+@app.route("/assign_tasks/<int:hw_id>", methods=['POST'])
+def assign_tasks(hw_id):
+    return "Not yet implemented."
 
-    hw = int(request.form['hw'])
+
+@app.route("/tabulate_grades/<int:hw_id>", methods=['POST'])
+def tabulate_grades(hw_id):
+    return "Not yet implemented."
+
+
+@app.route("/reminder_email/<int:hw_id>", methods=['POST'])
+def reminder_email(hw_id):
 
     smtpObj = smtplib.SMTP('localhost')
     sender = 'stats60-aut1314-staff@lists.stanford.edu'
     recipients = []
 
-    homework = session.query(Homework).filter_by(name="Homework %d" % hw).one()
+    homework = session.query(Homework).get(hw_id)
 
     for question in homework.questions:
         entries = session.query(GradingPermission).filter_by(question_id=question.id).filter_by(permissions=0).all()
@@ -60,45 +68,47 @@ def reminder_email():
             if email not in recipients:
                 message = r'''From: Stats 60 Staff <stats60-aut1314-staff@lists.stanford.edu>
 To: %s <%s>
-Subject: Homework %d Peer Grading Incomplete
+Subject: %s Peer Grading Incomplete
 
 Dear %s,
 
 You are receiving this e-mail because you were assigned to peer grading 
-for Homework %d and have not yet completed it. This is a reminder that 
+for %s and have not yet completed it. This is a reminder that 
 peer grading is due Tuesday at 5 P.M. Since peer grading counts the same 
 amount as the homework toward your course grade, please ensure that you 
 finish the peer grading before this deadline.
 
 Best,
 Stats 60 Staff
-''' % (name, email, hw, name, hw)
+''' % (name, email, homework.name, name, homework.name)
                 smtpObj.sendmail(sender, [email], message)                
                 recipients.append(email)
 
     return "Successfully sent email to:<br/>" + "<br/>".join(recipients)
 
 
-@app.route("/view_responses", methods=['POST'])
-def view_responses():
+@app.route("/view_responses/<int:q_id>", methods=['POST'])
+def view_responses(q_id):
 
-    hw = int(request.form['hw'])
-    q = int(request.form['q'])
+    user_responses = session.query(QuestionResponse, User).filter(QuestionResponse.sunet == User.sunet).\
+        filter(QuestionResponse.question_id == q_id).all()
 
-    homework = session.query(Homework).filter_by(name="Homework %d" % hw).one()
-    questions = homework.questions
+    #homework = session.query(Homework).filter_by(name="Homework %d" % hw).one()
+    #questions = homework.questions
 
-    question = questions[q-1]
-    groups = []
-    for i in range(4):
-        if treatments[i][hw-1]==0:
-            groups.append(i)
-    
-    responses = session.query(QuestionResponse).\
-        filter_by(question_id=question.id).join(User).\
-        filter((User.group == groups[0]) | (User.group == groups[1])).all()
+    #question = questions[q-1]
+    #groups = []
+    #for i in range(4):
+    #    if treatments[i][hw-1]==0:
+    #        groups.append(i)
+    #
+    #responses = session.query(QuestionResponse).\
+    #    filter_by(question_id=question.id).join(User).\
+    #    filter((User.group == groups[0]) | (User.group == groups[1])).all()
 
-    return render_template("admin/view_responses.html", responses=responses, options=options, user=user)
+    #responses = session.query(QuestionResponse).filter_by(question_id=question.id).all()
+
+    return render_template("admin/view_responses.html", user_responses=user_responses, options=options, user=user)
 
     
 @app.route("/update_response/<int:response_id>", methods=['POST'])

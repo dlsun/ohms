@@ -5,6 +5,34 @@
 
 <h3 id="homework_name"></h3>
 
+{% if user.type == "admin" %}
+<p>The following button will take the collection of responses and 
+assign them to students to be peer graded. Click this button soon 
+after the homework is due.
+  <form action="../admin.cgi/assign_tasks/{{ hw_id }}" method="POST">
+    Due Date: <input type="text" name="due_date"/> 
+    <input type="submit" value="Assign Tasks!"/>
+  </form>
+</p>
+
+<p>The following button will calculate students' scores and 
+create a link for students to view and rate the comments. Then 
+it will send out an e-mail to the students announcing the 
+availability of the peer feedback. Click 
+this button soon after the peer grading is due.</p>
+  <form action="../admin.cgi/tabulate_grades/{{ hw_id }}" method="POST">
+    <input type="submit" value="Tabulate Grades!">
+  </form>
+</p>
+
+<p>This button sends an e-mail to the students who have not 
+completed their peer grading task yet.
+  <form action="../admin.cgi/reminder_email/{{ hw_id }}" method="POST">
+    <input type="submit" value="Send Reminder Email!">
+  </form>
+</p>
+{% endif %}
+
 <hr/>
 
 {% if not questions %}
