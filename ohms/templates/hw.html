@@ -34,7 +34,8 @@ question will be shown above it.
   </h3>
 
   {% if user.type == "admin" %}
-  <form action="../admin.cgi/view_responses/{{ q.id }}" method="POST">
+  <form action="../admin.cgi/view_responses?q={{ q.id }}" method="POST">
+    <input type="checkbox" name="calibration" value="true"/> I'm selecting calibration responses. 
     <input type="submit" value="View Student Responses"/>
   </form>
   {% endif %}

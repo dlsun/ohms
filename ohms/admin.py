@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 
 from base import session
 from objects import User, Homework, Question, QuestionResponse, GradingPermission
-from queries import get_user
+from queries import get_user, get_grading_tasks_for_response, question_grade_query
 import options
 
 import smtplib
@@ -87,26 +87,19 @@ Stats 60 Staff
     return "Successfully sent email to:<br/>" + "<br/>".join(recipients)
 
 
-@app.route("/view_responses/<int:q_id>", methods=['POST'])
-def view_responses(q_id):
+@app.route("/view_responses", methods=['POST', 'GET'])
+def view_responses():
 
-    user_responses = session.query(QuestionResponse, User).filter(QuestionResponse.sunet == User.sunet).\
-        filter(QuestionResponse.question_id == q_id).all()
+    q_id = request.args.get('q')
 
-    #homework = session.query(Homework).filter_by(name="Homework %d" % hw).one()
-    #questions = homework.questions
+    query = session.query(QuestionResponse, User).filter(QuestionResponse.sunet == User.sunet).\
+        filter(QuestionResponse.question_id == q_id)
 
-    #question = questions[q-1]
-    #groups = []
-    #for i in range(4):
-    #    if treatments[i][hw-1]==0:
-    #        groups.append(i)
-    #
-    #responses = session.query(QuestionResponse).\
-    #    filter_by(question_id=question.id).join(User).\
-    #    filter((User.group == groups[0]) | (User.group == groups[1])).all()
+    # This next block is only necessary for the study. Will remove after this quarter is over.
+    if request.form.get('calibration') == "true":
+       query = query.filter((User.group == 0) | (User.group == 3))
 
-    #responses = session.query(QuestionResponse).filter_by(question_id=question.id).all()
+    user_responses = query.all()
 
     return render_template("admin/view_responses.html", user_responses=user_responses, options=options, user=user)
 
@@ -119,8 +112,26 @@ def update_response(response_id):
     response.score = int(request.form['score'])
     response.comments = request.form['comments']
     session.commit()
-    return 'Successfully updated response %d' % response.id
+    return 'Successfully updated response %d! Press the back button and refresh the page to confirm.' % response.id
 
+
+@app.route("/rate", methods=['GET'])
+def view_peer_comments():
+
+    out = {}
+    question_response_id = request.args.get("id")
+
+    grading_tasks = get_grading_tasks_for_response(question_response_id)
+    question_grades = []
+    
+    for task in grading_tasks:
+        submissions = question_grade_query(task.id).all()
+        if submissions:
+            question_grades.append(submissions[-1])
+
+    return render_template("admin/view_comments.html",
+                           question_grades=question_grades,
+                           options=options)
 
 @app.errorhandler(Exception)
 def handle_exceptions(error):
