@@ -221,6 +221,8 @@ class ShortAnswerItem(Item):
             session.add(short_answer)
             if short_answer.type in ["exact", "expression"]:
                 solutions.append(short_answer.exact)
+        if not solutions:
+            solutions.append(0.5*(short_answer.lb + short_answer.ub))
         self.solution = ", ".join(solutions)
 
     def to_html(self):
