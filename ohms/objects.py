@@ -63,24 +63,26 @@ class Question(Base):
         question.name = node.attrib['name'] if 'name' in node.attrib else ""
         question.points = 0
         # get dict that maps children to their parents
-        parent_map = dict((c, p) for p in node.getiterator() for c in p)
+        parent_map = dict((c, p) for p in node.iter() for c in p)
         # iterate over items
         i = 0
-        for parent in node.getiterator():
-            for j, child in enumerate(parent):
-                if child.tag == 'item':
-                    # get item object and its order
-                    item_object = Item.from_xml(child)
-                    item_object.order = i
-                    i += 1
-                    # add items to question
-                    question.points += item_object.points
-                    question.items.append(item_object)
-                    # replace items by corresponding html, saving the tail
-                    new_child = item_object.to_html()
-                    new_child.tail = child.tail
-                    parent.remove(child)
-                    parent.insert(j, new_child)
+        for e in node.iter():
+            if e.tag == "item":
+                item_object = Item.from_xml(e)
+                item_object.order = i
+                i += 1
+                # add items to question
+                question.points += item_object.points
+                question.items.append(item_object)
+                # replace items by corresponding html, saving the tail
+                new_e = item_object.to_html()
+                new_e.tail = e.tail
+                # get parent
+                parent = parent_map[e]
+                for j, child in enumerate(parent):
+                    if child == e:
+                        parent.remove(e)
+                        parent.insert(j, new_e)
                 
         # include raw html
         question.html = ET.tostring(node, method="html")
@@ -222,7 +224,7 @@ class ShortAnswerItem(Item):
             if short_answer.type in ["exact", "expression"]:
                 solutions.append(short_answer.exact)
         if not solutions:
-            solutions.append(0.5*(short_answer.lb + short_answer.ub))
+            solutions.append(str(0.5*(short_answer.lb + short_answer.ub)))
         self.solution = ", ".join(solutions)
 
     def to_html(self):
