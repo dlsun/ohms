@@ -178,14 +178,14 @@ up on one of its roulette wheels too often. It records the results of 3,800 play
 
     <item type="Long Answer" points="6">
       <solution>
-        <h6>Sample Correct Solution</h6>
+        <h4>Sample Correct Solution</h4>
 
         <p>The scores in the TA's section are like 30 draws at random from a box containing all 900 scores. (There is little difference between drawing with or without replacement, because the box is so big.) The null hypothesis specifies that the average of draws from the box is 63. The alternative hypothesis is that the average of draws form the box is lower than 63. The EV for the average of the draws is 63, and the SE is SD/sqrt(n) = 20/sqrt(900) = 3.65. So 
 $$z = \frac{obs − exp}{SE} = \frac{55 − 63}{3.65} \approx −2.2,$$ 
 and $P \approx 1\%$. The TA’s defense is not good.</p>
 
 
-        <h6>Grading Rubric</h6>
+        <h4>Grading Rubric</h4>
         <p>Please grade this question out of 6 points following these guidelines.</p>
         <ul>
           <li>1 point for stating the scores are the same as making 30 draws at random from a box containing all 900 scores. </li>
@@ -572,11 +572,11 @@ and $P \approx 1\%$. The TA’s defense is not good.</p>
 
     <item type="Long Answer" points="6">
       <solution>
-        <h6>Sample Correct Solution</h6>
+        <h4>Sample Correct Solution</h4>
 
         <p>The $p$-value of a test is the chance of getting a certain statistic (or something more extreme) assuming the null hypothesis to be right. P is not the chance of the null hypothesis being right; the null hypothesis is either right or it isn't. In this example, the 2.5% represents the probability that 60 or more heads happened by chance assuming 50 is the true average, not the chance that 50 is the true average. </p>
 
-        <h6>Grading Rubric</h6>
+        <h4>Grading Rubric</h4>
         <p>Please grade this question out of 6 points following these guidelines.</p>
         <ul>
           <li>3 points for stating the definition of a p-value for the z-test.</li>
