@@ -1,5 +1,159 @@
 <hw name="Homework 9" due_date="11/23/2013 17:00:00">
 
+  <question>
+    <p>
+      You are drawing 100 times at random with replacement from a box. Select the correct option below:
+    </p>
+    <ol type="a">
+      <li>To test the null hypothesis that the average of the box is 2, you would use:
+	<item type="Multiple Choice" points="3">
+	  <option correct="true">the one-sample z-test</option>
+	  <option>the two-sample z-test</option>
+	  <option>the $\chi^2$-test, with a null hypothesis that tells you the contents of the box</option>
+	  <option>the $\chi^2$-test for independence</option>
+	</item>
+      </li>
+      <li>To test the null hypothesis that the box is $\fbox{$\fbox{1}\fbox{2}\fbox{3}$}$, you would use:
+	<item type="Multiple Choice" points="3">
+	  <option>the one-sample z-test</option>
+	  <option>the two-sample z-test</option>
+	  <option correct="true">the $\chi^2$-test, with a null hypothesis that tells you the contents of the box</option>
+	  <option>the $\chi^2$-test for independence</option>
+	</item>
+      </li>
+    </ol>
+  </question>
+
+  <question>
+    <p>
+      As part of a study on the selection of grand juries in
+      Alameda county, the educational level of grand jurors was
+      compared with the county distribution.
+    </p>
+    <p>
+      The data on the percentage of people in the county
+      and the number of grand jurors attaining each educational
+      level is shown below. Fill in the expected number of
+      jurors attaining each educational level if the grand jury
+      had been selected as a simple random sample from the
+      population. (<b>Note</b>: the expected "number" can and should be a 
+      decimal.)
+    </p>
+    <table class="table span5">
+      <thead>
+	<th style="width:30%">Educational Level</th>
+	<th style="width:20%">County</th>
+	<th style="width:20%">Number of jurors</th>
+	<th style="width:30%">Expected "number"</th>
+      </thead>
+      <tbody>
+	<tr>
+	  <td>Elementary</td>
+	  <td>28.4%</td>
+	  <td>1</td>
+	  <td>
+            <item type="Short Answer" points="0.5">
+              <answer type="exact">17.6</answer>
+              <answer type="range">[17.4,17.8]</answer>
+            </item>
+	  </td>
+	</tr>
+	<tr>
+	  <td>Secondary</td>
+	  <td>48.5%</td>
+	  <td>10</td>
+	  <td>
+            <item type="Short Answer" points="0.5">
+              <answer type="exact">30.1</answer>
+              <answer type="range">[29.9,30.3]</answer>
+            </item>
+	  </td>
+	</tr>
+	<tr>
+	  <td>Some college</td>
+	  <td>11.9%</td>
+	  <td>16</td>
+	  <td>
+            <item type="Short Answer" points="0.5">
+              <answer type="exact">7.4</answer>
+              <answer type="range">[7.2,7.6]</answer>
+            </item>
+	  </td>
+	</tr>
+	<tr>
+	  <td>College degree</td>
+	  <td>11.2%</td>
+	  <td>35</td>
+	  <td>
+            <item type="Short Answer" points="0.5">
+              <answer type="exact">6.9</answer>
+              <answer type="range">[6.7,7.1]</answer>
+            </item>
+	  </td>
+	</tr>
+	<tr>
+	  <td><b>Total</b></td>
+	  <td><b>100.0%</b></td>
+	  <td><b>62</b></td>
+	  <td></td>
+	</tr>
+      </tbody>
+    </table>
+    <p>The test statistic is $\chi^2=$
+      <item type="Short Answer" points="1"> 
+	<answer type="exact">153</answer>
+	<answer type="range">[152,154]</answer>
+      </item>
+      with
+      <item type="Short Answer" points="1"> 
+	<answer type="exact">3</answer>
+      </item> degrees of freedom.
+    </p>
+    <p>Could a simple random sample from the county show a distribution of education level so different from the county-wide one? Choose one option and explanation.
+    </p>
+    <item type="Multiple Choice" points="2">
+      <option>This is absolutely impossible.</option>
+      <option correct="true">This is possible, but fantastically unlikely.</option>
+      <option>This is possible but unlikely—the chance is around 1% or so.</option>
+      <option>This is quite possible—the chance is around 10% or so.</option>
+      <option>This is nearly certain.</option>
+    </item>
+  </question>
+
+  <question>
+    <p>
+      Two people are trying to decide whether a die is fair. They roll it 100 times, with the results shown below. One person wants to make a z-test, the other wants to make a $\chi^2$-test. Who is right? Explain briefly. Then, calculate the $P$-value of the respective test. Is the die fair?
+    </p>
+
+    <div align="center">
+    21 <font size="200%"> ⚀</font>'s    &#160;     15 <font size="200%"> ⚁</font>'s      &#160;    13 <font size="200%"> ⚂</font>'s     &#160;     17 <font size="200%"> ⚃</font>'s     &#160;     19 <font size="200%"> ⚄</font>'s    &#160;     15 <font size="200%"> ⚅</font>'s
+    </div>
+
+    \begin{align}
+      \text{Average of numbers rolled} \approx 3.43, SD \approx 1.76
+    \end{align}
+
+    <item type="Long Answer" points="6">
+      <solution>
+        <h4>Sample Correct Solution</h4>
+	
+        <p>A $\chi^2$-test should be conducted, because we are interested in how well the rolls match the box, not just the average. For example, if we rolled ⚂ half the time and ⚃ the other half, we would be suspicious even though the average is exactly 3.5 as expected. Thus, we need to see whether the frequency of every outcome is close to its expected frequency, which is $\frac{100}{6} \approx 16.67\%$. With a $\chi^2$-test, $\chi^2$=2.6 on 5 degrees of freedom, which corresponds to $P \approx 75\%$. This is a good fit, and the die is fair. </p>
+
+
+        <h4>Grading Rubric</h4>
+        <p>Please grade this question out of 6 points following these guidelines.</p>
+        <ul>
+          <li>2 points for arguing that a $\chi^2$-test should be made, with appropriate justification.</li>
+          <li>1 point for calculating $\chi^2 = 2.5$.</li>
+	  <li>1 point for using 5 degrees of freedom. </li>
+	  <li>1 point for calculating $P \approx 75\%$ using the table.</li>
+	  <li>1 point for concluding that the die is fair. (If the student calculated an incorrect $P$-value of less than 5%, award them the 1 point for concluding the die is not fair.)</li>
+        </ul>
+      </solution>
+    </item>
+  </question>
+
+
 
   <question>
 
@@ -7,7 +161,7 @@
 
     <p>One argument was based on 1991 acquittal rates for persons charged with terrorist offenses. According to a defense expert, these rates were significantly different for Protestants and Catholics. The data are shown below: 8 Protestants out of 15 were acquitted, compared to 27 Catholics out of 65.</p>
 
-    <table class="table"> 
+    <table class="table span4"> 
       <thead> 
         <th></th> 
         <th>Protestant</th> 
@@ -29,10 +183,52 @@
 
     <p>The defense expert calculated $\chi^2 \approx 6.2$ with 1 degree of freedom, and concluded $P \approx 1\%$. He concluded that this was evidence of discrimination. In this problem, we will check his work.</p>
 
+    <p>First, fill in the table with expected counts.</p>
+
+     <table class="table span4"> 
+      <thead> 
+        <th></th> 
+        <th>Protestant</th> 
+        <th>Catholic</th> 
+      </thead> 
+      <tr> 
+        <td><b>Acquitted</b></td> 
+        <td>
+	  <item type="Short Answer" points="0.5">
+	    <answer type="range">[6.5,6.6]</answer>
+	    <answer type="exact">6.56</answer>
+	  </item>
+	</td> 
+        <td>
+	  <item type="Short Answer" points="0.5">
+	    <answer type="range">[28.4,28.5]</answer>
+	    <answer type="exact">28.44</answer>
+	  </item>
+	</td> 
+      </tr> 
+
+      <tr> 
+        <td><b>Convicted</b></td> 
+        <td>
+	  <item type="Short Answer" points="0.5">
+	    <answer type="range">[8.4,8.5]</answer>
+	    <answer type="exact">8.44</answer>
+	  </item>
+	</td> 
+        <td>
+	  <item type="Short Answer" points="0.5">
+	    <answer type="range">[36.5,36.6]</answer>
+	    <answer type="exact">36.56</answer>
+	  </item>
+	</td> 
+      </tr> 
+    </table> 
+
+
     <ol type="a">
 
       <li>What is the $\chi^2$ statistic?
-	<item type="Short Answer" points="2">
+	<item type="Short Answer" points="1">
 	  <answer type="range">[0.68,0.70]</answer>
 	  <answer type="exact">0.69</answer>
 	</item>
@@ -45,11 +241,11 @@
       </li>
 
       <li>According to the table in the book, the P-value lies between 
-	<item type="Short Answer" points="1">
+	<item type="Short Answer" points="0.5">
 	  <answer type="range">[30,30]</answer>
 	  <answer type="exact">30</answer>
 	</item>% and 
-	<item type="Short Answer" points="1">
+	<item type="Short Answer" points="0.5">
 	  <answer type="range">[50,50]</answer>
 	  <answer type="exact">50</answer>
 	</item>%.
@@ -63,6 +259,38 @@
 	</item>
       </li>
 
+    </ol>
+  </question>
+
+
+  <question>
+    <p>
+      In employment discrimination cases, courts have held that there is proof
+      of discrimination when the percentage of blacks among a firm's employees 
+      is lower than the percentage of blacks in the surrounding geographical region,
+      provided the difference is "statistically significant" (i.e., P-value less than 5%) 
+      by the z-test.
+    </p>
+    <ol type="a">
+      <li>
+	What is the biggest flaw with the court's criteria for proof of discrimination?
+	<item type="Multiple Choice" points="2"> 
+	  <option>The difference may be statistically significant but not practically important</option> 
+	  <option correct="true">Data snooping makes P-values hard to interpret</option> 
+          <option>The test is based on a sample of convenience</option>
+          <option>The test is based on data for the entire population</option> 
+	</item>
+      </li>
+      <li>
+	Consider a metropolitan area in which 10% of the people are black
+	and 50 firms which hire employees independently by a process which, 
+	as far as race is concerned, is equivalent to simple random sampling. 
+	The chance that at least one of the 50 firms will be found guilty
+	of discrimination is <item type="Short Answer" points="4">
+	  <answer type="range">[92, 92.4]</answer>
+	  <answer type="exact">92.3</answer>
+	</item>%.
+      </li>
     </ol>
   </question>
 
@@ -84,7 +312,7 @@
 
 	<p>We perform a $\chi^2$ test. First, we write down our observations into a table.</p>
 
-	<table class="table">
+	<table class="table span4">
 	  <thead>
 	    <th></th>
 	    <th>Mr. Smith</th>
@@ -111,7 +339,7 @@
 
 	<p>Under the null hypothesis, we have the following expected counts.</p>
 
-	<table class="table">
+	<table class="table span4">
 	  <thead>
 	    <th></th>
 	    <th>Mr. Smith</th>
@@ -284,5 +512,106 @@ group, 112 died of CVD after 6 years, compared to 123 in the control group. Does
   </question>
 
 
+  <question>
+    <p>
+      An experiment aims to test if right or left‐handedness affect how fast people type? 
+      Random samples of students from a typing class are given a typing speed test (words per minute),
+      and the results are compared.
+    </p>
+    <table class="table span4">
+      <thead>
+	<th>Handedness</th>
+	<th>$n$</th>
+	<th>Mean</th>
+	<th>$SD^+$</th>
+      </thead>
+      <tr>
+	<td>right</td>
+	<td>16</td>
+	<td>55.8</td>
+	<td>5.7</td>
+      </tr>
+      <tr>
+	<td>left</td>
+	<td>9</td>
+	<td>59.3</td>
+	<td>4.3</td>
+      </tr>
+    </table>
+
+    <p>Is there a relationship between handedness and typing speed? We will conduct a 2-sample test. Because 
+      sample sizes are small we use a t-test.</p>
+
+    <p>First, estimate the common SD of typing speed. 
+      $s = $ <item type="Short Answer" points="1">
+	<answer type="range">[5.2, 5.3]</answer>
+	<answer type="exact">5.25</answer>
+      </item> wpm.
+    </p>
+
+    <p>Now calculate the test statistic. 
+      $t = $ <item type="Short Answer" points="2">
+	<answer type="range">[1.58, 1.62]</answer>
+	<answer type="range">[-1.62, -1.58]</answer>
+	<answer type="exact">1.61</answer>
+	<answer type="exact">-1.61</answer>
+      </item> with <item type="Short Answer" points="1">
+	<answer type="exact">23</answer>
+      </item> degrees of freedom.
+    </p>
+
+    <p>According to the table in the book, this corresponds to a $P$-value between 
+      <item type="Short Answer" points="0.5">
+	<answer type="range">[10, 10]</answer>
+      </item>% and <item type="Short Answer" points="0.5">
+	<answer type="range">[20, 20]</answer>
+      </item>%.
+    </p>
+
+    <p>What do you conclude?
+      <item type="Multiple Choice" points="1"> 
+	<option correct="true">There is no relationship between handedness and typing speed.</option> 
+	<option>There is a statistically significant, but practically insignificant relationship 
+	  between handedness and typing speed.</option> 
+	<option>There is a both statistically and practically significant relationship between handedness 
+	  and typing speed.</option>
+      </item>
+    </p>
+  </question>
+
+
+  <question>
+    <p>This question is based on this <a href="http://xkcd.com/882/" target="_blank">comic</a>.</p>
+
+    <ol type="a">
+      <li>Explain the main point of the comic. Do the findings give us strong reason to believe there is a link between green jelly beans and acne? If not, what error is being made.</li>
+      <li>The newspaper article at the bottom of the comic proclaims "Green jelly beans linked to acne! 95% confidence". What do confidence intervals have to do with the hypothesis test the investigators conducted for green jelly beans?</li>
+      <li>Suppose the original $P$-value for jelly beans (as a whole) and acne was 6%. Instead of conducting studies for different colors (or playing minecraft), 
+	the scientists reconducted the original study for all jelly beans, but with substantially more subjects. They found that eating jelly beans 
+	increases risk of acne by $0.05\%$. This difference was very significant, with a $P$-value of 0.1%. Do we now have cause to be concerned about eating jelly beans?</li>
+    </ol>
+    
+    <item type="Long Answer" points="6">
+      <solution>
+        <h4>Sample Correct Solution</h4>
+        <p>The major issue with the comic is that we are testing multiple hypotheses without accounting for it. 
+        With 20 different jelly bean colors, even if none of the jelly beans had any effect on acne, 
+        we'd expect one false positive. </p>
+
+	<p>Confidence intervals and hypothesis tests are closely related. Rejecting the null hypothesis that green jelly beans have no effect at the 5% level is the same as saying that a 95% confidence interval for the effect size does not include zero. (See Lecture 25.)</p>
+
+        <p>As for the revised study, although the difference is statistically significant, a difference of 0.05% is practically unimportant. 
+        </p>
+
+        <h4>Grading Rubric</h4>
+        <p>Please grade this question out of 6 points following these guidelines:</p>
+        <ul>
+          <li>2 points for pointing out that the original comic was testing multiple hypotheses (a.k.a. data snooping) without adjusting for it.</li>
+	  <li>2 points for noting that rejecting the null hypothesis in this case means that a 95% confidence interval for the effect size would not include the null effect.</li>
+          <li>2 points for remarking on the difference between statistical and practical significance for the new study.</li>
+        </ul>
+      </solution>
+    </item>
+  </question>
 
 </hw>
