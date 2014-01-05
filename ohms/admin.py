@@ -10,7 +10,9 @@ from datetime import datetime, timedelta
 
 from base import session
 from objects import User, Homework, Question, QuestionResponse, GradingPermission
-from queries import get_user, get_grading_tasks_for_response, question_grade_query
+from queries import get_user, get_grading_tasks_for_response, question_grade_query, get_long_answer_qs
+from assign_grading_tasks import selective_peer_grading
+from tabulate_grades import tabulate_grades as _tabulate_grades
 import options
 
 import smtplib
@@ -43,12 +45,13 @@ def index():
 
 @app.route("/assign_tasks/<int:hw_id>", methods=['POST'])
 def assign_tasks(hw_id):
-    return "Not yet implemented."
+    selective_peer_grading(hw_id, request.args.get("due_date"))
 
 
 @app.route("/tabulate_grades/<int:hw_id>", methods=['POST'])
 def tabulate_grades(hw_id):
-    return "Not yet implemented."
+    for q in get_long_answer_qs(hw_id):
+        _tabulate_grades(q.id)
 
 
 @app.route("/reminder_email/<int:hw_id>", methods=['POST'])

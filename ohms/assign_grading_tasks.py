@@ -11,7 +11,7 @@ from queries import get_recent_question_responses, get_long_answer_qs
 from datetime import datetime, timedelta
 
 
-def make_grading_assignments(q_id, sunets):
+def make_grading_assignments(q_id, sunets, due_date=None):
     """
     Assigns students in "sunets" to grade each other.
 
@@ -25,9 +25,11 @@ def make_grading_assignments(q_id, sunets):
 
     # Create grading permissions
     for r in responses:
+        if due_date is None:
+            due_date = r.question.homework.due_date + timedelta(days=3)
         gp = GradingPermission(sunet=r.sunet, question_id=q_id,
                                permissions=0,
-                               due_date=r.question.homework.due_date + timedelta(days=3))
+                               due_date=due_date)
         session.add(gp)
 
     # This scheme guarantees that no pair of students is ever assigned to grade
@@ -78,7 +80,7 @@ def make_admin_assignments(q_id):
 
 
 
-def selective_peer_grading(hw_number):
+def selective_peer_grading(hw_number, due_date=None):
 
     treatments = {
         0: [1,1,1,0,0,1,1,0,0],
@@ -102,7 +104,7 @@ def selective_peer_grading(hw_number):
     # single Item, with a "Long Answer" type
     questions = get_long_answer_qs(hw_id)
     for q in questions:
-        make_grading_assignments(q.id, sunets)
+        make_grading_assignments(q.id, sunets, due_date)
         make_grader_assignments(q.id)
         make_admin_assignments(q.id)
 
