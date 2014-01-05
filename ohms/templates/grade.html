@@ -28,6 +28,13 @@ this button soon after the peer grading is due.</p>
 <p>This button sends an e-mail to the students who have not 
 completed their peer grading task yet.
   <form action="../admin.cgi/reminder_email/{{ hw_id }}" method="POST">
+    <textarea name="message">
+You are receiving this e-mail because you were assigned to peer grading 
+this week and have not yet completed it. This is a reminder that 
+peer grading is due Tuesday at 5 P.M. Since peer grading counts the same 
+amount as the homework toward your course grade, please ensure that you 
+finish the peer grading before this deadline.
+    </textarea>
     <input type="submit" value="Send Reminder Email!">
   </form>
 </p>

@@ -72,15 +72,11 @@ Subject: %s Peer Grading Incomplete
 
 Dear %s,
 
-You are receiving this e-mail because you were assigned to peer grading 
-for %s and have not yet completed it. This is a reminder that 
-peer grading is due Tuesday at 5 P.M. Since peer grading counts the same 
-amount as the homework toward your course grade, please ensure that you 
-finish the peer grading before this deadline.
+%s
 
 Best,
 Stats 60 Staff
-''' % (name, email, homework.name, name, homework.name)
+''' % (name, email, homework.name, name, request.form.get('message'))
                 smtpObj.sendmail(sender, [email], message)                
                 recipients.append(email)
 

@@ -102,7 +102,7 @@
     <p>The test statistic is $\chi^2=$
       <item type="Short Answer" points="1"> 
 	<answer type="exact">153</answer>
-	<answer type="range">[152,154]</answer>
+	<answer type="range">[150,155]</answer>
       </item>
       with
       <item type="Short Answer" points="1"> 
@@ -229,7 +229,7 @@
 
       <li>What is the $\chi^2$ statistic?
 	<item type="Short Answer" points="1">
-	  <answer type="range">[0.68,0.70]</answer>
+	  <answer type="range">[0.65,0.70]</answer>
 	  <answer type="exact">0.69</answer>
 	</item>
       </li>
