@@ -56,9 +56,9 @@ def index():
     if user.group is not None:
         peer_grading = treatments[user.group]
     elif user.type == "admin" or user.type == "grader":
-        peer_grading = [1,1,1,1,1,1,1,1,1]
+        peer_grading = [None,1]*int(round(.5*len(hws)))
     else:
-        peer_grading = [-1,-1,-1,-1,-1,-1,-1,-1,-1]
+        peer_grading = [None,1,None] + [-1]*(len(hws)-3)
 
     return render_template("index.html", homeworks=hws,
                            peer_grading=peer_grading,
@@ -73,7 +73,7 @@ def hw():
     hw_id = request.args.get("id")
     homework = get_homework(hw_id)
     if homework.start_date and homework.start_date > datetime.now():
-        raise "This homework has not yet been released."
+        raise Exception("This homework has not yet been released.")
     else:
         return render_template("hw.html",
                                homework=homework,
@@ -331,7 +331,7 @@ def staff():
 
 @app.route("/handouts")
 def handouts():
-    handouts = sorted(os.listdir("/afs/ir/class/stats60/WWW/handouts"))
+    handouts = sorted(os.listdir("/afs/ir/%s/WWW/handouts" % options.class_prefix))
     return render_template("handouts.html", handouts=handouts, options=options, user=user)
 
 @app.route("/tips")

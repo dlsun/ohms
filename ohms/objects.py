@@ -114,7 +114,7 @@ class Question(Base):
 
     def __iter__(self):
         """Iterates over the items in this question, in order"""
-        for item in sorted(self.items, key=lambda x: x.order):
+        for item in self.items:
             yield item
 
     def __str__(self):
