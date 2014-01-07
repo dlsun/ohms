@@ -8,7 +8,7 @@ from __future__ import division
 import os
 import elementtree.ElementTree as ET
 import re
-from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, UnicodeText
 from sqlalchemy.orm import relationship, backref
 from base import Base, session
 from datetime import datetime
@@ -18,7 +18,7 @@ class Homework(Base):
     __tablename__ = 'hws'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String, unique=True)
+    name = Column(String(50), unique=True)
     start_date = Column(DateTime)
     due_date = Column(DateTime)
 
@@ -49,9 +49,9 @@ class Question(Base):
     __tablename__ = 'questions'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String(100))
     hw_id = Column(Integer, ForeignKey('hws.id'))
-    xml = Column(String)
+    xml = Column(UnicodeText)
     items = relationship("Item", order_by="Item.id", backref="question")
     points = Column(Float)
 
@@ -135,8 +135,8 @@ class Item(Base):
     id = Column(Integer, primary_key=True)
     question_id = Column(Integer, ForeignKey('questions.id'))
     points = Column(Float)
-    type = Column(String)
-    solution = Column(String)
+    type = Column(String(20))
+    solution = Column(UnicodeText)
 
     __mapper_args__ = {'polymorphic_on': type,
                        'polymorphic_identity': 'item'}
@@ -230,7 +230,7 @@ class MultipleChoiceOption(Base):
     id = Column(Integer, primary_key=True)
     item_id = Column(Integer, ForeignKey('items.id'))
     order = Column(Integer)
-    text = Column(String)
+    text = Column(UnicodeText)
     correct = Column(Integer)
 
 
@@ -275,10 +275,10 @@ class ShortAnswer(Base):
 
     id = Column(Integer, primary_key=True)
     short_answer_id = Column(Integer, ForeignKey('items.id'))
-    type = Column(String)  # "range" or "exact" or "expression"
+    type = Column(String(10))  # "range" or "exact" or "expression"
     lb = Column(Float)
     ub = Column(Float)
-    exact = Column(String)
+    exact = Column(String(20))
 
     def from_xml(self, node):
         self.type = node.attrib['type'].lower()
@@ -368,16 +368,16 @@ class LongAnswerItem(Item):
 
 class User(Base):
     __tablename__ = 'users'
-    sunet = Column(String, primary_key=True)
-    name = Column(String)
-    type = Column(String)
+    sunet = Column(String(10), primary_key=True)
+    name = Column(String(100))
+    type = Column(String(10))
     group = Column(Integer)
 
 
 class QuestionResponse(Base):
     __tablename__ = 'question_responses'
     id = Column(Integer, primary_key=True)
-    sunet = Column(String, ForeignKey('users.sunet'))
+    sunet = Column(String(10), ForeignKey('users.sunet'))
     question_id = Column(Integer, ForeignKey('questions.id'))
     question = relationship("Question")
     time = Column(DateTime)
@@ -385,7 +385,7 @@ class QuestionResponse(Base):
                                   order_by="ItemResponse.id",
                                   backref="question")
     score = Column(Float)
-    comments = Column(String)
+    comments = Column(UnicodeText)
     sample = Column(Integer)
 
     def __str__(self):
@@ -400,7 +400,7 @@ class ItemResponse(Base):
     id = Column(Integer, primary_key=True)
     question_response_id = Column(Integer, ForeignKey('question_responses.id'))
     item_id = Column(Integer, ForeignKey('items.id'))
-    response = Column(String)
+    response = Column(UnicodeText)
 
     question_response = relationship("QuestionResponse")
     item_response = relationship("Item")
@@ -409,7 +409,7 @@ class ItemResponse(Base):
 class GradingPermission(Base):
     __tablename__ = "grading_permissions"
     id = Column(Integer, primary_key=True)
-    sunet = Column(String, ForeignKey('users.sunet'))
+    sunet = Column(String(10), ForeignKey('users.sunet'))
     question_id = Column(Integer, ForeignKey('questions.id'))
     permissions = Column(Integer)
     due_date = Column(DateTime)
@@ -421,7 +421,7 @@ class GradingPermission(Base):
 class GradingTask(Base):
     __tablename__ = 'grading_tasks'
     id = Column(Integer, primary_key=True)
-    grader = Column(String, ForeignKey('users.sunet'))
+    grader = Column(String(10), ForeignKey('users.sunet'))
     question_response_id = Column(Integer, ForeignKey('question_responses.id'))
 
     question_response = relationship("QuestionResponse")
@@ -434,7 +434,7 @@ class QuestionGrade(Base):
                              ForeignKey('grading_tasks.id'))
     time = Column(DateTime)
     score = Column(Float)
-    comments = Column(String)
+    comments = Column(UnicodeText)
     rating = Column(Integer)
 
     grading_task = relationship("GradingTask")
