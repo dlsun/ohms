@@ -51,7 +51,7 @@ class Question(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     hw_id = Column(Integer, ForeignKey('hws.id'))
-    html = Column(String)
+    xml = Column(String)
     items = relationship("Item", order_by="Item.id", backref="question")
     points = Column(Float)
 
@@ -59,37 +59,58 @@ class Question(Base):
 
     @staticmethod
     def from_xml(node):
-        question = Question()
+        # if question already has ID assigned, fetch instance; otherwise create new
+        if 'id' in node.attrib:
+            question = session.query(Question).get(node.attrib['id'])
+        else:
+            question = Question()
+            session.add(question)
+            session.flush()
+            node.attrib['id'] = str(question.id)
+        # question properties
         question.name = node.attrib['name'] if 'name' in node.attrib else ""
         question.points = 0
-        # get dict that maps children to their parents
+        question.items = []
+        # dict that maps children to their parents
         parent_map = dict((c, p) for p in node.iter() for c in p)
         # iterate over items
-        i = 0
         for e in node.iter():
             if e.tag == "item":
-                item_object = Item.from_xml(e)
-                item_object.order = i
-                i += 1
-                # add items to question
-                question.points += item_object.points
-                question.items.append(item_object)
+                # fetch item object
+                item = Item.from_xml(e)
+                # add item to question
+                question.points += item.points
+                question.items.append(item)
                 # replace items by corresponding html, saving the tail
-                new_e = item_object.to_html()
-                new_e.tail = e.tail
+                e_new = e
+                e_new.attrib['id'] = str(item.id)
+                e_new.tail = e.tail
                 # get parent
                 parent = parent_map[e]
                 for j, child in enumerate(parent):
                     if child == e:
                         parent.remove(e)
-                        parent.insert(j, new_e)
-                
-        # include raw html
-        question.html = ET.tostring(node, method="html")
-        session.add(question)
+                        parent.insert(j, e_new)
+
+        question.xml = ET.tostring(node, method="xml")
         session.commit()
 
         return question
+
+    def to_html(self):
+        node = ET.fromstring(self.xml)
+        parent_map = dict((c, p) for p in node.iter() for c in p)
+        for e in node.iter():
+            if e.tag == "item":
+                item = Item.from_xml(e)
+                e_new = item.to_html()
+                e_new.tail = e.tail
+                parent = parent_map[e]
+                for j, child in enumerate(parent):
+                    if child == e:
+                        parent.remove(e)
+                        parent.insert(j, e_new)
+        return ET.tostring(node, method="html")
 
     def __iter__(self):
         """Iterates over the items in this question, in order"""
@@ -97,7 +118,7 @@ class Question(Base):
             yield item
 
     def __str__(self):
-        return self.html
+        return self.to_html()
 
     def check(self, responses):
         scores, comments = zip(*[item.check(response) for (item, response)
@@ -114,7 +135,6 @@ class Item(Base):
     id = Column(Integer, primary_key=True)
     question_id = Column(Integer, ForeignKey('questions.id'))
     points = Column(Float)
-    order = Column(Integer)
     type = Column(String)
     solution = Column(String)
 
@@ -124,6 +144,9 @@ class Item(Base):
     @staticmethod
     def from_xml(node):
         """Constructs a Item object from an xml node"""
+
+        if 'id' in node.attrib:
+            return session.query(Item).get(node.attrib['id'])
 
         if node.attrib['type'] == 'Multiple Choice':
             item = MultipleChoiceItem()
@@ -136,6 +159,8 @@ class Item(Base):
 
         item.from_xml(node)
         item.points = float(node.attrib['points'])
+        session.add(item)
+        session.flush()
         return item
 
     def to_html(self):

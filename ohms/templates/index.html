@@ -6,6 +6,7 @@
 <table class="table table-striped" id="homeworks">
   <thead>
     <th>Homework</th>
+    <th>Start Date</th>
     <th>Due Date</th>
     <th>Peer Grading</th>
   </thead>
@@ -14,15 +15,30 @@
   {% for hw in homeworks %}
 
   <tr>
-    <td><a href="hw?id={{hw.id}}">{{hw.name}}</a></td>
-    <td>{{hw.due_date}} PDT</td>
+    <td>
+      {% if hw.start_date==None or hw.start_date < current_time %}
+        <a href="hw?id={{hw.id}}">{{hw.name}}</a>
+      {% else %}
+        <p class="muted">{{hw.name}}</p>
+      {% endif %}
+    </td>
+    <td>
+      {% if hw.start_date %}
+        {{hw.start_date}}
+      {% endif %}
+    </td>
+    <td>
+      {% if hw.due_date %}
+        {{hw.due_date}}
+      {% endif %}
+    </td>
     <td>
       {% if peer_grading[loop.index0]==1 %}
         <a href="grade?id={{hw.id}}">Peer Grading</a>
       {% elif peer_grading[loop.index0]==0 %}
-        You were not assigned to peer grade this week.
+        You weren't assigned to peer grade this week.
       {% elif peer_grading[loop.index0]==-1 %}
-	Please see a member of the course staff.
+	ERROR: please see course staff.
       {% endif %}
     </td>
   </tr>

@@ -13,7 +13,7 @@ from objects import Homework, Question
 
 def get_homework(hw_id=None):
     if hw_id is None:
-        return session.query(Homework).all()
+        return session.query(Homework).order_by(Homework.due_date).all()
     else:
         return session.query(Homework).get(hw_id)
 

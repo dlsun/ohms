@@ -132,6 +132,19 @@ def view_peer_comments():
                            question_grades=question_grades,
                            options=options)
 
+
+@app.route("/update_question", methods=['POST'])
+def update_question():
+    q_id = request.form['q_id']
+    xml_new = request.form['xml']
+    import elementtree.ElementTree as ET
+    question = Question.from_xml(ET.fromstring(xml_new))
+    return json.dumps({
+        "xml": question.xml,
+        "html": question.to_html(),
+    })
+
+
 @app.errorhandler(Exception)
 def handle_exceptions(error):
     return make_response(error.message, 403)

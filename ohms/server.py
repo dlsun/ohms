@@ -22,10 +22,11 @@ import options
 # Configuration based on deploy target
 if options.target == "local":
     app = Flask(__name__, static_url_path="/static", static_folder="../static")
-    sunet = "parkerp1"
+    sunet = "test"
     user = User(sunet=sunet,
                 name="Test User",
-                type="student")
+                type="student",
+                group=0)
 else:
     app = Flask(__name__)
     app.debug = (options.target != "prod")
@@ -36,16 +37,16 @@ else:
         user = get_user(sunet)
     except:
         user = User(sunet=sunet,
-                    name=os.environ.get(""),
+                    name=os.environ.get("WEBAUTH_LDAP_DISPLAYNAME"),
                     type="student")
         session.add(user)
         session.commit()
 
 treatments = {
-    0: [1,1,1,0,0,1,1,0,0],
-    1: [1,0,0,1,1,0,0,1,1],
-    2: [1,1,1,0,0,0,0,1,1],
-    3: [1,0,0,1,1,1,1,0,0]
+    0: [None,1,None,1,None,1,None,0,None,0,None,1,None,1,None,0,None,0],
+    1: [None,1,None,0,None,0,None,1,None,1,None,0,None,0,None,1,None,1],
+    2: [None,1,None,1,None,1,None,0,None,0,None,0,None,0,None,1,None,1],
+    3: [None,1,None,0,None,0,None,1,None,1,None,1,None,1,None,0,None,0]
     }
 
 @app.route("/")
@@ -62,17 +63,22 @@ def index():
     return render_template("index.html", homeworks=hws,
                            peer_grading=peer_grading,
                            user=user,
-                           options=options)
+                           options=options,
+                           current_time=datetime.now()
+    )
 
 
 @app.route("/hw", methods=['GET'])
 def hw():
     hw_id = request.args.get("id")
     homework = get_homework(hw_id)
-    return render_template("hw.html",
-                           homework=homework,
-                           user=user,
-                           options=options)
+    if homework.start_date and homework.start_date > datetime.now():
+        raise "This homework has not yet been released."
+    else:
+        return render_template("hw.html",
+                               homework=homework,
+                               user=user,
+                               options=options)
 
 
 @app.route("/grade", methods=['GET'])
@@ -133,12 +139,13 @@ def rate():
 
 def check_if_locked(due_date, submissions):
     past_due = due_date and due_date < datetime.now()
-    if len(submissions) > 1:
-        last_time = max(x.time for x in submissions)
-        too_many_submissions = datetime.now() < last_time + timedelta(hours=6)
-    else:
-        too_many_submissions = False
-    return past_due or too_many_submissions
+    return past_due
+    # if len(submissions) > 1:
+    #     last_time = max(x.time for x in submissions)
+    #     too_many_submissions = datetime.now() < last_time + timedelta(hours=6)
+    # else:
+    #     too_many_submissions = False
+    # return past_due or too_many_submissions
 
 
 @app.route("/load", methods=['GET'])

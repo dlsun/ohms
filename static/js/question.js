@@ -37,9 +37,32 @@ var OHMS = (function(OHMS) {
 	    var that = this;
 	    // submit onclick handler
 	    this.element.find(".submit").click(function () {
-		    that.lock();
-		    that.submit_response();
-		})
+		that.lock();
+		that.submit_response();
+	    })
+	    // allow editable source code for admins
+	    this.element.find(".editable").dblclick(function () {
+		$(this).hide();
+		that.element.find(".source").show();
+	    })
+	    this.element.find(".source").blur(function () {
+		$.ajax({
+		    url : "../admin.cgi/update_question",
+		    type : "POST",
+		    dataType : "json",
+		    data : {
+			q_id: that.id,
+			xml: that.element.find(".source").val(),
+		    }, 
+		    success : function (data) {
+			that.element.find(".source").val(data.xml).hide();
+			that.element.find(".editable").html(data.html).show();
+		    }, 
+		    error : function () {
+			alert("Update not successful.");
+		    }
+		});
+	    })
 	}
 
 	Question.prototype.load_response = function () {
