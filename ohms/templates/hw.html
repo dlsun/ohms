@@ -5,7 +5,8 @@
 
 <div id="homework">
 
-<h3 id="homework_name">{{ homework.name }} (Due: {{ homework.due_date }} PST)</h3>
+<h3 id="homework_name">{{ homework.name }} (Due: {{
+  homework.due_date.strftime("%a, %b %d at %I:%M %p") }} PST)</h3>
 
 <!--
 <p><b>Instructions:</b></p>

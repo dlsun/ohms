@@ -24,12 +24,12 @@
     </td>
     <td>
       {% if hw.start_date %}
-        {{hw.start_date}}
+        {{hw.start_date.strftime("%a, %b %d at %I:%M %p")}}
       {% endif %}
     </td>
     <td>
       {% if hw.due_date %}
-        {{hw.due_date}}
+        {{hw.due_date.strftime("%a, %b %d at %I:%M %p")}}
       {% endif %}
     </td>
     <td>
