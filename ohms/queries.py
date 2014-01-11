@@ -4,6 +4,7 @@ queries.py
 Some useful sql queries.
 """
 
+from datetime import datetime
 from collections import defaultdict
 
 from base import session
@@ -16,6 +17,14 @@ def get_homework(hw_id=None):
         return session.query(Homework).order_by(Homework.due_date).all()
     else:
         return session.query(Homework).get(hw_id)
+
+
+def get_last_homework():
+    """Gets the homework that finished most recently"""
+    now = datetime.now()
+    homeworks = session.query(Homework).all()
+    finished_hws = [hw for hw in homeworks if hw.due_date <= now]
+    return max(homeworks, key=lambda hw: hw.due_date)
 
 
 def get_question(question_id):
