@@ -24,7 +24,7 @@ def get_last_homework():
     now = datetime.now()
     homeworks = session.query(Homework).all()
     finished_hws = [hw for hw in homeworks if hw.due_date <= now]
-    return max(homeworks, key=lambda hw: hw.due_date)
+    return max(finished_hws, key=lambda hw: hw.due_date)
 
 
 def get_question(question_id):
