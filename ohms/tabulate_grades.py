@@ -1,5 +1,5 @@
 from base import session
-from queries import get_recent_question_responses
+from queries import get_recent_question_responses, get_last_homework, get_long_answer_qs
 from objects import *
 import numpy as np
 import sys
@@ -28,4 +28,8 @@ def tabulate_grades(q_id):
     session.commit()
 
 if __name__ == "__main__":
-    tabulate_grades(sys.argv[1])
+    homework = get_last_homework()
+    hw_id = homework.id
+    questions = get_long_answer_qs(hw_id)
+    for q in questions:
+        tabulate_grades(q.id)
