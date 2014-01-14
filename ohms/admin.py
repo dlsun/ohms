@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from base import session
 from objects import User, Homework, Question, QuestionResponse, GradingPermission
 from queries import get_user, get_grading_tasks_for_response, question_grade_query, get_long_answer_qs
-from assign_grading_tasks import selective_peer_grading
+#from assign_grading_tasks import selective_peer_grading
 from tabulate_grades import tabulate_grades as _tabulate_grades
 import options
 
