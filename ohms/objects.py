@@ -136,6 +136,7 @@ class Item(Base):
     question_id = Column(Integer, ForeignKey('questions.id'))
     points = Column(Float)
     type = Column(String(20))
+    xml = Column(UnicodeText)
     solution = Column(UnicodeText)
 
     __mapper_args__ = {'polymorphic_on': type,
@@ -145,9 +146,11 @@ class Item(Base):
     def from_xml(node):
         """Constructs a Item object from an xml node"""
 
+        # gets existing Item from ID, if specified
         if 'id' in node.attrib:
             return session.query(Item).get(node.attrib['id'])
 
+        # otherwise create new Item
         if node.attrib['type'] == 'Multiple Choice':
             item = MultipleChoiceItem()
         elif node.attrib['type'] == 'Long Answer':
@@ -158,6 +161,7 @@ class Item(Base):
             raise ValueError
 
         item.from_xml(node)
+        item.xml = ET.tostring(node)
         item.points = float(node.attrib['points'])
         session.add(item)
         session.flush()
@@ -177,53 +181,70 @@ class MultipleChoiceItem(Item):
                            backref="item")
 
     def from_xml(self, node):
+
+        # this should eventually be named self.options
+        self.options_ = []
         for i, option in enumerate(node.iter('option')):
             match = re.match("<option.*?>(?P<inner>.*)</option>",
                              ET.tostring(option), re.DOTALL)
-            text = match.group('inner') if match else ""
+            self.options_.append( match.group('inner') if match else "" )
             if 'correct' in option.attrib:
                 correct = option.attrib['correct'].lower()
-            else:
-                correct = None
-            if correct not in ["true", "false", None]:
-                raise ValueError("The 'correct' attribute in multiple choice"
-                                 "options must be one of 'true' or 'false'")
-            if correct == 'true':
+            if correct == "true":
                 self.solution = i
-                correct = 1
-            else:
-                correct = 0
-            option_object = MultipleChoiceOption(order=i,
-                                                 text=text,
-                                                 correct=correct,
-                                                 item=self)
-            session.add(option_object)
-        session.commit()
+        #     else:
+        #         correct = None
+            
+        #     if correct not in ["true", "false", None]:
+        #         raise ValueError("The 'correct' attribute in multiple choice"
+        #                          "options must be one of 'true' or 'false'")
+        #     if correct == 'true':
+        #         self.solution = i
+        #         correct = 1
+        #     else:
+        #         correct = 0
+        #     option_object = MultipleChoiceOption(order=i,
+        #                                          text=text,
+        #                                          correct=correct,
+        #                                          item=self)
+        #     session.add(option_object)
+        # session.commit()
 
-    def __iter__(self):
-        """Iterates over the multiple choice options in this item, in order"""
-        for mc_option in sorted(self.options, key=lambda x: x.order):
-            yield mc_option
+    # def __iter__(self):
+    #     """Iterates over the multiple choice options in this item, in order"""
+    #     for mc_option in sorted(self.options, key=lambda x: x.order):
+    #         yield mc_option
 
     def to_html(self):
         attrib = {"class": "item",
                   "itemtype": "multiple-choice"}
         root = ET.Element("div", attrib=attrib)
 
-        for option in self:
-            root.append(ET.fromstring(r'''
+        if self.xml:
+            node = ET.fromstring(self.xml)
+            self.from_xml(node)
+            for i, option in enumerate(self.options_):
+                root.append(ET.fromstring(r'''
 <p><input type='radio' name='%d' value='%d' disabled='disabled'> %s</input></p>
-''' % (self.id, option.order, option.text)))
+                ''' % (self.id, i, option)))
+
+        # this case should eventually be removed
+        else:
+            for i, option in enumerate(self.options):
+                root.append(ET.fromstring(r'''
+<p><input type='radio' name='%d' value='%d' disabled='disabled'> %s</input></p>
+                ''' % (self.id, i, option.text)))
+
         return root
 
     def check(self, response):
-        correct = [option.order for option in self if option.correct]
-        if response == str(correct[0]):
+        if response == self.solution:
             return self.points, ""
         else:
             return 0, ""
 
 
+# this is now obsolete, keeping for now for backwards compatibility
 class MultipleChoiceOption(Base):
     __tablename__ = 'mc_options'
 
@@ -232,6 +253,9 @@ class MultipleChoiceOption(Base):
     order = Column(Integer)
     text = Column(UnicodeText)
     correct = Column(Integer)
+
+    def __str__(self):
+        return self.text
 
 
 class ShortAnswerItem(Item):
@@ -269,7 +293,7 @@ class ShortAnswerItem(Item):
                 return self.points, ""
         return 0, ""
 
-
+# TODO: make this a regular object, not tied to database
 class ShortAnswer(Base):
     __tablename__ = "short_answers"
 
