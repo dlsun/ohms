@@ -189,9 +189,8 @@ class MultipleChoiceItem(Item):
                              ET.tostring(option), re.DOTALL)
             self.options_.append( match.group('inner') if match else "" )
             if 'correct' in option.attrib:
-                correct = option.attrib['correct'].lower()
-            if correct == "true":
-                self.solution = i
+                if option.attrib['correct'].lower() == "true":
+                    self.solution = i
         #     else:
         #         correct = None
             
