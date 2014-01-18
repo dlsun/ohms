@@ -4,6 +4,10 @@ email.py
 Tools for sending emails.
 """
 
+
+# XXX: This doesn't appear to work on corn, perhaps only works from the web
+# servers, because can't connect to localhost. Fuck an A, amiright?
+
 import smtplib
 
 def send_all(users, subject, message):
