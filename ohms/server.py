@@ -58,7 +58,7 @@ def index():
     elif user.type == "admin" or user.type == "grader":
         peer_grading = [None,1]*int(round(.5*len(hws)))
     else:
-        peer_grading = [None,1,None,1] + [-1]*(len(hws)-4)
+        peer_grading = [None,1,None] + [-1]*(len(hws)-3)
 
     return render_template("index.html", homeworks=hws,
                            peer_grading=peer_grading,
