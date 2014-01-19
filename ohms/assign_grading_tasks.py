@@ -9,6 +9,7 @@ from base import session
 from objects import Homework, User, GradingTask, GradingPermission
 from queries import get_recent_question_responses, get_long_answer_qs, get_last_homework
 from datetime import datetime, timedelta
+from send_email import send_all
 
 
 def make_grading_assignments(q_id, sunets, due_date=None):
@@ -78,25 +79,40 @@ def make_all_grading_assignments():
     homework = get_last_homework()
     hw_id = homework.id
 
-    # Commenting out for the first week; just take all students.
-    """
+    hw_number = int(homework.name.split()[1][:-1])
     groups = []
     for i in range(4):
         if treatments[i][hw_number-1]==1:
             groups.append(i)
     users = session.query(User).filter((User.group == groups[0]) | (User.group == groups[1])).all()
-    """
-
-    users = session.query(User).all()
-    sunets = [user.sunet for user in users]
 
     # XXX: Make sure all homework questions you want graded are composed of a
     # single Item, with a "Long Answer" type
+    sunets = [user.sunet for user in users]
     questions = get_long_answer_qs(hw_id)
     for q in questions:
         make_grading_assignments(q.id, sunets)
-        make_grader_assignments(q.id, sunets)
 
+    # Send everyone email
+#    send_all(users, "Peer Grading for %s is Ready" % homework.name,
+#r"""Dear %s,
+#
+#You've been assigned to peer grade this week. As usual, peer grading is due on Tuesday at 9:00AM.
+#
+#Best,
+#STATS 60 Staff
+#""")
+#
+#    admins = session.query(User).filter_by(type="admin").all()
+#    send_all(admins, "Peer Grading for %s is Ready" % homework.name,
+#r"""Hey %s (and other staff),
+#
+#Just letting you know that I released the peer grading this week.
+#
+#(This is an automatically generated message).
+#
+#Naftali
+#""")
 
 if __name__ == "__main__":
     make_all_grading_assignments()
