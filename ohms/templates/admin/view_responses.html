@@ -40,8 +40,8 @@
 		<td><input class='input-mini' name='score' type='text'/></td>
 	      </tr>
 	      <tr>
-		<td colspan="2"><b>Comments:</b><br/>
-		{{ user_response[1].comments|safe }}</td>
+		<td colspan="2"><b>Comments:</b>
+		<div style="white-space: pre-wrap;">{{ user_response[1].comments|safe }}</div></td>
 		<td><textarea name='comments' rows="5"></textarea></td>
 	      </tr>
 	      <tr>

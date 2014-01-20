@@ -53,7 +53,7 @@ question will be shown above it.
 
   <table class='frame'>
     <tr><td class='score'><strong>This problem is worth {{q.points}} points.</strong></td></tr>
-    <tr><td class='alert'><h5>Comments:</h5> <p class='comments'></p></td></tr>
+    <tr><td class='alert'><h5>Comments:</h5> <p class='comments' style="white-space: pre-wrap"></p></td></tr>
     <tr><td class='body'>
 	{% if user.type == "admin" %}
 	<textarea class="source span8" style="display:none;" rows="50">{{q.xml}}</textarea>
