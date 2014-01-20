@@ -9,7 +9,7 @@ from utils import NewEncoder
 from datetime import datetime, timedelta
 
 from base import session
-from objects import User, Homework, Question, QuestionResponse, GradingPermission
+from objects import User, Homework, Question, QuestionResponse, QuestionGrade, GradingTask
 from queries import get_user, get_grading_tasks_for_response, question_grade_query, get_long_answer_qs
 #from assign_grading_tasks import selective_peer_grading
 from tabulate_grades import tabulate_grades as _tabulate_grades
@@ -58,18 +58,22 @@ def tabulate_grades(hw_id):
 def reminder_email(hw_id):
 
     smtpObj = smtplib.SMTP('localhost')
-    sender = 'stats60-aut1314-staff@lists.stanford.edu'
+    sender = 'psych10-win1314-staff@lists.stanford.edu'
     recipients = []
 
     homework = session.query(Homework).get(hw_id)
+    users = session.query(User).all()
 
     for question in homework.questions:
-        entries = session.query(GradingPermission).filter_by(question_id=question.id).filter_by(permissions=0).all()
-        for entry in entries:
-            name = session.query(User).get(entry.sunet).name
-            email = "%s@stanford.edu" % entry.sunet
-            if email not in recipients:
-                message = r'''From: Stats 60 Staff <stats60-aut1314-staff@lists.stanford.edu>
+        tasks = session.query(GradingTask).join(QuestionResponse).\
+                filter(QuestionResponse.question_id == question.id).all()
+        for task in tasks:
+            grades = session.query(QuestionGrade).filter_by(grading_task_id=task.id).all()
+            if not grades and (task.grader not in recipients):
+                user = session.query(User).get(task.grader)
+                name = user.name
+                email = "%s@stanford.edu" % user.sunet
+                message = r'''From: Stats 60 Staff <psych10-win1314-staff@lists.stanford.edu>
 To: %s <%s>
 Subject: %s Peer Grading Incomplete
 
@@ -80,11 +84,10 @@ Dear %s,
 Best,
 Stats 60 Staff
 ''' % (name, email, homework.name, name, request.form.get('message'))
-                smtpObj.sendmail(sender, [email], message)                
-                recipients.append(email)
+                smtpObj.sendmail(sender, [email], message)
+                recipients.append(user.sunet)
 
-    return "Successfully sent email to:<br/>" + "<br/>".join(recipients)
-
+    return "Successfully sent email to %d recipients:<br/> %s" % (len(recipients), "<br/>".join(recipients))
 
 @app.route("/view_responses", methods=['POST', 'GET'])
 def view_responses():
