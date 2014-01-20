@@ -17,17 +17,21 @@
     <table class='table'>
       {% for user_response in user_responses %}
       <tr>
-	<td class='span2'>  
+	<td class='span1'>  
 	  <p>{{ user_response[0].name }}</p>
 	  <p><tt>{{ user_response[1].sunet }}</tt></p>
 	  <p>{{ user_response[1].time }}</p>
 	</td><td class='span5'>
-	  <ul>
+	  {% if user_response[1].item_responses|length > 1 %}
+	  <ul><li>
+	  {% endif %}
 	  {% for item_response in user_response[1].item_responses %}
-	  <li><div style="white-space: pre-wrap">{{ item_response.response }}</div></li>
+	  <div style="white-space: pre-wrap">{{ item_response.response }}</div>
 	  {% endfor %}
-	  </ul>
-	</td><td class='span5'>
+	  {% if user_response[1].item_responses|length > 1 %}
+	  </li></ul>
+	  {% endif %}
+	</td><td class='span6' {% if user_response[1].score != None %}style='background-color:#dff0d8;'{% endif %}>
 	  <form method='POST' action='update_response/{{ user_response[1].id }}' target='_blank'>
 	    <table>
 	      <tr>
@@ -51,8 +55,6 @@
     </table>
 
     </div>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 
   </body>
 
