@@ -1,51 +1,58 @@
 <html>
 
   <head>
-    <title>Select Sampling Responses</title>
+    <title>Viewing Student Responses</title>
     <link href="{{options.static}}/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{options.static}}/css/style.css" rel="stylesheet">
   </head>
 
-  <body class='span12'>
+  <body>
 
-    <h3>Select Sample Responses</h3>
+    <div class='span12'>
 
-    <p class='lead'>Showing {{ user_responses|length }} Responses</p>
+    <h3>Viewing Student Responses</h3>
+
+    <p class='lead'>Showing {{ user_responses|length }} Responses from Groups {{ groups|join(', ') }}</p>
 
     <table class='table'>
       {% for user_response in user_responses %}
       <tr>
 	<td class='span2'>  
-	  <p>{{ user_response[1].name }}</p>
-	  <p><tt>{{ user_response[0].sunet }}</tt></p>
-	  <p>{{ user_response[0].time }}</p>
+	  <p>{{ user_response[0].name }}</p>
+	  <p><tt>{{ user_response[1].sunet }}</tt></p>
+	  <p>{{ user_response[1].time }}</p>
 	</td><td class='span5'>
 	  <ul>
-	  {% for item_response in user_response[0].item_responses %}
+	  {% for item_response in user_response[1].item_responses %}
 	  <li><div style="white-space: pre-wrap">{{ item_response.response }}</div></li>
 	  {% endfor %}
 	  </ul>
 	</td><td class='span5'>
-	  <form method='POST' action='update_response/{{ user_response[0].id }}'>
-	    <table style="border-top: none;">
+	  <form method='POST' action='update_response/{{ user_response[1].id }}' target='_blank'>
+	    <table>
 	      <tr>
-		<td>Score:</td>
-		<td>{{ user_response[0].score }}</td>
+		<td><b>Score:</b></td>
+		<td>{{ user_response[1].score }}</td>
 		<td><input class='input-mini' name='score' type='text'/></td>
 	      </tr>
 	      <tr>
-		<td>Comments:</td>
-		<td>{{ user_response[0].comments|safe }}</td>
-		<td><textarea name='comments'></textarea></td>
+		<td colspan="2"><b>Comments:</b><br/>
+		{{ user_response[1].comments|safe }}</td>
+		<td><textarea name='comments' rows="5"></textarea></td>
 	      </tr>
 	      <tr>
-		<td colspan=2><input type='submit'/></td>
+		<td colspan=2></td>
+		<td align='right'><input type='submit'/></td>
 	      </tr>
 	    </table>
 	  </form>
       </td></tr>
       {% endfor %}
     </table>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 
   </body>
 

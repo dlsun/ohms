@@ -38,8 +38,16 @@ question will be shown above it.
 
   {% if user.type == "admin" %}
   <form action="../admin.cgi/view_responses?q={{ q.id }}" method="POST">
-    <input type="checkbox" name="calibration" value="true"/> I'm selecting calibration responses. 
-    <input type="submit" value="View Student Responses"/>
+    <p><strong>Please check the groups which you would like to grade.</strong></p>
+    <table>
+      <tr>
+	<td width='15%'><input type="checkbox" name="group" value="0"/>0</input></td>
+	<td width='15%'><input type="checkbox" name="group" value="1"/>1</input></td>
+	<td width='15%'><input type="checkbox" name="group" value="2"/>2</input></td>
+	<td width='15%'><input type="checkbox" name="group" value="3"/>3</input></td>
+	<td width='40%'><input type="submit" value="View Student Responses"/></td>
+      </tr>
+    </table>
   </form>
   {% endif %}
 

@@ -90,17 +90,24 @@ Stats 60 Staff
 def view_responses():
 
     q_id = request.args.get('q')
+    groups = request.form.getlist('group')
 
-    query = session.query(QuestionResponse, User).filter(QuestionResponse.sunet == User.sunet).\
-        filter(QuestionResponse.question_id == q_id)
+    users = session.query(User).filter(User.group.in_(groups)).all()
 
-    # This next block is only necessary for the study. Will remove after this quarter is over.
-    if request.form.get('calibration') == "true":
-       query = query.filter((User.group == 0) | (User.group == 3))
+    import random
+    random.seed(q_id)
+    random.shuffle(users)
 
-    user_responses = query.all()
-
-    return render_template("admin/view_responses.html", user_responses=user_responses, options=options, user=user)
+    user_responses = []
+    for u in users:
+        responses = session.query(QuestionResponse).\
+                   filter_by(sunet = u.sunet).\
+                   filter_by(question_id = q_id).\
+                   all()
+        if responses:
+            user_responses.append( (u, responses[-1]) )
+        
+    return render_template("admin/view_responses.html", user_responses=user_responses, options=options, user=user, groups=groups)
 
     
 @app.route("/update_response/<int:response_id>", methods=['POST'])
@@ -108,10 +115,14 @@ def update_response(response_id):
     from objects import QuestionResponse
     response = session.query(QuestionResponse).get(response_id)
     response.sample = 1
-    response.score = int(request.form['score'])
+    score = request.form['score']
+    response.score = int(score) if score else None
     response.comments = request.form['comments']
     session.commit()
-    return 'Successfully updated response %d! Press the back button and refresh the page to confirm.' % response.id
+    return r'''
+Successfully updated response %d! 
+<script type="text/javascript">window.close();</script>
+''' % response.id
 
 
 @app.route("/rate", methods=['GET'])
