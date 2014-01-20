@@ -106,7 +106,7 @@ def grade():
             "tasks": tasks})
 
     return render_template("grade.html",
-                           hw_id=hw_id,
+                           homework=homework,
                            questions=questions,
                            user=user,
                            options=options)

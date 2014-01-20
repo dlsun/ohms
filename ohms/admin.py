@@ -75,7 +75,7 @@ def reminder_email(hw_id):
                 email = "%s@stanford.edu" % user.sunet
                 message = r'''From: Stats 60 Staff <psych10-win1314-staff@lists.stanford.edu>
 To: %s <%s>
-Subject: %s Peer Grading Incomplete
+Subject: %s
 
 Dear %s,
 
@@ -83,7 +83,7 @@ Dear %s,
 
 Best,
 Stats 60 Staff
-''' % (name, email, homework.name, name, request.form.get('message'))
+''' % (name, email, request.form.get('subject'), name, request.form.get('message'))
                 smtpObj.sendmail(sender, [email], message)
                 recipients.append(user.sunet)
 
