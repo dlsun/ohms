@@ -20,6 +20,9 @@
         <a href="hw?id={{hw.id}}">{{hw.name}}</a>
       {% else %}
         <p class="muted">{{hw.name}}</p>
+	{% if user.type=="admin" %}
+	(<a href="hw?id={{hw.id}}">Preview</a>)
+	{% endif %}
       {% endif %}
     </td>
     <td>

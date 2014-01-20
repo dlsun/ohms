@@ -72,7 +72,7 @@ def index():
 def hw():
     hw_id = request.args.get("id")
     homework = get_homework(hw_id)
-    if homework.start_date and homework.start_date > datetime.now():
+    if user.type != "admin" and homework.start_date and homework.start_date > datetime.now():
         raise Exception("This homework has not yet been released.")
     else:
         return render_template("hw.html",
