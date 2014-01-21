@@ -60,11 +60,23 @@ def index():
     else:
         peer_grading = [None,1,None] + [-1]*(len(hws)-3)
 
+    grades = []
+    try:
+        f = open('/afs/ir/class/psych10/ohms/grades.csv')
+        reader = __import__('csv').reader(f)
+        headers = reader.next()[1:]
+        for row in reader:
+            if row[0] == user.sunet:
+                grades = zip(*(headers, row[1:]))
+    except:
+        pass
+
     return render_template("index.html", homeworks=hws,
                            peer_grading=peer_grading,
                            user=user,
                            options=options,
-                           current_time=datetime.now()
+                           current_time=datetime.now(),
+                           grades=grades
     )
 
 

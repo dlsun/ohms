@@ -50,5 +50,25 @@
 
   </tbody>
 </table>
+
+
+<table class="table table-striped" id="grades">
+  <thead>
+    <th>Item</th>
+    <th>Grade</th>
+  </thead>
+  <tbody>
+
+  {% for grade in grades %}
+
+  <tr>
+    <td>{{ grade[0] }}</td>
+    <td>{{ grade[1] }}</td>
+  </tr>
+
+  {% endfor %}
+
+  </tbody>
+</table>
 {% endblock %}
 
