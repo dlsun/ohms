@@ -9,10 +9,8 @@ from utils import NewEncoder
 from datetime import datetime, timedelta
 
 from base import session
-from objects import User, Homework, Question, QuestionResponse, QuestionGrade, GradingTask
-from queries import get_user, get_grading_tasks_for_response, question_grade_query, get_long_answer_qs
-#from assign_grading_tasks import selective_peer_grading
-from tabulate_grades import tabulate_grades as _tabulate_grades
+from objects import User, Homework, Question, QuestionResponse, QuestionGrade, GradingTask, LongAnswerItem
+from queries import get_user, get_question_responses, get_question_grades, get_grading_tasks_for_response
 import options
 
 import smtplib
@@ -45,13 +43,38 @@ def index():
 
 @app.route("/assign_tasks/<int:hw_id>", methods=['POST'])
 def assign_tasks(hw_id):
-    selective_peer_grading(hw_id, request.args.get("due_date"))
+
+    homework = session.query(Homework).get(hw_id)
+
+    groups = [int(i) for i in request.form.getlist("group")]
+    users = session.query(User).filter(User.group.in_(groups)).all()
+    due_date = datetime.strptime(request.form[due_date],
+                                 "%m/%d/%Y %H:%M:%S")
+
+    for q in homework.questions:
+
+        # only if this is a peer graded question
+        if isinstance(q.items[0], LongAnswerItem):
+
+            # get the responses from the relevant users
+            responses = []
+            for user in users:
+                submits = get_question_responses(q.id, user.sunet)
+                if submits: responses.append(submits[-1])
+
+            # TODO: assign grading tasks to those users
 
 
-@app.route("/tabulate_grades/<int:hw_id>", methods=['POST'])
-def tabulate_grades(hw_id):
-    for q in get_long_answer_qs(hw_id):
-        _tabulate_grades(q.id)
+            # update the comments to include a link to peer comments
+            for r in responses:
+                r.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments from your peers." % r.id
+
+            session.commit()
+
+            # TODO: send email notification
+
+
+    return "Successfully assigned %d students." % len(responses)
 
 
 @app.route("/reminder_email/<int:hw_id>", methods=['POST'])
@@ -117,7 +140,6 @@ def view_responses():
 def update_response(response_id):
     from objects import QuestionResponse
     response = session.query(QuestionResponse).get(response_id)
-    response.sample = 1
     score = request.form['score']
     response.score = int(score) if score else None
     response.comments = request.form['comments']
@@ -138,7 +160,7 @@ def view_peer_comments():
     question_grades = []
     
     for task in grading_tasks:
-        submissions = question_grade_query(task.id).all()
+        submissions = get_question_grades(task.id)
         if submissions:
             question_grades.append(submissions[-1])
 
