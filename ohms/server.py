@@ -9,10 +9,10 @@ from utils import NewEncoder
 from datetime import datetime, timedelta
 
 from base import session
-from objects import QuestionResponse, ItemResponse, QuestionGrade, User
+from objects import Question, QuestionResponse, ItemResponse, QuestionGrade, User
 from queries import get_user, get_homework, get_question, \
     get_question_response, get_question_responses, \
-    question_grade_query, get_question_grade, get_question_grades, \
+    get_question_grade, get_question_grades, \
     get_grading_permissions, set_grading_permissions, \
     get_grading_task, get_grading_tasks_for_grader, get_grading_tasks_for_response, \
     get_sample_responses
@@ -58,7 +58,41 @@ def index():
     elif user.type == "admin" or user.type == "grader":
         peer_grading = [None,1]*int(round(.5*len(hws)))
     else:
-        peer_grading = [None,1,None] + [-1]*(len(hws)-3)
+        peer_grading = [None,-1]*int(round(.5*len(hws)))
+
+    from collections import defaultdict
+    todo = defaultdict(int)
+    questions = session.query(Question).all()
+    for q in questions:
+
+        responses = get_question_responses(q.id, user.sunet)
+
+        if responses:
+            r = responses[-1]
+            tasks = get_grading_tasks_for_response(r.id)
+
+            # ignore if this is not a peer graded question
+            if not tasks:
+                continue
+
+            # if user has no score for response, compute score if peer grades due
+            if r.score is None:
+                permission = get_grading_permissions(q.id, tasks[0].grader)
+                if permission.due_date < datetime.now():
+                    scores = []
+                    for task in tasks:
+                        submits = get_question_grades(task.id)
+                        if submits: scores.append(submits[-1].score)
+                    if scores:
+                        r.score = sorted(scores)[len(scores) // 2] # median
+                        session.commit()
+
+            # check if user has any ratings to complete
+            else:
+                for task in tasks:
+                    submits = get_question_grades(task.id)
+                    if submits and not submits[-1].rating:
+                        todo[q.homework.name] += 1
 
     grades = []
     try:
@@ -76,7 +110,8 @@ def index():
                            user=user,
                            options=options,
                            current_time=datetime.now(),
-                           grades=grades
+                           grades=grades,
+                           todo=todo
     )
 
 
@@ -140,7 +175,7 @@ def rate():
     grading_tasks = get_grading_tasks_for_response(question_response_id)
     question_grades = []
     for task in grading_tasks:
-        submissions = question_grade_query(task.id).all()
+        submissions = get_question_grades(task.id)
         if submissions:
             question_grades.append(submissions[-1])
 
@@ -179,7 +214,7 @@ def load():
     # if loading a student's peer grade for an actual student's response
     elif q_id[0] == "g":
         grading_task_id = q_id[1:]
-        question_grades = get_question_grades(grading_task_id, sunet)
+        question_grades = get_question_grades(grading_task_id)
         if question_grades:
             question_id = question_grades[0].grading_task.question_response.question_id
         else:

@@ -3,6 +3,18 @@
 {% block content %}
 <h3>Online Homework Management System (OHMS)</h3>
 
+{% if todo %}
+<div class='alert alert-error'>
+<strong>Attention!</strong> You have ratings of peer comments to complete.
+<ul>
+  {% for homework, number in todo.iteritems() %}
+  <li>{{ number }} ratings in {{ homework }}</li>
+  {% endfor %}
+</ul>
+Please complete these as soon as possible.
+</div>
+{% endif %}
+
 <table class="table table-striped" id="homeworks">
   <thead>
     <th>Homework</th>

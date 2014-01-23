@@ -87,17 +87,13 @@ def get_sample_responses(question_id):
         order_by(QuestionResponse.id).all()
 
 
-def question_grade_query(grading_task_id):
-    return session.query(QuestionGrade).\
-        filter_by(grading_task_id=grading_task_id).\
-        order_by(QuestionGrade.time)
-
 def get_question_grade(question_grade_id):
     return session.query(QuestionGrade).get(question_grade_id)
 
-def get_question_grades(grading_task_id, sunet):
-    return question_grade_query(grading_task_id).\
-        join(GradingTask).filter(GradingTask.grader == sunet).all()
+def get_question_grades(grading_task_id):
+    return session.query(QuestionGrade).\
+        filter_by(grading_task_id=grading_task_id).\
+        order_by(QuestionGrade.time).all()
 
 
 def get_user(sunet):
