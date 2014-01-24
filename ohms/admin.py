@@ -68,23 +68,24 @@ def assign_tasks(hw_id):
             session.commit()
 
             # Send email notifications
-            send_all(users, "Peer Grading for %s is Ready" % homework.name,
+            send_all(users, "Peer Assessment for %s is Ready" % homework.name,
 r"""Dear %s,
 
-You've been assigned to peer grade this week. Peer grading is due at {due_date}. 
+You've been assigned to assess your peers this week. Peer assessment is due
+{due_date}. 
 
 You will be able to view peer comments on your answers as they come in, but 
-your score will not be available until {due_date}. Don't forget to 
-rate the peer comments!
+your score will not be available until {due_date}. 
+Don't forget to rate the peer comments!
 
 Best,
 STATS 60 Staff""".format(due_date=request.form["due_date"]))
 
             admins = session.query(User).filter_by(type="admin").all()
-            send_all(admins, "Peer Grading for %s is Ready" % homework.name,
+            send_all(admins, "Peer Assessment for %s is Ready" % homework.name,
 r"""Hey %s (and other staff),
 
-Just letting you know that peer grading was released this week, due at {due_date}.
+Just letting you know that peer assessment was released this week, due at {due_date}.
 
 Sincerely,
 
@@ -118,11 +119,11 @@ Stats 60 Staff
         send_all(users, request.form['subject'], message)
 
         admins = session.query(User).filter_by(type="admin").all()
-        send_all(admins, "Peer Grading Reminder Sent" % homework.name,
+        send_all(admins, "Peer Assessment Reminder Sent" % homework.name,
 """Hey %s (and other staff),
 
 A reminder e-mail was just sent to the following users to remind them to complete their 
-peer grading.\n\n""" + "\n".join(u.sunet for u in users) + """
+peer assessments.\n\n""" + "\n".join(u.sunet for u in users) + """
 
 Sincerely,
 OHMS
