@@ -11,7 +11,9 @@
   <li>{{ number }} ratings in {{ homework }}</li>
   {% endfor %}
 </ul>
-Please complete these as soon as possible.
+To view the peer comments for a given response, open up the homework and 
+click on the link in the "Comments" section above the corresponding 
+question. Please complete these as soon as possible.
 </div>
 {% endif %}
 
@@ -20,7 +22,7 @@ Please complete these as soon as possible.
     <th>Homework</th>
     <th>Start Date</th>
     <th>Due Date</th>
-    <th>Peer Grading</th>
+    <th>Peer Assessment</th>
   </thead>
   <tbody>
 
@@ -49,9 +51,9 @@ Please complete these as soon as possible.
     </td>
     <td>
       {% if peer_grading[loop.index0]==1 %}
-        <a href="grade?id={{hw.id}}">Peer Grading</a>
+        <a href="grade?id={{hw.id}}">Peer Assessment</a>
       {% elif peer_grading[loop.index0]==0 %}
-        You weren't assigned to peer grade this week.
+        You weren't assigned to peer assess this week.
       {% elif peer_grading[loop.index0]==-1 %}
 	ERROR: please see course staff.
       {% endif %}

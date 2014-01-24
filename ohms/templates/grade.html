@@ -7,9 +7,9 @@
 
 {% if user.type == "admin" %}
 <p>This takes the collection of responses in the selected groups, 
-and assigns them to those students for peer grading. It sends an 
-e-mail to the students notifying them that the peer grading is 
-available. 
+and assigns them to those students for peer assessment. It 
+sends an e-mail to the students notifying them that the peer 
+assessment is available. 
   <form action="../admin.cgi/assign_tasks/{{ homework.id }}" method="POST">
 
     <table>
@@ -34,29 +34,30 @@ available.
 </p>
 
 <p>This button sends a reminder e-mail to the students who have not 
-completed their peer grading task yet.
+completed their peer assessment task yet.
   <form action="../admin.cgi/reminder_email/{{ homework.id }}" method="POST">
 
     <table>
 
       <tr>
 	<td>Subject</td>
-	<td><input type="text" class="input-xlarge" name="subject" value="{{ homework.name }} Peer Grading Incomplete"/></td>
+	<td><input type="text" class="input-xlarge" name="subject" value="{{ homework.name }} Peer Assessment Incomplete"/></td>
       </tr>
 
       <tr>
 	<td>Body</td>
 	<td>
 	  <textarea name="message" class="span8" rows="7">
-You are receiving this e-mail because you were assigned to peer grading
-this week and have not yet completed it. This is a reminder that peer
-grading is due Tuesday at 9 AM.
+You are receiving this e-mail because you were assigned to peer 
+assessment this week and have not yet completed it. This is a 
+reminder that peer assessment is due Tuesday at 9 AM.
 
-Please note that each student will complete 4 peer grading tasks 
-which count for 10% of the final grade. This means that each peer grading 
-task counts for 2.5% of the final grade. The difference between doing 
-peer grading and not doing peer grading is the difference between a 
-C and an A on a quiz! Please do not lose these easy points.</textarea>
+Please note that each student will complete 4 peer assessment 
+tasks which count for 10% of the final grade. This means that 
+each peer assessment task counts for 2.5% of the final grade. 
+The difference between doing peer assessment and not doing it 
+is the difference between a C and an A on a quiz! Please do 
+not lose these easy points.</textarea>
 	</td>
       </tr>
 
@@ -73,14 +74,14 @@ C and an A on a quiz! Please do not lose these easy points.</textarea>
 <hr/>
 
 {% if not questions %}
-No responses to peer grade at the moment. Please check back again later.
+No responses to peer assess at the moment. Please check back again later.
 {% endif %}
 
 {% for q in questions %}
 
-<h3>Peer Grading Item #{{loop.index}}</h3>
+<h3>Peer Assessment Item {{loop.index}}</h3>
 
-<p><strong>Shown below is the question to be graded, along with your 
+<p><strong>Shown below is the question to be assessed, along with your 
 response and the correct solution.</strong></p>
 
 <div class='question' id='q{{q.question.id}}' points='{{q.question.points}}'>
@@ -100,7 +101,7 @@ response and the correct solution.</strong></p>
     <tr>
       <td>
 	  {% if q.permission == 1 %}
-	    <h4>Peer Grading</h4>
+	    <h4>Peer Assessment</h4>
 
 	    Please score the following responses from your peers. You 
 	    should provide detailed comments, even if the response is perfect. 
@@ -109,7 +110,7 @@ response and the correct solution.</strong></p>
 	  {% else %}
 	    <h4>Calibration</h4>
 
-	    Before you grade responses from your peers, we want 
+	    Before you assess responses from your peers, we want 
 	    to make sure everyone is using the same standards. 
 	    The following 
 	    responses have been scored by an instructor. You must 
@@ -154,7 +155,7 @@ response and the correct solution.</strong></p>
 	  {% if q.permission == 1 %}
 	  <tr>
 	    <td></td>
-	    <td><button class='submit' disabled>Submit Grades</button>&nbsp; <span class='time'></span></td>
+	    <td><button class='submit' disabled>Submit Assessment</button>&nbsp; <span class='time'></span></td>
 	  </tr>
 	  {% endif %}
 	</table>
@@ -168,7 +169,7 @@ response and the correct solution.</strong></p>
     {% if q.permission == 0 %}
     <tr>
       <td>
-	<button class='submit' disabled>Submit Grades</button>
+	<button class='submit' disabled>Submit Assessment</button>
       </td>
     </tr>
     <tr>
