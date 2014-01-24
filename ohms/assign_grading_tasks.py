@@ -45,28 +45,6 @@ def make_grading_assignments(q_id, sunets, due_date=None):
     session.commit()
 
 
-def make_grader_assignments(q_id, sunets):
-    """Assigns graders and admins to grade the given question id"""
-
-    responses = get_recent_question_responses(q_id)
-    responses = [r for r in responses if r.sunet in sunets]
-
-    graders = session.query(User).filter_by(type="grader").all()
-    graders += session.query(User).filter_by(type="admin").all()
-    for grader in graders:
-        gp = GradingPermission(sunet=grader.sunet, question_id=q_id,
-                               permissions=1,
-                               due_date=datetime(2015, 1, 1, 0, 0, 0))
-        session.add(gp)
-
-        random.shuffle(responses)
-        for response in responses:
-            gt = GradingTask(grader=grader.sunet, question_response=response)
-            session.add(gt)
-
-    session.commit()
-
-
 def make_all_grading_assignments():
 
     treatments = {
@@ -74,7 +52,7 @@ def make_all_grading_assignments():
         1: [1,0,0,1,1,0,0,1,1],
         2: [1,1,1,0,0,0,0,1,1],
         3: [1,0,0,1,1,1,1,0,0]
-        }
+    }
 
     homework = get_last_homework()
     hw_id = homework.id
@@ -93,26 +71,6 @@ def make_all_grading_assignments():
     for q in questions:
         make_grading_assignments(q.id, sunets)
 
-    # Send everyone email
-#    send_all(users, "Peer Grading for %s is Ready" % homework.name,
-#r"""Dear %s,
-#
-#You've been assigned to peer grade this week. As usual, peer grading is due on Tuesday at 9:00AM.
-#
-#Best,
-#STATS 60 Staff
-#""")
-#
-#    admins = session.query(User).filter_by(type="admin").all()
-#    send_all(admins, "Peer Grading for %s is Ready" % homework.name,
-#r"""Hey %s (and other staff),
-#
-#Just letting you know that I released the peer grading this week.
-#
-#(This is an automatically generated message).
-#
-#Naftali
-#""")
 
 if __name__ == "__main__":
     make_all_grading_assignments()
