@@ -28,7 +28,7 @@ try:
     user = get_user(sunet)
     assert(user.type == "admin")
 except:
-    raise Exception("You are not authorized to view thie page.")
+    raise Exception("You are not authorized to view this page.")
 
 
 @app.route("/")
@@ -111,15 +111,25 @@ def reminder_email(hw_id):
             if not grades and (task.grader not in recipients):
                 users.append(session.query(User).get(task.grader))
 
-        message = request.form['message']
         message = '''Dear %s,\n\n''' + request.form['message'] + '''\n
 Best,
 Stats 60 Staff
 '''
         send_all(users, request.form['subject'], message)
 
-    return "Sent email to %d recipients:<br/> %s" % (len(users), 
-                                                     "<br/>".join(u.sunet for u in users))
+        admins = session.query(User).filter_by(type="admin").all()
+        send_all(admins, "Peer Grading Reminder Sent" % homework.name,
+"""Hey %s (and other staff),
+
+A reminder e-mail was just sent to the following users to remind them to complete their 
+peer grading.\n\n""" + "\n".join(u.sunet for u in users) + """
+
+Sincerely,
+OHMS
+
+P.S. This is an automatically generated message ;-)""")
+
+    return "Sent reminder to %d recipients. You should have received an e-mail." % len(users)
 
 
 @app.route("/view_responses", methods=['POST', 'GET'])
