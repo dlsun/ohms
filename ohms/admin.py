@@ -11,6 +11,8 @@ from datetime import datetime, timedelta
 from base import session
 from objects import User, Homework, Question, QuestionResponse, QuestionGrade, GradingTask, LongAnswerItem
 from queries import get_user, get_question_responses, get_question_grades, get_grading_tasks_for_response
+from assign_grading_tasks import make_grading_assignments
+from send_email import send_all
 import options
 
 import smtplib
@@ -48,7 +50,8 @@ def assign_tasks(hw_id):
 
     groups = [int(i) for i in request.form.getlist("group")]
     users = session.query(User).filter(User.group.in_(groups)).all()
-    due_date = datetime.strptime(request.form[due_date],
+
+    due_date = datetime.strptime(request.form["due_date"],
                                  "%m/%d/%Y %H:%M:%S")
 
     for q in homework.questions:
@@ -62,7 +65,8 @@ def assign_tasks(hw_id):
                 submits = get_question_responses(q.id, user.sunet)
                 if submits: responses.append(submits[-1])
 
-            # TODO: assign grading tasks to those users
+            # assign grading tasks to those users
+            make_grading_assignments(q.id, [user.sunet for users in users], due_date)
 
 
             # update the comments to include a link to peer comments
@@ -71,7 +75,27 @@ def assign_tasks(hw_id):
 
             session.commit()
 
-            # TODO: send email notification
+            # Send email notifications
+            send_all(users, "Peer Grading for %s is Ready" % homework.name,
+r"""Dear %s,
+
+You've been assigned to peer grade this week. Peer grading is due at {due_date}.
+
+Best,
+STATS 60 Staff""".format(due_date=request.form["due_date"]))
+
+            admins = session.query(User).filter_by(type="admin").all()
+            send_all(admins, "Peer Grading for %s is Ready" % homework.name,
+r"""Hey %s (and other staff),
+
+Just letting you know that peer grading was released this week, due at {due_date}.
+
+Sincerely,
+
+OHMS
+
+P.S. This is an automatically generated message ;-)
+""".format(due_date=request.form["due_date"]))
 
 
     return "Successfully assigned %d students." % len(responses)
