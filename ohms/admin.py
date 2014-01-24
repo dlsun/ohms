@@ -74,7 +74,8 @@ r"""Dear %s,
 You've been assigned to peer grade this week. Peer grading is due at {due_date}. 
 
 You will be able to view peer comments on your answers as they come in, but 
-your score be available until {due_date}. Don't forget to rate the peer comments!
+your score will not be available until {due_date}. Don't forget to 
+rate the peer comments!
 
 Best,
 STATS 60 Staff""".format(due_date=request.form["due_date"]))
