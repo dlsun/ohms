@@ -62,7 +62,7 @@ def make_all_grading_assignments():
     for i in range(4):
         if treatments[i][hw_number-1]==1:
             groups.append(i)
-    users = session.query(User).filter((User.group == groups[0]) | (User.group == groups[1])).all()
+    users = session.query(User).filter(User.group.in_(groups)).all()
 
     # XXX: Make sure all homework questions you want graded are composed of a
     # single Item, with a "Long Answer" type

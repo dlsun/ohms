@@ -30,13 +30,6 @@ try:
 except:
     raise Exception("You are not authorized to view thie page.")
 
-treatments = {
-    0: [1,1,1,0,0,1,1,0,0],
-    1: [1,0,0,1,1,0,0,1,1],
-    2: [1,1,1,0,0,0,0,1,1],
-    3: [1,0,0,1,1,1,1,0,0]
-    }
-
 
 @app.route("/")
 def index():
@@ -68,7 +61,6 @@ def assign_tasks(hw_id):
             # assign grading tasks to those users
             make_grading_assignments(q.id, [user.sunet for users in users], due_date)
 
-
             # update the comments to include a link to peer comments
             for r in responses:
                 r.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments from your peers." % r.id
@@ -79,7 +71,10 @@ def assign_tasks(hw_id):
             send_all(users, "Peer Grading for %s is Ready" % homework.name,
 r"""Dear %s,
 
-You've been assigned to peer grade this week. Peer grading is due at {due_date}.
+You've been assigned to peer grade this week. Peer grading is due at {due_date}. 
+
+You will be able to view peer comments on your answers as they come in, but 
+your score be available until {due_date}. Don't forget to rate the peer comments!
 
 Best,
 STATS 60 Staff""".format(due_date=request.form["due_date"]))
@@ -95,21 +90,17 @@ Sincerely,
 OHMS
 
 P.S. This is an automatically generated message ;-)
-""".format(due_date=request.form["due_date"]))
+""". format(due_date=request.form["due_date"]))
 
-
-    return "Successfully assigned %d students." % len(responses)
+    return r'''Successfully assigned %d students. You should have received an 
+e-mail as confirmation.''' % len(responses)
 
 
 @app.route("/reminder_email/<int:hw_id>", methods=['POST'])
 def reminder_email(hw_id):
 
-    smtpObj = smtplib.SMTP('localhost')
-    sender = 'psych10-win1314-staff@lists.stanford.edu'
-    recipients = []
-
     homework = session.query(Homework).get(hw_id)
-    users = session.query(User).all()
+    users = []
 
     for question in homework.questions:
         tasks = session.query(GradingTask).join(QuestionResponse).\
@@ -117,24 +108,18 @@ def reminder_email(hw_id):
         for task in tasks:
             grades = session.query(QuestionGrade).filter_by(grading_task_id=task.id).all()
             if not grades and (task.grader not in recipients):
-                user = session.query(User).get(task.grader)
-                name = user.name
-                email = "%s@stanford.edu" % user.sunet
-                message = r'''From: Stats 60 Staff <psych10-win1314-staff@lists.stanford.edu>
-To: %s <%s>
-Subject: %s
+                users.append(session.query(User).get(task.grader))
 
-Dear %s,
-
-%s
-
+        message = request.form['message']
+        message = '''Dear %s,\n\n''' + request.form['message'] + '''\n
 Best,
 Stats 60 Staff
-''' % (name, email, request.form.get('subject'), name, request.form.get('message'))
-                smtpObj.sendmail(sender, [email], message)
-                recipients.append(user.sunet)
+'''
+        send_all(users, request.form['subject'], message)
 
-    return "Successfully sent email to %d recipients:<br/> %s" % (len(recipients), "<br/>".join(recipients))
+    return "Sent email to %d recipients:<br/> %s" % (len(users), 
+                                                     "<br/>".join(u.sunet for u in users))
+
 
 @app.route("/view_responses", methods=['POST', 'GET'])
 def view_responses():
