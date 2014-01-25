@@ -5,18 +5,21 @@
 
 {% if todo %}
 <div class='alert alert-error'>
-<strong>Attention!</strong> We want to encourage you to read over the 
-comments your peers have taken the time to write for you, so we require 
+<strong>Attention!</strong> To encourage you to look over the 
+comments your peers have taken the time to write for you, we require 
 that you <i>rate</i> your peer comments after each peer assessment period 
-ends. The following ratings are incomplete:
+ends. Our records indicate that you are missing: 
 <ul>
   {% for homework, number in todo.iteritems() %}
-  <li>{{ number }} ratings in {{ homework }}</li>
+  <li>{{ number }} rating(s) in {{ homework }}</li>
   {% endfor %}
 </ul>
 To view the peer comments for a given response, open up the homework and 
 click on the link in the "Comments" section above the corresponding 
-question. Please complete these as soon as possible.
+question. <a href="../../WWW/static/img/ratings_location.png">Here</a> 
+is a graphic showing where to find this link.
+
+<p>Please complete these ratings as soon as possible.</p>
 </div>
 {% endif %}
 
