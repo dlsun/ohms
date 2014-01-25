@@ -46,6 +46,8 @@ def assign_tasks(hw_id):
     due_date = datetime.strptime(request.form["due_date"],
                                  "%Y-%m-%d %H:%M:%S")
 
+    not_assigned = []
+
     for q in homework.questions:
 
         # only if this is a peer graded question
@@ -56,7 +58,10 @@ def assign_tasks(hw_id):
             
             for user in users:
                 submits = get_question_responses(q.id, user.sunet)
-                if submits: responses.append(submits[-1])
+                if submits: 
+                    responses.append(submits[-1])
+                elif user not in not_assigned:
+                    not_assigned.append(user)
 
             # assign grading tasks to those users
             make_grading_assignments(q.id, [user.sunet for user in users], due_date)
@@ -67,40 +72,60 @@ def assign_tasks(hw_id):
 
     session.commit()
 
-    # Send email notifications
-    send_all(users, "Peer Assessment for %s is Ready" % homework.name,
+    # Send email notifications to studnts who were assigned to all questions
+    assigned_users = [u for u in users if u not in not_assigned]
+    send_all(assigned_users, "Peer Assessment for %s is Ready" % homework.name,
 r"""Dear %s,
 
-You've been assigned to assess your peers this week. Peer assessment is due
-{due_date}. 
-
-Please note that you are allowed to evaluate others' responses only if you 
-submitted an answer to that question yourself. If you do not see any 
-tasks in the Peer Assessment tool, that is most likely because you did not 
-answer any of the free response questions this week. In the future, please 
-be sure to finish the homework on time in order to participate in peer 
-assessment.
+You've been assigned to assess your peers this week. The assessments are 
+due {due_date}. 
 
 You will be able to view your peer's comments on your answers as they 
 are submitted, but your score will not be available until {due_date}. 
-At that time, you should rate the comments you received from your 
-peers.
+At that time, please log in to view and rate the comments you received 
+from your peers.
 
 Best,
-STATS 60 Staff""".format(due_date=request.form["due_date"]))
+STATS 60 Staff""".format(due_date=due_date.strftime("%A, %b %d at %I:%M %p")))
 
+    # Send slightly different email to students who were not assigned to all questions
+    send_all(not_assigned, "Peer Assessment for %s is Ready" % homework.name,
+r"""Dear %s,
+
+You've been assigned to assess your peers this week. The assessments are 
+due {due_date}. 
+
+Our records indicate that you did not complete all of the free response  
+questions this week. Please note that you are allowed to evaluate others' 
+responses only if you attempted that question yourself. Therefore, you 
+may not have been assigned any evaulation tasks for some or all of the 
+questions. In the future, please be sure to finish the homework on time 
+in order to participate in peer assessment.
+
+You will be able to view your peer's comments on your answers as they 
+are submitted, but your score will not be available until {due_date}. 
+At that time, please log in to view and rate the comments you received 
+from your peers.
+
+Best,
+STATS 60 Staff""".format(due_date=due_date.strftime("%A, %b %d at %I:%M %p")))
+
+    # Send email to the course staff
     admins = session.query(User).filter_by(type="admin").all()
     send_all(admins, "Peer Assessment for %s is Ready" % homework.name,
-r"""Hey %s (and other staff),
+r"""Dear %s (and other members of the STATS 60 Staff),
 
-Just letting you know that peer assessment was released this week, due at {due_date}.
+Just letting you know that the peer assessment for this week was just released. 
+It is due at {due_date}.
+
+If you were assigned to grade for this week, please do so between now and 
+{due_date}.
 
 Sincerely,
-
 OHMS
 
 P.S. This is an automatically generated message ;-)
-""". format(due_date=request.form["due_date"]))
+""".format(due_date=due_date.strftime("%A, %b %d at %I:%M %p")))
 
     return r'''Successfully assigned %d students. You should have received an 
 e-mail as confirmation.''' % len(responses)
