@@ -6,7 +6,7 @@ import os
 from flask import Flask, request, render_template, make_response
 import json
 from utils import NewEncoder
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from base import session
 from objects import User, Homework, Question, QuestionResponse, QuestionGrade, GradingTask, LongAnswerItem
@@ -40,12 +40,9 @@ def index():
 def assign_tasks(hw_id):
 
     homework = session.query(Homework).get(hw_id)
-
-    groups = [int(i) for i in request.form.getlist("group")]
+    groups = request.form.getlist('group')
+    
     users = session.query(User).filter(User.group.in_(groups)).all()
-
-    due_date = datetime.strptime(request.form["due_date"],
-                                 "%m/%d/%Y %H:%M:%S")
 
     for q in homework.questions:
 
@@ -54,6 +51,7 @@ def assign_tasks(hw_id):
 
             # get the responses from the relevant users
             responses = []
+            
             for user in users:
                 submits = get_question_responses(q.id, user.sunet)
                 if submits: responses.append(submits[-1])
@@ -65,24 +63,32 @@ def assign_tasks(hw_id):
             for r in responses:
                 r.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments from your peers." % r.id
 
-            session.commit()
+    session.commit()
 
-            # Send email notifications
-            send_all(users, "Peer Assessment for %s is Ready" % homework.name,
+    # Send email notifications
+    send_all(users, "Peer Assessment for %s is Ready" % homework.name,
 r"""Dear %s,
 
 You've been assigned to assess your peers this week. Peer assessment is due
 {due_date}. 
 
-You will be able to view peer comments on your answers as they come in, but 
-your score will not be available until {due_date}. 
-Don't forget to rate the peer comments!
+Please note that you are allowed to evaluate others' responses only if you 
+submitted an answer to that question yourself. If you do not see any 
+tasks in the Peer Assessment tool, that is most likely because you did not 
+answer any of the free response questions this week. In the future, please 
+be sure to finish the homework on time in order to participate in peer 
+assessment.
+
+You will be able to view your peer's comments on your answers as they 
+are submitted, but your score will not be available until {due_date}. 
+At that time, you should rate the comments you received from your 
+peers.
 
 Best,
 STATS 60 Staff""".format(due_date=request.form["due_date"]))
 
-            admins = session.query(User).filter_by(type="admin").all()
-            send_all(admins, "Peer Assessment for %s is Ready" % homework.name,
+    admins = session.query(User).filter_by(type="admin").all()
+    send_all(admins, "Peer Assessment for %s is Ready" % homework.name,
 r"""Hey %s (and other staff),
 
 Just letting you know that peer assessment was released this week, due at {due_date}.
@@ -138,7 +144,7 @@ def view_responses():
 
     q_id = request.args.get('q')
     groups = request.form.getlist('group')
-
+    
     users = session.query(User).filter(User.group.in_(groups)).all()
 
     import random
