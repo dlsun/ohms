@@ -43,6 +43,8 @@ def assign_tasks(hw_id):
     groups = request.form.getlist('group')
     
     users = session.query(User).filter(User.group.in_(groups)).all()
+    due_date = datetime.strptime(request.form["due_date"],
+                                 "%Y-%m-%d %H:%M:%S")
 
     for q in homework.questions:
 
@@ -57,7 +59,7 @@ def assign_tasks(hw_id):
                 if submits: responses.append(submits[-1])
 
             # assign grading tasks to those users
-            make_grading_assignments(q.id, [user.sunet for users in users], due_date)
+            make_grading_assignments(q.id, [user.sunet for user in users], due_date)
 
             # update the comments to include a link to peer comments
             for r in responses:
