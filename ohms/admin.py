@@ -7,9 +7,10 @@ from flask import Flask, request, render_template, make_response
 import json
 from utils import NewEncoder
 from datetime import datetime
+import random
 
 from base import session
-from objects import User, Homework, Question, QuestionResponse, QuestionGrade, GradingTask, LongAnswerItem
+from objects import User, Homework, Question, QuestionResponse, QuestionGrade, GradingPermission, GradingTask, LongAnswerItem
 from queries import get_user, get_question_responses, get_question_grades, get_grading_tasks_for_response
 from assign_grading_tasks import make_grading_assignments
 from send_email import send_all
@@ -46,29 +47,42 @@ def assign_tasks(hw_id):
     due_date = datetime.strptime(request.form["due_date"],
                                  "%Y-%m-%d %H:%M:%S")
 
+    # store the users who were not assigned because they didn't complete HW
     not_assigned = []
 
     for q in homework.questions:
 
         # only if this is a peer graded question
-        if isinstance(q.items[0], LongAnswerItem):
+        if not isinstance(q.items[0], LongAnswerItem):
+            continue
 
-            # get the responses from the relevant users
-            responses = []
+        # get responses from only the relevant users
+        responses = []
+        for user in users:
+            submits = get_question_responses(q.id, user.sunet)
+            if submits:
+                responses.append(submits[-1])
+            elif user not in not_assigned:
+                not_assigned.append(user)
+
+        # shuffle the responses and iterate over them
+        n = len(responses)
+        random.seed(q.id) # setting a seed will be useful for debugging
+        random.shuffle(responses)
+        for i, r in enumerate(responses):
+            # update comments section with link to peer comments
+            r.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view and respond to feedback from your peers." % r.id
             
-            for user in users:
-                submits = get_question_responses(q.id, user.sunet)
-                if submits: 
-                    responses.append(submits[-1])
-                elif user not in not_assigned:
-                    not_assigned.append(user)
-
-            # assign grading tasks to those users
-            make_grading_assignments(q.id, [user.sunet for user in users], due_date)
-
-            # update the comments to include a link to peer comments
-            for r in responses:
-                r.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments from your peers." % r.id
+            # assign user permissions for this question
+            gp = GradingPermission(sunet=r.sunet, question_id=q.id,
+                                   permissions=1, due_date=due_date)
+            session.add(gp)
+            
+            # assign this user other responses to grade
+            for offset in [1, 3, 6]:
+                j = (i + offset) % n
+                gt = GradingTask(grader=r.sunet, question_response=responses[j])
+                session.add(gt)
 
     session.commit()
 
@@ -82,8 +96,8 @@ due {due_date}.
 
 You will be able to view your peer's comments on your answers as they 
 are submitted, but your score will not be available until {due_date}. 
-At that time, please log in to view and rate the comments you received 
-from your peers.
+At that time, please log in to view and respond to the comments you 
+received from your peers.
 
 Best,
 STATS 60 Staff""".format(due_date=due_date.strftime("%A, %b %d at %I:%M %p")))
@@ -104,8 +118,8 @@ in order to participate in peer assessment.
 
 You will be able to view your peer's comments on your answers as they 
 are submitted, but your score will not be available until {due_date}. 
-At that time, please log in to view and rate the comments you received 
-from your peers.
+At that time, please log in to view and respond to the comments you 
+received from your peers.
 
 Best,
 STATS 60 Staff""".format(due_date=due_date.strftime("%A, %b %d at %I:%M %p")))
@@ -128,7 +142,7 @@ P.S. This is an automatically generated message ;-)
 """.format(due_date=due_date.strftime("%A, %b %d at %I:%M %p")))
 
     return r'''Successfully assigned %d students. You should have received an 
-e-mail as confirmation.''' % len(responses)
+e-mail confirmation.''' % len(responses)
 
 
 @app.route("/reminder_email/<int:hw_id>", methods=['POST'])
