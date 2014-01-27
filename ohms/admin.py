@@ -6,10 +6,11 @@ import os
 from flask import Flask, request, render_template, make_response
 import json
 from utils import NewEncoder
-from datetime import datetime, timedelta
+from datetime import datetime
+import random
 
 from base import session
-from objects import User, Homework, Question, QuestionResponse, QuestionGrade, GradingTask, LongAnswerItem
+from objects import User, Homework, Question, QuestionResponse, QuestionGrade, GradingPermission, GradingTask, LongAnswerItem
 from queries import get_user, get_question_responses, get_question_grades, get_grading_tasks_for_response
 from assign_grading_tasks import make_grading_assignments
 from send_email import send_all
@@ -28,14 +29,7 @@ try:
     user = get_user(sunet)
     assert(user.type == "admin")
 except:
-    raise Exception("You are not authorized to view thie page.")
-
-treatments = {
-    0: [1,1,1,0,0,1,1,0,0],
-    1: [1,0,0,1,1,0,0,1,1],
-    2: [1,1,1,0,0,0,0,1,1],
-    3: [1,0,0,1,1,1,1,0,0]
-    }
+    raise Exception("You are not authorized to view this page.")
 
 
 @app.route("/")
@@ -47,101 +41,156 @@ def index():
 def assign_tasks(hw_id):
 
     homework = session.query(Homework).get(hw_id)
-
-    groups = [int(i) for i in request.form.getlist("group")]
+    groups = request.form.getlist('group')
+    
     users = session.query(User).filter(User.group.in_(groups)).all()
-
     due_date = datetime.strptime(request.form["due_date"],
-                                 "%m/%d/%Y %H:%M:%S")
+                                 "%Y-%m-%d %H:%M:%S")
+
+    # store the users who were not assigned because they didn't complete HW
+    not_assigned = []
 
     for q in homework.questions:
 
         # only if this is a peer graded question
-        if isinstance(q.items[0], LongAnswerItem):
+        if not isinstance(q.items[0], LongAnswerItem):
+            continue
 
-            # get the responses from the relevant users
-            responses = []
-            for user in users:
-                submits = get_question_responses(q.id, user.sunet)
-                if submits: responses.append(submits[-1])
+        # get responses from only the relevant users
+        responses = []
+        for user in users:
+            submits = get_question_responses(q.id, user.sunet)
+            if submits:
+                responses.append(submits[-1])
+            elif user not in not_assigned:
+                not_assigned.append(user)
 
-            # assign grading tasks to those users
-            make_grading_assignments(q.id, [user.sunet for users in users], due_date)
+        # shuffle the responses and iterate over them
+        n = len(responses)
+        random.seed(q.id) # setting a seed will be useful for debugging
+        random.shuffle(responses)
+        for i, r in enumerate(responses):
+            # update comments section with link to peer comments
+            r.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view and respond to feedback from your peers." % r.id
+            
+            # assign user permissions for this question
+            gp = GradingPermission(sunet=r.sunet, question_id=q.id,
+                                   permissions=1, due_date=due_date)
+            session.add(gp)
+            
+            # assign this user other responses to grade
+            for offset in [1, 3, 6]:
+                j = (i + offset) % n
+                gt = GradingTask(grader=r.sunet, question_response=responses[j])
+                session.add(gt)
 
+    session.commit()
 
-            # update the comments to include a link to peer comments
-            for r in responses:
-                r.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments from your peers." % r.id
-
-            session.commit()
-
-            # Send email notifications
-            send_all(users, "Peer Grading for %s is Ready" % homework.name,
+    # Send email notifications to studnts who were assigned to all questions
+    assigned_users = [u for u in users if u not in not_assigned]
+    send_all(assigned_users, "Peer Assessment for %s is Ready" % homework.name,
 r"""Dear %s,
 
-You've been assigned to peer grade this week. Peer grading is due at {due_date}.
+You've been assigned to assess your peers this week. The assessments are 
+due {due_date}. 
+
+You will be able to view your peer's comments on your answers as they 
+are submitted, but your score will not be available until {due_date}. 
+At that time, please log in to view and respond to the comments you 
+received from your peers.
 
 Best,
-STATS 60 Staff""".format(due_date=request.form["due_date"]))
+STATS 60 Staff""".format(due_date=due_date.strftime("%A, %b %d at %I:%M %p")))
 
-            admins = session.query(User).filter_by(type="admin").all()
-            send_all(admins, "Peer Grading for %s is Ready" % homework.name,
-r"""Hey %s (and other staff),
+    # Send slightly different email to students who were not assigned to all questions
+    send_all(not_assigned, "Peer Assessment for %s is Ready" % homework.name,
+r"""Dear %s,
 
-Just letting you know that peer grading was released this week, due at {due_date}.
+You've been assigned to assess your peers this week. The assessments are 
+due {due_date}. 
+
+Our records indicate that you did not complete all of the free response  
+questions this week. Please note that you are allowed to evaluate others' 
+responses only if you attempted that question yourself. Therefore, you 
+may not have been assigned any evaulation tasks for some or all of the 
+questions. In the future, please be sure to finish the homework on time 
+in order to participate in peer assessment.
+
+You will be able to view your peer's comments on your answers as they 
+are submitted, but your score will not be available until {due_date}. 
+At that time, please log in to view and respond to the comments you 
+received from your peers.
+
+Best,
+STATS 60 Staff""".format(due_date=due_date.strftime("%A, %b %d at %I:%M %p")))
+
+    # Send email to the course staff
+    admins = session.query(User).filter_by(type="admin").all()
+    send_all(admins, "Peer Assessment for %s is Ready" % homework.name,
+r"""Dear %s (and other members of the STATS 60 Staff),
+
+Just letting you know that the peer assessment for this week was just released. 
+It is due at {due_date}.
+
+If you were assigned to grade for this week, please do so between now and 
+{due_date}.
 
 Sincerely,
-
 OHMS
 
 P.S. This is an automatically generated message ;-)
-""".format(due_date=request.form["due_date"]))
+""".format(due_date=due_date.strftime("%A, %b %d at %I:%M %p")))
 
-
-    return "Successfully assigned %d students." % len(responses)
+    return r'''Successfully assigned %d students. You should have received an 
+e-mail confirmation.''' % len(responses)
 
 
 @app.route("/reminder_email/<int:hw_id>", methods=['POST'])
 def reminder_email(hw_id):
 
-    smtpObj = smtplib.SMTP('localhost')
-    sender = 'psych10-win1314-staff@lists.stanford.edu'
-    recipients = []
-
     homework = session.query(Homework).get(hw_id)
-    users = session.query(User).all()
+    users = []
 
+    # get users who haven't completed peer grading
     for question in homework.questions:
         tasks = session.query(GradingTask).join(QuestionResponse).\
                 filter(QuestionResponse.question_id == question.id).all()
         for task in tasks:
             grades = session.query(QuestionGrade).filter_by(grading_task_id=task.id).all()
-            if not grades and (task.grader not in recipients):
-                user = session.query(User).get(task.grader)
-                name = user.name
-                email = "%s@stanford.edu" % user.sunet
-                message = r'''From: Stats 60 Staff <psych10-win1314-staff@lists.stanford.edu>
-To: %s <%s>
-Subject: %s
+            if not grades and (task.grader not in users):
+                users.append(task.grader)
 
-Dear %s,
-
-%s
+    # send e-mails
+    users = [session.query(User).get(u) for u in users]
+    message = request.form['message'].replace("%", "%%")
+    message = '''Dear %s,\n\n''' + message + '''
 
 Best,
 Stats 60 Staff
-''' % (name, email, request.form.get('subject'), name, request.form.get('message'))
-                smtpObj.sendmail(sender, [email], message)
-                recipients.append(user.sunet)
+'''
+    send_all(users, request.form['subject'], message)
+    
+    admins = session.query(User).filter_by(type="admin").all()
+    send_all(admins, "%s Peer Assessment Reminder Sent" % homework.name,
+"""Hey %s (and other staff),
 
-    return "Successfully sent email to %d recipients:<br/> %s" % (len(recipients), "<br/>".join(recipients))
+A reminder e-mail was just sent to the following users to remind them to complete their 
+peer assessments.\n\n""" + "\n".join(u.sunet for u in users) + """
+
+Sincerely,
+OHMS
+
+P.S. This is an automatically generated message ;-)""")
+
+    return "Sent reminder to %d recipients. You should have received an e-mail." % len(users)
+
 
 @app.route("/view_responses", methods=['POST', 'GET'])
 def view_responses():
 
     q_id = request.args.get('q')
     groups = request.form.getlist('group')
-
+    
     users = session.query(User).filter(User.group.in_(groups)).all()
 
     import random

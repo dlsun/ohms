@@ -5,13 +5,21 @@
 
 {% if todo %}
 <div class='alert alert-error'>
-<strong>Attention!</strong> You have ratings of peer comments to complete.
+<p><strong>Attention!</strong> To encourage you to look over the 
+comments your peers have taken the time to write for you, we require 
+that you <i>rate</i> your peer comments after each peer assessment period 
+ends. Our records indicate that you are missing: 
 <ul>
   {% for homework, number in todo.iteritems() %}
-  <li>{{ number }} ratings in {{ homework }}</li>
+  <li>{{ number }} rating(s) in {{ homework }}</li>
   {% endfor %}
 </ul>
-Please complete these as soon as possible.
+To view the peer comments for a given response, open up the homework and 
+click on the link in the "Comments" section above the corresponding 
+question. <a href="../../static/img/ratings_location.png">Here</a> 
+is a graphic showing where to find this link.<p>
+
+<p>Please complete these ratings as soon as possible.</p>
 </div>
 {% endif %}
 
@@ -20,7 +28,7 @@ Please complete these as soon as possible.
     <th>Homework</th>
     <th>Start Date</th>
     <th>Due Date</th>
-    <th>Peer Grading</th>
+    <th>Peer Assessment</th>
   </thead>
   <tbody>
 
@@ -49,9 +57,9 @@ Please complete these as soon as possible.
     </td>
     <td>
       {% if peer_grading[loop.index0]==1 %}
-        <a href="grade?id={{hw.id}}">Peer Grading</a>
+        <a href="grade?id={{hw.id}}">Peer Assessment</a>
       {% elif peer_grading[loop.index0]==0 %}
-        You weren't assigned to peer grade this week.
+        You weren't assigned to peer assess this week.
       {% elif peer_grading[loop.index0]==-1 %}
 	ERROR: please see course staff.
       {% endif %}
