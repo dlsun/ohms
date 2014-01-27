@@ -24,4 +24,4 @@ static-prod-deploy:
 ohms-prod-deploy:
 	scp corn.stanford.edu:/afs/ir.stanford.edu/class/psych10/ohms/templates/office_hours.html ohms/templates/office_hours.html
 	cp options/prod_options.py ohms/options.py
-	rsync -avz --delete-excluded ohms/ corn.stanford.edu:/afs/ir.stanford.edu/class/psych10/ohms/
+	rsync -avz ohms/ corn.stanford.edu:/afs/ir.stanford.edu/class/psych10/ohms/
