@@ -151,22 +151,27 @@ def reminder_email(hw_id):
     homework = session.query(Homework).get(hw_id)
     users = []
 
+    # get users who haven't completed peer grading
     for question in homework.questions:
         tasks = session.query(GradingTask).join(QuestionResponse).\
                 filter(QuestionResponse.question_id == question.id).all()
         for task in tasks:
             grades = session.query(QuestionGrade).filter_by(grading_task_id=task.id).all()
-            if not grades and (task.grader not in recipients):
-                users.append(session.query(User).get(task.grader))
+            if not grades and (task.grader not in users):
+                users.append(task.grader)
 
-        message = '''Dear %s,\n\n''' + request.form['message'] + '''\n
+    # send e-mails
+    users = [session.query(User).get(u) for u in users]
+    message = request.form['message'].replace("%", "%%")
+    message = '''Dear %s,\n\n''' + message + '''
+
 Best,
 Stats 60 Staff
 '''
-        send_all(users, request.form['subject'], message)
-
-        admins = session.query(User).filter_by(type="admin").all()
-        send_all(admins, "Peer Assessment Reminder Sent" % homework.name,
+    send_all(users, request.form['subject'], message)
+    
+    admins = session.query(User).filter_by(type="admin").all()
+    send_all(admins, "%s Peer Assessment Reminder Sent" % homework.name,
 """Hey %s (and other staff),
 
 A reminder e-mail was just sent to the following users to remind them to complete their 
