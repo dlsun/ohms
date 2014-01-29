@@ -96,7 +96,7 @@ def index():
 
     grades = []
     try:
-        f = open('/afs/ir/class/psych10/ohms/grades.csv')
+        f = open('/afs/ir/class/psych10/grades/grades.csv')
         reader = __import__('csv').reader(f)
         headers = reader.next()[1:]
         for row in reader:
