@@ -94,16 +94,15 @@ def index():
                     if submits and not submits[-1].rating:
                         todo[q.homework.name] += 1
 
-    grades = []
     try:
-        f = open('/afs/ir/class/psych10/ohms/grades.csv')
+        f = open('/afs/ir/class/psych10/grades/grades.csv')
         reader = __import__('csv').reader(f)
         headers = reader.next()[1:]
         for row in reader:
             if row[0] == user.sunet:
                 grades = zip(*(headers, row[1:]))
     except:
-        pass
+        grades = []
 
     return render_template("index.html", homeworks=hws,
                            peer_grading=peer_grading,
