@@ -14,6 +14,13 @@ from base import Base, session
 from datetime import datetime
 
 
+# helper function that strips tail from element and returns tail
+def strip_and_save_tail(element):
+    tail = element.tail
+    element.tail = None
+    return tail
+
+
 class Homework(Base):
     __tablename__ = 'hws'
 
@@ -71,26 +78,19 @@ class Question(Base):
         question.name = node.attrib['name'] if 'name' in node.attrib else ""
         question.points = 0
         question.items = []
-        # dict that maps children to their parents
-        parent_map = dict((c, p) for p in node.iter() for c in p)
         # iterate over items
         for e in node.iter():
             if e.tag == "item":
+                # save the tail
+                tail = strip_and_save_tail(e)
                 # fetch item object
                 item = Item.from_xml(e)
                 # add item to question
                 question.points += item.points
                 question.items.append(item)
-                # replace items by corresponding html, saving the tail
-                e_new = e
-                e_new.attrib['id'] = str(item.id)
-                e_new.tail = e.tail
-                # get parent
-                parent = parent_map[e]
-                for j, child in enumerate(parent):
-                    if child == e:
-                        parent.remove(e)
-                        parent.insert(j, e_new)
+                # update the item with its ID, re-append the tail
+                e.attrib['id'] = str(item.id)
+                e.tail = tail
 
         question.xml = ET.tostring(node, method="xml")
         session.commit()
@@ -100,16 +100,19 @@ class Question(Base):
     def to_html(self):
         node = ET.fromstring(self.xml)
         parent_map = dict((c, p) for p in node.iter() for c in p)
+        i = 0
         for e in node.iter():
+            # replace item by HTML
             if e.tag == "item":
-                item = Item.from_xml(e)
-                e_new = item.to_html()
+                e_new = self.items[i].to_html()
                 e_new.tail = e.tail
                 parent = parent_map[e]
                 for j, child in enumerate(parent):
                     if child == e:
                         parent.remove(e)
                         parent.insert(j, e_new)
+                        break
+                i += 1
         return ET.tostring(node, method="html")
 
     def __iter__(self):
@@ -191,28 +194,6 @@ class MultipleChoiceItem(Item):
             if 'correct' in option.attrib:
                 if option.attrib['correct'].lower() == "true":
                     self.solution = i
-        #     else:
-        #         correct = None
-            
-        #     if correct not in ["true", "false", None]:
-        #         raise ValueError("The 'correct' attribute in multiple choice"
-        #                          "options must be one of 'true' or 'false'")
-        #     if correct == 'true':
-        #         self.solution = i
-        #         correct = 1
-        #     else:
-        #         correct = 0
-        #     option_object = MultipleChoiceOption(order=i,
-        #                                          text=text,
-        #                                          correct=correct,
-        #                                          item=self)
-        #     session.add(option_object)
-        # session.commit()
-
-    # def __iter__(self):
-    #     """Iterates over the multiple choice options in this item, in order"""
-    #     for mc_option in sorted(self.options, key=lambda x: x.order):
-    #         yield mc_option
 
     def to_html(self):
         attrib = {"class": "item",
