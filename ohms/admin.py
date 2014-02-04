@@ -48,7 +48,7 @@ def assign_tasks(hw_id):
                                  "%Y-%m-%d %H:%M:%S")
 
     # store the users who were not assigned because they didn't complete HW
-    not_assigned = []
+    not_assigned = set()
 
     for q in homework.questions:
 
@@ -62,8 +62,8 @@ def assign_tasks(hw_id):
             submits = get_question_responses(q.id, user.sunet)
             if submits:
                 responses.append(submits[-1])
-            elif user not in not_assigned:
-                not_assigned.append(user)
+            else:
+                not_assigned.add(user)
 
         # shuffle the responses and iterate over them
         n = len(responses)
@@ -149,21 +149,20 @@ e-mail confirmation.''' % len(responses)
 def reminder_email(hw_id):
 
     homework = session.query(Homework).get(hw_id)
-    users = []
 
     # get users who haven't completed peer grading
+    users = set()
     for question in homework.questions:
         tasks = session.query(GradingTask).join(QuestionResponse).\
                 filter(QuestionResponse.question_id == question.id).all()
         for task in tasks:
             grades = session.query(QuestionGrade).filter_by(grading_task_id=task.id).all()
-            if not grades and (task.grader not in users):
-                users.append(task.grader)
+            if not grades:
+                users.add(task.grader)
 
     # send e-mails
     users = [session.query(User).get(u) for u in users]
-    message = request.form['message'].replace("%", "%%")
-    message = '''Dear %s,\n\n''' + message + '''
+    message = '''Dear %s,\n\n''' + request.form['message'].replace("%", "%%") + '''
 
 Best,
 Stats 60 Staff

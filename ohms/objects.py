@@ -282,7 +282,7 @@ class ShortAnswer(Base):
     type = Column(String(10))  # "range" or "exact" or "expression"
     lb = Column(Float)
     ub = Column(Float)
-    exact = Column(String(20))
+    exact = Column(String(100))
 
     def from_xml(self, node):
         self.type = node.attrib['type'].lower()
