@@ -328,8 +328,11 @@ the score it did.</p>'''
         task = get_grading_task(id)
         if task.grader != sunet:
             raise Exception("You are not authorized to grade this response.")
-
-        score = float(responses[0])
+            
+        try:
+            score = float(responses[0])
+        except:
+            raise Exception("Sorry, I didn't understand the score you entered. Please check that you have entered a score.")
         comments = responses[1]
 
         question_grade = QuestionGrade(

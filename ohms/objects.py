@@ -341,9 +341,9 @@ class ShortAnswer(Base):
             if response:
                 processed_response = self.preprocess(response)
                 self.validate(processed_response)
+                ans = eval(self.preprocess(self.exact), {"__builtins__": None})
                 try:
                     resp = eval(processed_response, {"__builtins__": None})
-                    ans = eval(self.preprocess(self.exact), {"__builtins__": None})
                 except:
                     raise Exception("I'm sorry, but I did not understand the expression you typed in. Please check the expression and try again.")
                 return abs(resp - ans) < 1e-15 
