@@ -185,8 +185,8 @@ class MultipleChoiceItem(Item):
 
     def from_xml(self, node):
 
-        # this should eventually be named self.options
-        self.options_ = []
+        self.options_ = [] # this should eventually be named self.options
+        self.solution = None
         for i, option in enumerate(node.iter('option')):
             match = re.match("<option.*?>(?P<inner>.*)</option>",
                              ET.tostring(option), re.DOTALL)
@@ -219,6 +219,8 @@ class MultipleChoiceItem(Item):
 
     def check(self, response):
         if response == self.solution:
+            return self.points, ""
+        elif self.solution is None:
             return self.points, ""
         else:
             return 0, ""
