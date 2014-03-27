@@ -179,18 +179,15 @@ class Item(Base):
 
 class MultipleChoiceItem(Item):
     __mapper_args__ = {'polymorphic_identity': 'Multiple Choice'}
-    options = relationship("MultipleChoiceOption",
-                           order_by="MultipleChoiceOption.id",
-                           backref="item")
 
     def from_xml(self, node):
 
-        self.options_ = [] # this should eventually be named self.options
+        self.options = []
         self.solution = None
         for i, option in enumerate(node.iter('option')):
             match = re.match("<option.*?>(?P<inner>.*)</option>",
                              ET.tostring(option), re.DOTALL)
-            self.options_.append( match.group('inner') if match else "" )
+            self.options.append( match.group('inner') if match else "" )
             if 'correct' in option.attrib:
                 if option.attrib['correct'].lower() == "true":
                     self.solution = i
@@ -200,20 +197,12 @@ class MultipleChoiceItem(Item):
                   "itemtype": "multiple-choice"}
         root = ET.Element("div", attrib=attrib)
 
-        if self.xml:
-            node = ET.fromstring(self.xml)
-            self.from_xml(node)
-            for i, option in enumerate(self.options_):
-                root.append(ET.fromstring(r'''
+        node = ET.fromstring(self.xml)
+        self.from_xml(node)
+        for i, option in enumerate(self.options):
+            root.append(ET.fromstring(r'''
 <p><input type='radio' name='%d' value='%d' disabled='disabled'> %s</input></p>
                 ''' % (self.id, i, option)))
-
-        # this case should eventually be removed
-        else:
-            for i, option in enumerate(self.options):
-                root.append(ET.fromstring(r'''
-<p><input type='radio' name='%d' value='%d' disabled='disabled'> %s</input></p>
-                ''' % (self.id, i, option.text)))
 
         return root
 
@@ -224,20 +213,6 @@ class MultipleChoiceItem(Item):
             return self.points, ""
         else:
             return 0, ""
-
-
-# this is now obsolete, keeping for now for backwards compatibility
-class MultipleChoiceOption(Base):
-    __tablename__ = 'mc_options'
-
-    id = Column(Integer, primary_key=True)
-    item_id = Column(Integer, ForeignKey('items.id'))
-    order = Column(Integer)
-    text = Column(UnicodeText)
-    correct = Column(Integer)
-
-    def __str__(self):
-        return self.text
 
 
 class ShortAnswerItem(Item):
@@ -409,7 +384,7 @@ class ItemResponse(Base):
     response = Column(UnicodeText)
 
     question_response = relationship("QuestionResponse")
-    item_response = relationship("Item")
+    item_response = relationship("Item")    
 
 
 class GradingPermission(Base):
