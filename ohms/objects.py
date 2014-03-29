@@ -12,7 +12,6 @@ from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Uni
 from sqlalchemy.orm import relationship, backref
 from base import Base, session
 from datetime import datetime
-from queries import get_last_question_response, get_grading_tasks_for_grader
 
 # helper function that strips tail from element and returns tail
 def strip_and_save_tail(element):
@@ -63,6 +62,8 @@ class Question(Base):
     points = Column(Float)
 
     homework = relationship("Homework")
+
+    __mapper_args__ = {'polymorphic_identity': 'question'}
 
     @staticmethod
     def from_xml(node):
@@ -128,6 +129,7 @@ class Question(Base):
         return due_date and due_date < datetime.now()
 
     def load_response(self, sunet):
+        from queries import get_last_question_response
         last_submission = get_last_question_response(self.id, sunet)
         out = {
             'submission': last_submission,
@@ -138,6 +140,7 @@ class Question(Base):
         return out
 
     def submit_response(self, sunet, responses):
+        from queries import get_last_question_response
         last_submission = get_last_question_response(self.id, sunet)
         if not self.check_if_locked(last_submission):
             item_responses = [ItemResponse(item_id=item.id, response=response) \
@@ -258,6 +261,7 @@ class ShortAnswerItem(Item):
     def from_xml(self, node):
 
         self.answers = []
+        solutions = []
         for a in node.findall("answer"):
             answer = ShortAnswer()
             answer.from_xml(a)
@@ -265,7 +269,7 @@ class ShortAnswerItem(Item):
                 solutions.append(answer.exact)
             self.answers.append(answer)
         if not solutions:
-            solutions.append(str(0.5*(short_answer.lb + short_answer.ub)))
+            solutions.append(str(0.5*(answer.lb + answer.ub)))
         self.solution = ", ".join(solutions)
 
     def to_html(self):
@@ -427,7 +431,7 @@ class GradingTask(Base):
     id = Column(Integer, primary_key=True)
     grader = Column(String(10), ForeignKey('users.sunet'))
     student = Column(String(10), ForeignKey('users.sunet'))
-    question_id = Column(Integer, ForeignKey('question.id'))
+    question_id = Column(Integer, ForeignKey('questions.id'))
     time = Column(DateTime)
     score = Column(Float)
     comments = Column(UnicodeText)
@@ -438,6 +442,7 @@ class GradingTask(Base):
 
 
 class PeerReview(Question):
+    __mapper_args__ = {'polymorphic_identity': 'Peer Review'}
 
     @staticmethod
     def from_xml(node):
@@ -446,6 +451,8 @@ class PeerReview(Question):
 
     def to_html(self):
 
+        from queries import get_last_question_response, get_grading_tasks_for_grader
+        self.from_xml(self.xml)
         sunet = os.environ.get("WEBAUTH_USER")
         tasks = get_grading_tasks_for_grader(self.question_id, sunet)
         
@@ -492,6 +499,9 @@ the student did well.</p>
         return html
 
     def load_response(self, sunet):
+
+        from queries import get_grading_tasks_for_grader
+
         item_responses = []
         tasks = get_grading_tasks_for_grader(self.question_id, sunet)
         for task in tasks:
@@ -506,11 +516,16 @@ the student did well.</p>
             }
 
     def submit_response(self, sunet, responses):
+
+        from queries import get_grading_tasks_for_grader
+
         tasks = get_grading_tasks_for_grader(self.question_id, sunet)
         if datetime.now() <= self.homework.due_date:
             i = 0
             item_responses = []
             for task in self.tasks:
+                if task.grader != sunet:
+                    raise Exception("You are not authorized to grade this response.")
                 try:
                     0 <= float(responses[i]) <= self.points
                 except:
@@ -532,9 +547,8 @@ the student did well.</p>
                 'submission': {
                     "time": datetime.now(),
                     "score": self.points,
-                    "comments": '''You've earned credit for completing the peer reviews! 
-However, your peer review grade will also depend on the accuracy of your scores and 
-the accuracy of the comments.''',
+                    "comments": '''You've earned credit for completing the peer reviews, 
+but your peer review grade will also depend on the accuracy and quality of your feedback.''',
                     "item_responses": item_responses
                     }
             }

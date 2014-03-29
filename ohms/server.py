@@ -9,14 +9,14 @@ from utils import NewEncoder
 from datetime import datetime, timedelta
 
 from base import session
-from objects import Question, QuestionResponse, ItemResponse, QuestionGrade, User
+from objects import Question, QuestionResponse, ItemResponse, User
 from queries import get_user, get_homework, get_question, \
-    get_question_response, get_question_responses, \
-    get_question_grade, get_question_grades, \
-    get_grading_permissions, set_grading_permissions, \
-    get_grading_task, get_grading_tasks_for_grader, get_grading_tasks_for_response, \
+    get_question_response, get_last_question_response, \
+    set_grading_permissions, get_peer_review_questions, \
+    get_grading_tasks_for_grader, get_grading_tasks_for_student, \
     get_sample_responses
 import options
+from collections import defaultdict
 
 
 # Configuration based on deploy target
@@ -30,6 +30,12 @@ if options.target == "local":
 else:
     app = Flask(__name__)
     app.debug = (options.target != "prod")
+
+    @app.errorhandler(Exception)
+    def handle_exceptions(error):
+        return make_response(error.message, 403)
+
+    ### THIS IS STUFF THAT SHOULD BE FACTORED OUT
     sunet = os.environ.get("WEBAUTH_USER")
     if not sunet:
         raise Exception("You are no longer logged in. Please refresh the page.")
@@ -47,47 +53,34 @@ else:
 def index():
     hws = get_homework()
     
-    from collections import defaultdict
-    todo = defaultdict(int)
-    questions = session.query(Question).all()
-    for q in questions:
+    # a to-do list
+    to_do = defaultdict(int)
 
-        responses = get_question_responses(q.id, user.sunet)
+    # get all peer review items
+    peer_review_questions = get_peer_review_questions()
+    for prq in peer_review_questions:
 
-        if responses:
-            r = responses[-1]
-            tasks = get_grading_tasks_for_response(r.id)
-
-            # ignore if this is not a peer graded question
-            if not tasks:
-                continue
-
-            # if user has no score for response, compute score if peer grades due
-            if r.score is None:
-                permission = get_grading_permissions(q.id, tasks[0].grader)
-                if permission.due_date < datetime.now():
-                    scores = []
-                    for task in tasks:
-                        submits = get_question_grades(task.id)
-                        if submits: scores.append(submits[-1].score)
-                    if scores:
-                        r.score = sorted(scores)[len(scores) // 2] # median
-                        session.commit()
-
-            # check if user has any ratings to complete
-            else:
-                for task in tasks:
-                    submits = get_question_grades(task.id)
-                    if submits and not submits[-1].rating:
-                        todo[q.homework.name] += 1
+        response = get_last_question_response(prq.question_id, user.sunet)
+        # if deadline has passed...
+        if prq.homework.due_date < datetime.now():
+            tasks = get_grading_tasks_for_student(prq.question_id, user.sunet)
+            # if student doesn't have score, tabulate scores from peer reviews
+            if response.score is None:
+                scores = [t.score for t in tasks if t is not None]
+                if scores:
+                    response.score = sorted(scores)[len(scores) // 2]
+                    session.commit()
+            # check that student has rated all the peer reviews
+            for task in tasks:
+                if task.score is not None and task.rating is None:
+                    to_do[response.question.homework.name] += 1
 
     return render_template("index.html", homeworks=hws,
                            peer_grading=peer_grading,
                            user=user,
                            options=options,
                            current_time=datetime.now(),
-                           grades=grades,
-                           todo=todo
+                           to_do=to_do
     )
 
 
@@ -104,37 +97,6 @@ def hw():
                                options=options)
 
 
-@app.route("/grade", methods=['GET'])
-def grade():
-    hw_id = request.args.get("id")
-    homework = get_homework(hw_id)
-    permissions = []
-    for q in homework.questions:
-        try:
-            permissions.append(get_grading_permissions(q.id, sunet))
-        except:
-            pass
-    questions = []
-    for permission in permissions:
-        question = permission.question
-        if permission.permissions:
-            tasks = get_grading_tasks_for_grader(question.id, sunet)
-        else:
-            qrs = get_sample_responses(question.id)
-            tasks = [{"id": qr.id, "question_response": qr} for qr in qrs]
-
-        questions.append({
-            "question": question,
-            "permission": permission.permissions,
-            "tasks": tasks})
-
-    return render_template("grade.html",
-                           homework=homework,
-                           questions=questions,
-                           user=user,
-                           options=options)
-
-
 @app.route("/rate", methods=['GET'])
 def rate():
 
@@ -142,30 +104,16 @@ def rate():
     question_response_id = request.args.get("id")
 
     # check that student is the one who submitted this QuestionResponse
-
     question_response = get_question_response(question_response_id)
     if question_response.sunet != sunet and user.type != "admin":
         raise Exception("You are not authorized to rate this response.")
 
     # fetch all peers that were assigned to grade this QuestionResponse
     grading_tasks = get_grading_tasks_for_response(question_response_id)
-    question_grades = []
-    for task in grading_tasks:
-        submissions = get_question_grades(task.id)
-        if submissions:
-            question_grades.append(submissions[-1])
 
     return render_template("rate.html", 
-                           question_grades=question_grades,
+                           grading_tasks=grading_tasks,
                            options=options)
-
-
-def check_if_locked(due_date, submissions):
-    past_due = due_date and due_date < datetime.now()
-    if len(submissions):
-        last_time = max(x.time for x in submissions)
-        too_many_submissions = datetime.now() < last_time + timedelta(minutes=30)
-    return past_due or too_many_submissions
 
 
 @app.route("/load", methods=['GET'])
@@ -179,45 +127,20 @@ def load():
         question_id = q_id[1:]
         question = get_question(question_id)
         out = question.load_response(sunet)
-#         question.load_response()
-#         submissions = get_question_responses(question_id, sunet)
-#         out['submission'] = submissions[-1] if submissions else None
-#         out['locked'] = check_if_locked(question.hw.due_date, submissions)
-#         if datetime.now() > question.hw.due_date:
-#             out['solution'] = [item.solution for item in question.items]
-
-    # if loading a student's peer grade for an actual student's response
-    elif q_id[0] == "g":
-        grading_task_id = q_id[1:]
-        question_grades = get_question_grades(grading_task_id)
-        if question_grades:
-            question_id = question_grades[0].grading_task.question_response.question_id
-        else:
-            question_id = get_grading_task(grading_task_id).question_response.question_id
-        if question_grades:
-            out['submission'] = {
-                "time": datetime.now(),
-                "item_responses": [
-                    {"response": question_grades[-1].score},
-                    {"response": question_grades[-1].comments}
-                    ]
-                }
-        permission = get_grading_permissions(question_id, sunet)
-        out['locked'] = (datetime.now() > permission.due_date)
 
     # if loading a student's scores for a sample response (not currently functional)
     elif q_id[0] == "s":
         question_id = q_id[1:]
-        permission = get_grading_permissions(question_id, sunet)
-        out['locked'] = (datetime.now() > permission.due_date)
+        question = get_question(question_id)
+        out['locked'] = (datetime.now() > question.homework.due_date)
 
     # if loading a student rating to a peer grade
     elif q_id[0] == "r":
-        question_grade_id = q_id[1:]
-        question_grade = get_question_grade(question_grade_id)
-        if question_grade.rating:
+        grading_task_id = q_id[1:]
+        grading_task = get_grading_task(grading_task_id)
+        if grading_task.rating:
             out['submission'] = {
-                "item_responses": [ {"response": question_grade.rating} ]
+                "item_responses": [ {"response": grading_task.rating} ]
                 }
         out['locked'] = False
 
@@ -235,35 +158,6 @@ def submit():
     if submit_type == "q":
         question = get_question(q_id[1:])
         out = question.submit_response(sunet, responses)
-
-
-    # Question submission
-#     if submit_type == "q":
-#         submissions = get_question_responses(id, sunet)
-#         question = submissions[0].question if submissions else get_question(id)
-
-#         is_locked = check_if_locked(question.hw.due_date, submissions)
-
-#         if not is_locked:
-
-#             score, comments = question.check(responses)
-
-#             question_response.score = score
-#             question_response.comments = comments
-#             for item, response in zip(question.items, responses):
-#                 item_response = ItemResponse(item_id=item.id,
-#                                              response=response)
-#                 question_response.item_responses.append(item_response)
-
-#             # add response to the database
-#             session.add(question_response)
-#             session.commit()
-
-#             submissions.append(question_response)
-#             is_locked = check_if_locked(question.hw.due_date, submissions)
-
-#         else:
-#             raise Exception("The deadline for submitting this homework has passed.")
 
     # Sample question grading submission
     elif submit_type == "s":
@@ -300,95 +194,43 @@ the score it did.</p>'''
         question_response.comments = [r.comments for r in sample_responses]
         question_response.comments.append(summary_comment)
 
-
-    # Grading student questions
-    elif submit_type == "g":
-
-        question_response = QuestionResponse(
-            sunet=sunet,
-            time=datetime.now(),
-            question_id=id
-            )
-
-        is_locked = False
-
-        # Make sure student was assigned this grading task
-        task = get_grading_task(id)
-        if task.grader != sunet:
-            raise Exception("You are not authorized to grade this response.")
-            
-        try:
-            score = float(responses[0])
-        except:
-            raise Exception("Sorry, I didn't understand the score you entered. Please check that you have entered a score.")
-        comments = responses[1]
-
-        question_grade = QuestionGrade(
-            grading_task=task,
-            time=datetime.now(),
-            score=score,
-            comments=comments
-        )
-        session.add(question_grade)
-        session.commit()
-
-        question_response.comments = "Your scores have been "\
-            "successfully recorded!"
+        out = json.dumps({
+            "locked": is_locked,
+            "submission": question_response
+            })
 
     # Rating the peer reviews
     elif submit_type == "r":
         is_locked = False
 
+        # Make sure student was assigned to rate this
+        rating = request.form.getlist('responses')[0]
+        grading_task = get_grading_task(id)
+        if grading_task.student == sunet:
+            grading_task.rating = rating
+            session.commit()
+        else:
+            raise Exception("You are not authorized to rate this comment.")
+
+        # Make question_response object to return
         question_response = QuestionResponse(
             sunet=sunet,
             time=datetime.now(),
-            question_id=id
+            question_id=id,
+            comments="Rating submitted successfully!"
             )
 
-        # Make sure student was assigned to rate this
-        rating = request.form.getlist('responses')[0]
-        question_grade = get_question_grade(id)
-        if question_grade.grading_task.question_response.sunet == sunet:
-            question_grade.rating = rating
-            session.commit()
-        else:
-            raise Exception("You are not authorized to rate this grade.")
-
-        question_response.comments = "Rating submitted successfully!"
+        out = json.dumps({
+            "locked": is_locked,
+            "submission": question_response
+            })
         
-
     # Wrong submit_type
     else:
         raise Exception("Invalid submission.")
 
     # Add response to what to return to the user
-    return json.dumps({
-        "locked": is_locked,
-        "submission": question_response,
-    }, cls=NewEncoder)
-
-
-
-@app.route("/staff")
-def staff():
-    return render_template("office_hours.html", options=options, user=user)
-
-@app.route("/handouts")
-def handouts():
-    handouts = sorted(os.listdir("/afs/ir/%s/WWW/handouts" % options.class_prefix))
-    return render_template("handouts.html", handouts=handouts, options=options, user=user)
-
-@app.route("/tips")
-def tips():
-    return render_template("tips.html", options=options, user=user)
-
-@app.route("/grading")
-def grading():
-    return render_template("grading.html", options=options, user=user)
-
-@app.errorhandler(Exception)
-def handle_exceptions(error):
-    return make_response(error.message, 403)
+    return json.dumps(out, cls=NewEncoder)
 
 
 # For local development--this does not run in prod or test

@@ -8,8 +8,8 @@ from datetime import datetime
 from collections import defaultdict
 
 from base import session
-from objects import QuestionResponse, QuestionGrade, GradingTask, GradingPermission, User
-from objects import Homework, Question
+from objects import QuestionResponse, GradingTask, User
+from objects import Homework, Question, PeerReview
 
 
 def get_homework(hw_id=None):
@@ -18,17 +18,11 @@ def get_homework(hw_id=None):
     else:
         return session.query(Homework).get(hw_id)
 
-
-def get_last_homework():
-    """Gets the homework that finished most recently"""
-    now = datetime.now()
-    homeworks = session.query(Homework).all()
-    finished_hws = [hw for hw in homeworks if hw.due_date <= now]
-    return max(finished_hws, key=lambda hw: hw.due_date)
-
-
 def get_question(question_id):
     return session.query(Question).get(question_id)
+
+def get_peer_review_questions():
+    return session.query(PeerReview).all()
 
 
 def get_question_response(question_response_id):
@@ -46,34 +40,18 @@ def get_last_question_response(question_id, sunet):
         filter_by(question_id=question_id).\
         order_by(QuestionResponse.time).all()
     return qrs[-1] if qrs else None
-        
-
-def get_recent_question_responses(q_id):
-    """Returns each student's most recent response to a question"""
-    responses = session.query(QuestionResponse).\
-        filter_by(question_id=q_id).\
-        join(User).\
-        filter(User.type == "student").all()
-
-    student_responses = defaultdict(list)
-    for r in responses:
-        student_responses[r.sunet].append(r)
-
-    return [max(rs, key=lambda r: r.time) for rs in student_responses.values()]
-
 
 def grading_permissions_query(question_id, sunet):
-    return session.query(GradingPermission).\
+    return session.query(GradingTask.permission).\
         filter_by(sunet=sunet).\
         filter_by(question_id=question_id)
 
 def get_grading_permissions(question_id, sunet):
-    return grading_permissions_query(question_id, sunet).one()
+    return grading_permissions_query(question_id, sunet).all()
 
 def set_grading_permissions(question_id, sunet, permissions):
     grading_permissions_query(question_id, sunet).update({"permissions": permissions})
     session.commit()
-
 
 def get_grading_task(grading_task_id):
     return session.query(GradingTask).get(grading_task_id)
@@ -84,37 +62,19 @@ def get_grading_tasks_for_grader(question_id, sunet):
         filter(QuestionResponse.question_id == question_id).\
         order_by(GradingTask.id).all()
 
-def get_grading_tasks_for_response(question_response_id):
+def get_grading_tasks_for_student(question_id, sunet):
     return session.query(GradingTask).\
-        filter_by(question_response_id=question_response_id).all()
-
+        filter_by(student=sunet).join(QuestionResponse).\
+        filter(QuestionResponse.question_id == question_id).\
+        order_by(GradingTask.id).all()
 
 def get_sample_responses(question_id):
     return session.query(QuestionResponse).filter_by(sample=1).\
         filter_by(question_id=question_id).\
         order_by(QuestionResponse.id).all()
 
-
-def get_question_grade(question_grade_id):
-    return session.query(QuestionGrade).get(question_grade_id)
-
-def get_question_grades(grading_task_id):
-    return session.query(QuestionGrade).\
-        filter_by(grading_task_id=grading_task_id).\
-        order_by(QuestionGrade.time).all()
-
-
 def get_user(sunet):
     return session.query(User).filter_by(sunet=sunet).one()
 
-
-def get_long_answer_qs(hw_id):
-    """Returns questions that are composed of a single long answer"""
-    questions = session.query(Question).\
-        join(Homework).\
-        filter_by(id=hw_id).all()
-
-    return [q for q in questions if len(q.items) == 1 and
-            q.items[0].type == "Long Answer"]
 
 

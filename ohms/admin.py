@@ -11,8 +11,7 @@ import random
 
 from base import session
 from objects import User, Homework, Question, QuestionResponse, QuestionGrade, GradingPermission, GradingTask, LongAnswerItem
-from queries import get_user, get_question_responses, get_question_grades, get_grading_tasks_for_response
-from assign_grading_tasks import make_grading_assignments
+from queries import get_user, get_question_grades, get_grading_tasks_for_response
 from send_email import send_all
 import options
 
@@ -59,9 +58,9 @@ def assign_tasks(hw_id):
         # get responses from only the relevant users
         responses = []
         for user in users:
-            submits = get_question_responses(q.id, user.sunet)
-            if submits:
-                responses.append(submits[-1])
+            submit = get_last_question_response(q.id, user.sunet)
+            if submit:
+                responses.append(submit)
             else:
                 not_assigned.add(user)
 

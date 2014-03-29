@@ -3,14 +3,14 @@
 {% block content %}
 <h3>Online Homework Management System (OHMS)</h3>
 
-{% if todo %}
+{% if to_do %}
 <div class='alert alert-error'>
 <p><strong>Attention!</strong> To encourage you to look over the 
 comments your peers have taken the time to write for you, we require 
 that you <i>rate</i> your peer comments after each peer assessment period 
 ends. Our records indicate that you are missing: 
 <ul>
-  {% for homework, number in todo.iteritems() %}
+  {% for homework, number in to_do.iteritems() %}
   <li>{{ number }} rating(s) in {{ homework }}</li>
   {% endfor %}
 </ul>

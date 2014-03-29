@@ -16,28 +16,28 @@
       are accurate (according to the rubric) and fair.
     </p>
 
-    {% for grade in question_grades %}
+    {% for task in grading_tasks %}
 
     <h4>Comment {{loop.index}}</h4>
     
-    <div class='alert' style="white-space: pre-wrap">{{grade.comments}}</div>
+    <div class='alert' style="white-space: pre-wrap">{{task.comments}}</div>
     
     <h5>Your Rating</h5>
     
-    <div class='question' id='r{{grade.id}}'>
+    <div class='question' id='r{{task.id}}'>
       
       <div class="item" itemtype="multiple-choice">
-	<p><input type="radio" name='r{{grade.id}}' value="4" disabled='disabled'>
+	<p><input type="radio" name='r{{task.id}}' value="4" disabled='disabled'>
 	  The comments responded thoughtfully and accurately to my response.
 	</input></p>
-	<p><input type="radio" name='r{{grade.id}}' value="3" disabled='disabled'>
+	<p><input type="radio" name='r{{task.id}}' value="3" disabled='disabled'>
 	  The comments were mostly accurate, but could be more detailed or 
 	  were slightly inaccurate in places.
 	</input></p>
-	<p><input type="radio" name='r{{grade.id}}' value="2" disabled='disabled'>
+	<p><input type="radio" name='r{{task.id}}' value="2" disabled='disabled'>
 	  The comments missed a key component of my response.
 	</input></p>
-	<p><input type="radio" name='r{{grade.id}}' value="1" disabled='disabled'>
+	<p><input type="radio" name='r{{task.id}}' value="1" disabled='disabled'>
 	  The comments demonstrate no engagement with my response.
 	</input></p>
       </div>
