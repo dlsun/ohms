@@ -57,13 +57,15 @@ class Question(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     hw_id = Column(Integer, ForeignKey('hws.id'))
+    type = Column(String(20))
     xml = Column(UnicodeText)
     items = relationship("Item", order_by="Item.id", backref="question")
     points = Column(Float)
 
     homework = relationship("Homework")
 
-    __mapper_args__ = {'polymorphic_identity': 'question'}
+    __mapper_args__ = {'polymorphic_identity': 'question',
+                       'polymorphic_on': type}
 
     @staticmethod
     def from_xml(node):
@@ -71,7 +73,10 @@ class Question(Base):
         if 'id' in node.attrib:
             question = session.query(Question).get(node.attrib['id'])
         else:
-            question = Question()
+            if 'type' in node.attrib and node.attrib['type'] == 'peer_review':
+                question = PeerReview()
+            else:
+                question = Question()
             session.add(question)
             session.flush()
             node.attrib['id'] = str(question.id)
@@ -99,6 +104,7 @@ class Question(Base):
         return question
 
     def to_html(self):
+
         node = ET.fromstring(self.xml)
         parent_map = dict((c, p) for p in node.iter() for c in p)
         i = 0
@@ -135,7 +141,7 @@ class Question(Base):
             'submission': last_submission,
             'locked': self.check_if_locked(last_submission),
             }
-        if datetime.now() > question.hw.due_date:
+        if datetime.now() > self.homework.due_date:
             out['solution'] = [item.solution for item in self.items]
         return out
 
@@ -444,17 +450,12 @@ class GradingTask(Base):
 class PeerReview(Question):
     __mapper_args__ = {'polymorphic_identity': 'Peer Review'}
 
-    @staticmethod
-    def from_xml(node):
-        self.question_id = node.attrib['question_id']
-        return super(PeerReview, self).from_xml(node)
-
     def to_html(self):
 
         from queries import get_last_question_response, get_grading_tasks_for_grader
-        self.from_xml(self.xml)
+        question_id = ET.fromstring(self.xml).attrib['question_id']
         sunet = os.environ.get("WEBAUTH_USER")
-        tasks = get_grading_tasks_for_grader(self.question_id, sunet)
+        tasks = get_grading_tasks_for_grader(question_id, sunet)
         
         html = '''
 <table>
@@ -470,7 +471,7 @@ the student did well.</p>
 '''
 
         for i, task in enumerate(tasks):
-            question_response = get_last_question_response(self.question_id, task.student)
+            question_response = get_last_question_response(question_id, task.student)
             html += '''
   <tr><td>
     <table class='table table-condensed'>
@@ -502,24 +503,27 @@ the student did well.</p>
 
         from queries import get_grading_tasks_for_grader
 
+        question_id = ET.fromstring(self.xml).attrib['question_id']
         item_responses = []
-        tasks = get_grading_tasks_for_grader(self.question_id, sunet)
+        tasks = get_grading_tasks_for_grader(question_id, sunet)
+        time = None
         for task in tasks:
             item_responses.append({"response": task.score})
             item_responses.append({"response": task.comments})
-        return {
+            time = task.time
+        out = {
             "locked": (datetime.now() > self.homework.due_date),
-            "submission": {
-                "time": datetime.now(),
-                "item_responses": item_responses
-                }
+            "submission": { "item_responses": item_responses }
             }
+        if time:
+            out['submission']['time'] = time
 
     def submit_response(self, sunet, responses):
 
         from queries import get_grading_tasks_for_grader
 
-        tasks = get_grading_tasks_for_grader(self.question_id, sunet)
+        question_id = ET.fromstring(self.xml).attrib['question_id']
+        tasks = get_grading_tasks_for_grader(question_id, sunet)
         if datetime.now() <= self.homework.due_date:
             i = 0
             item_responses = []
@@ -529,15 +533,16 @@ the student did well.</p>
                 try:
                     0 <= float(responses[i]) <= self.points
                 except:
-                    raise Exception("Please enter a score between %f and %f." % (0, self.points))
+                    raise Exception("Please enter a score between %f and %f." % (0, tasks.question.points))
                 if not responses[i+1].strip():
                     raise Exception("Please enter comments for all responses.")
                 item_responses.append({"response": task.score})
                 item_responses.append({"response": task.comments})
                 task.update({
-                        "score": responses[i],
-                        "comments": responses[i+1]
-                        })
+                    "time": datetime.now(), 
+                    "score": responses[i],
+                    "comments": responses[i+1]
+                })
                 i += 2
 
             session.commit()

@@ -58,14 +58,15 @@ def get_grading_task(grading_task_id):
 
 def get_grading_tasks_for_grader(question_id, sunet):
     return session.query(GradingTask).\
-        filter_by(grader=sunet).join(QuestionResponse).\
-        filter(QuestionResponse.question_id == question_id).\
+        filter_by(grader=sunet).join(Question).\
+        filter(Question.id == question_id).\
         order_by(GradingTask.id).all()
 
 def get_grading_tasks_for_student(question_id, sunet):
     return session.query(GradingTask).\
         filter_by(student=sunet).join(QuestionResponse).\
-        filter(QuestionResponse.question_id == question_id).\
+        filter_by(grader=sunet).join(Question).\
+        filter(Question.id == question_id).\
         order_by(GradingTask.id).all()
 
 def get_sample_responses(question_id):

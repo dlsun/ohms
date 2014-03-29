@@ -28,7 +28,6 @@ is a graphic showing where to find this link.<p>
     <th>Homework</th>
     <th>Start Date</th>
     <th>Due Date</th>
-    <th>Peer Assessment</th>
   </thead>
   <tbody>
 
@@ -55,15 +54,6 @@ is a graphic showing where to find this link.<p>
         {{hw.due_date.strftime("%a, %b %d at %I:%M %p")}}
       {% endif %}
     </td>
-    <td>
-      {% if peer_grading[loop.index0]==1 %}
-        <a href="grade?id={{hw.id}}">Peer Assessment</a>
-      {% elif peer_grading[loop.index0]==0 %}
-        You weren't assigned to peer assess this week.
-      {% elif peer_grading[loop.index0]==-1 %}
-	ERROR: please see course staff.
-      {% endif %}
-    </td>
   </tr>
 
   {% endfor %}
@@ -71,24 +61,5 @@ is a graphic showing where to find this link.<p>
   </tbody>
 </table>
 
-
-<table class="table table-striped" id="grades">
-  <thead>
-    <th>Item</th>
-    <th>Grade</th>
-  </thead>
-  <tbody>
-
-  {% for grade in grades %}
-
-  <tr>
-    <td>{{ grade[0] }}</td>
-    <td>{{ grade[1] }}</td>
-  </tr>
-
-  {% endfor %}
-
-  </tbody>
-</table>
 {% endblock %}
 

@@ -63,6 +63,8 @@ def index():
         response = get_last_question_response(prq.question_id, user.sunet)
         # if deadline has passed...
         if prq.homework.due_date < datetime.now():
+
+            ### THIS STATEMENT IS A BUG ###
             tasks = get_grading_tasks_for_student(prq.question_id, user.sunet)
             # if student doesn't have score, tabulate scores from peer reviews
             if response.score is None:
@@ -76,7 +78,6 @@ def index():
                     to_do[response.question.homework.name] += 1
 
     return render_template("index.html", homeworks=hws,
-                           peer_grading=peer_grading,
                            user=user,
                            options=options,
                            current_time=datetime.now(),
