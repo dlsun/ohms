@@ -42,24 +42,11 @@ else:
         session.add(user)
         session.commit()
 
-treatments = {
-    0: [None,1,None,1,None,1,None,0,None,0,None,1,None,1,None,0,None,0],
-    1: [None,1,None,0,None,0,None,1,None,1,None,0,None,0,None,1,None,1],
-    2: [None,1,None,1,None,1,None,0,None,0,None,0,None,0,None,1,None,1],
-    3: [None,1,None,0,None,0,None,1,None,1,None,1,None,1,None,0,None,0]
-    }
 
 @app.route("/")
 def index():
     hws = get_homework()
     
-    if user.group is not None:
-        peer_grading = treatments[user.group]
-    elif user.type == "admin" or user.type == "grader":
-        peer_grading = [None,1]*int(round(.5*len(hws)))
-    else:
-        peer_grading = [None,-1]*int(round(.5*len(hws)))
-
     from collections import defaultdict
     todo = defaultdict(int)
     questions = session.query(Question).all()
@@ -93,17 +80,6 @@ def index():
                     submits = get_question_grades(task.id)
                     if submits and not submits[-1].rating:
                         todo[q.homework.name] += 1
-
-    grades = []
-    try:
-        f = open('/afs/ir/class/psych10/grades/grades.csv')
-        reader = __import__('csv').reader(f)
-        headers = reader.next()[1:]
-        for row in reader:
-            if row[0] == user.sunet:
-                grades = zip(*(headers, row[1:]))
-    except:
-        pass
 
     return render_template("index.html", homeworks=hws,
                            peer_grading=peer_grading,
@@ -186,13 +162,10 @@ def rate():
 
 def check_if_locked(due_date, submissions):
     past_due = due_date and due_date < datetime.now()
-    return past_due
-    # if len(submissions) > 1:
-    #     last_time = max(x.time for x in submissions)
-    #     too_many_submissions = datetime.now() < last_time + timedelta(hours=6)
-    # else:
-    #     too_many_submissions = False
-    # return past_due or too_many_submissions
+    if len(submissions):
+        last_time = max(x.time for x in submissions)
+        too_many_submissions = datetime.now() < last_time + timedelta(minutes=30)
+    return past_due or too_many_submissions
 
 
 @app.route("/load", methods=['GET'])
@@ -205,11 +178,13 @@ def load():
     if q_id[0] == "q":
         question_id = q_id[1:]
         question = get_question(question_id)
-        submissions = get_question_responses(question_id, sunet)
-        out['submission'] = submissions[-1] if submissions else None
-        out['locked'] = check_if_locked(question.hw.due_date, submissions)
-        if datetime.now() > question.hw.due_date:
-            out['solution'] = [item.solution for item in question.items]
+        out = question.load_response(sunet)
+#         question.load_response()
+#         submissions = get_question_responses(question_id, sunet)
+#         out['submission'] = submissions[-1] if submissions else None
+#         out['locked'] = check_if_locked(question.hw.due_date, submissions)
+#         if datetime.now() > question.hw.due_date:
+#             out['solution'] = [item.solution for item in question.items]
 
     # if loading a student's peer grade for an actual student's response
     elif q_id[0] == "g":
@@ -257,42 +232,48 @@ def submit():
 
     responses = request.form.getlist('responses')
 
-    question_response = QuestionResponse(
-        sunet=sunet,
-        time=datetime.now(),
-        question_id=id
-    )
+    if submit_type == "q":
+        question = get_question(q_id[1:])
+        out = question.submit_response(sunet, responses)
+
 
     # Question submission
-    if submit_type == "q":
-        submissions = get_question_responses(id, sunet)
-        question = submissions[0].question if submissions else get_question(id)
+#     if submit_type == "q":
+#         submissions = get_question_responses(id, sunet)
+#         question = submissions[0].question if submissions else get_question(id)
 
-        is_locked = check_if_locked(question.hw.due_date, submissions)
+#         is_locked = check_if_locked(question.hw.due_date, submissions)
 
-        if not is_locked:
+#         if not is_locked:
 
-            score, comments = question.check(responses)
+#             score, comments = question.check(responses)
 
-            question_response.score = score
-            question_response.comments = comments
-            for item, response in zip(question.items, responses):
-                item_response = ItemResponse(item_id=item.id,
-                                             response=response)
-                question_response.item_responses.append(item_response)
+#             question_response.score = score
+#             question_response.comments = comments
+#             for item, response in zip(question.items, responses):
+#                 item_response = ItemResponse(item_id=item.id,
+#                                              response=response)
+#                 question_response.item_responses.append(item_response)
 
-            # add response to the database
-            session.add(question_response)
-            session.commit()
+#             # add response to the database
+#             session.add(question_response)
+#             session.commit()
 
-            submissions.append(question_response)
-            is_locked = check_if_locked(question.hw.due_date, submissions)
+#             submissions.append(question_response)
+#             is_locked = check_if_locked(question.hw.due_date, submissions)
 
-        else:
-            raise Exception("The deadline for submitting this homework has passed.")
+#         else:
+#             raise Exception("The deadline for submitting this homework has passed.")
 
     # Sample question grading submission
     elif submit_type == "s":
+
+        question_response = QuestionResponse(
+        sunet=sunet,
+        time=datetime.now(),
+        question_id=id
+        )
+
         is_locked = False
 
         sample_responses = get_sample_responses(id)
@@ -322,6 +303,13 @@ the score it did.</p>'''
 
     # Grading student questions
     elif submit_type == "g":
+
+        question_response = QuestionResponse(
+            sunet=sunet,
+            time=datetime.now(),
+            question_id=id
+            )
+
         is_locked = False
 
         # Make sure student was assigned this grading task
@@ -351,6 +339,12 @@ the score it did.</p>'''
     elif submit_type == "r":
         is_locked = False
 
+        question_response = QuestionResponse(
+            sunet=sunet,
+            time=datetime.now(),
+            question_id=id
+            )
+
         # Make sure student was assigned to rate this
         rating = request.form.getlist('responses')[0]
         question_grade = get_question_grade(id)
@@ -367,7 +361,7 @@ the score it did.</p>'''
     else:
         raise Exception("Invalid submission.")
 
-    # add response to what to return to the user
+    # Add response to what to return to the user
     return json.dumps({
         "locked": is_locked,
         "submission": question_response,

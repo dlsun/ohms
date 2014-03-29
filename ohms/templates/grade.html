@@ -127,38 +127,6 @@ response and the correct solution.</strong></p>
 	<div class='question' id='g{{task.id}}'>
 	{% endif %}
 	
-        <table class='table table-condensed'>
-	  <tr>
-	    <td class='span2'><strong>Response {{loop.index}}</strong></td>
-	    <td class='span5' style="white-space: pre-wrap;">{{task.question_response}}</td>
-	  </tr>
-	  <tr class='info'>
-	    <td><strong>Score</strong></td>
-	    <td>
-	      <input type='text' class='item input-mini' itemtype='short-answer' disabled='disabled'/> 
-	      out of {{q.question.points}} points
-	    </td>
-	  </tr>
-	  <tr class='info'>
-	    <td><strong>Comments</strong></td>
-	    <td>
-	      {% if q.permission == 1 %}
-	      <textarea class='item span5' itemtype='long-answer' disabled='disabled'></textarea>
-	      {% else %}
-	      <div class='comments'>
-		   <i>You will have to provide comments for your peers, but 
-		     not for these sample responses.</i>
-	      </div>
-	      {% endif %}
-	    </td>
-	  </tr>
-	  {% if q.permission == 1 %}
-	  <tr>
-	    <td></td>
-	    <td><button class='submit' disabled>Submit Assessment</button>&nbsp; <span class='time'></span></td>
-	  </tr>
-	  {% endif %}
-	</table>
 	
 	{% if q.permission == 1 %}
 	</div>

@@ -39,6 +39,13 @@ def get_question_responses(question_id, sunet):
         filter_by(sunet=sunet).\
         filter_by(question_id=question_id).\
         order_by(QuestionResponse.time).all()
+
+def get_last_question_response(question_id, sunet):
+    qrs = session.query(QuestionResponse).\
+        filter_by(sunet=sunet).\
+        filter_by(question_id=question_id).\
+        order_by(QuestionResponse.time).all()
+    return qrs[-1] if qrs else None
         
 
 def get_recent_question_responses(q_id):
@@ -74,7 +81,8 @@ def get_grading_task(grading_task_id):
 def get_grading_tasks_for_grader(question_id, sunet):
     return session.query(GradingTask).\
         filter_by(grader=sunet).join(QuestionResponse).\
-        filter(QuestionResponse.question_id == question_id).all()
+        filter(QuestionResponse.question_id == question_id).\
+        order_by(GradingTask.id).all()
 
 def get_grading_tasks_for_response(question_response_id):
     return session.query(GradingTask).\

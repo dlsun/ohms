@@ -12,7 +12,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Uni
 from sqlalchemy.orm import relationship, backref
 from base import Base, session
 from datetime import datetime
-
+from queries import get_last_question_response, get_grading_tasks_for_grader
 
 # helper function that strips tail from element and returns tail
 def strip_and_save_tail(element):
@@ -123,6 +123,43 @@ class Question(Base):
     def __str__(self):
         return self.to_html()
 
+    def check_if_locked(self, last_submission):
+        due_date = self.homework.due_date
+        return due_date and due_date < datetime.now()
+
+    def load_response(self, sunet):
+        last_submission = get_last_question_response(self.id, sunet)
+        out = {
+            'submission': last_submission,
+            'locked': self.check_if_locked(last_submission),
+            }
+        if datetime.now() > question.hw.due_date:
+            out['solution'] = [item.solution for item in self.items]
+        return out
+
+    def submit_response(self, sunet, responses):
+        last_submission = get_last_question_response(self.id, sunet)
+        if not self.check_if_locked(last_submission):
+            item_responses = [ItemResponse(item_id=item.id, response=response) \
+                                  for item, response in zip(self.items, responses)]
+            score, comments = self.check(responses)
+            question_response = QuestionResponse(
+                sunet=sunet,
+                time=datetime.now(),
+                question_id=self.id,
+                item_responses=item_responses,
+                score=score,
+                comments=comments
+                )
+            session.add(question_response)
+            session.commit()
+            return {
+                'submission': question_response,
+                'locked': self.check_if_locked(question_response),
+            }
+        else:
+            raise Exception("The deadline for submitting this homework has passed.")
+
     def check(self, responses):
         scores, comments = zip(*[item.check(response) for (item, response)
                                  in zip(self, responses)])
@@ -149,24 +186,24 @@ class Item(Base):
     def from_xml(node):
         """Constructs a Item object from an xml node"""
 
-        # gets existing Item from ID, if specified
+        # get existing item based on ID, if specified
         if 'id' in node.attrib:
-            return session.query(Item).get(node.attrib['id'])
-
-        # otherwise create new Item
-        if node.attrib['type'] == 'Multiple Choice':
-            item = MultipleChoiceItem()
-        elif node.attrib['type'] == 'Long Answer':
-            item = LongAnswerItem()
-        elif node.attrib['type'] == 'Short Answer':
-            item = ShortAnswerItem()
+            item = session.query(Item).get(node.attrib['id'])
+        # otherwise create new item
         else:
-            raise ValueError
+            if node.attrib['type'] == 'Multiple Choice':
+                item = MultipleChoiceItem()
+            elif node.attrib['type'] == 'Long Answer':
+                item = LongAnswerItem()
+            elif node.attrib['type'] == 'Short Answer':
+                item = ShortAnswerItem()
+            else:
+                raise ValueError
+            session.add(item)
 
         item.from_xml(node)
         item.xml = ET.tostring(node)
         item.points = float(node.attrib['points'])
-        session.add(item)
         session.flush()
         return item
 
@@ -217,49 +254,50 @@ class MultipleChoiceItem(Item):
 
 class ShortAnswerItem(Item):
     __mapper_args__ = {'polymorphic_identity': 'Short Answer'}
-    answers = relationship("ShortAnswer", backref="item")
 
     def from_xml(self, node):
-        short_answer = None
-        solutions = []
-        for answer in node.findall("answer"):
-            short_answer = ShortAnswer()
-            short_answer.from_xml(answer)
-            short_answer.item = self
-            session.add(short_answer)
-            if short_answer.type in ["exact", "expression"]:
-                solutions.append(short_answer.exact)
+
+        self.answers = []
+        for a in node.findall("answer"):
+            answer = ShortAnswer()
+            answer.from_xml(a)
+            if answer.type in ["exact", "expression"]:
+                solutions.append(answer.exact)
+            self.answers.append(answer)
         if not solutions:
             solutions.append(str(0.5*(short_answer.lb + short_answer.ub)))
         self.solution = ", ".join(solutions)
 
     def to_html(self):
+
+        # parse the answers from the XML
+        node = ET.fromstring(self.xml)
+        self.from_xml(node)
+
+        # set attributes of textbox
+        size = "medium" if any(a.type == "expression" for a in self.answers) else "mini"
         attrib = {"type": "text",
                   "itemtype": "short-answer",
-                  "disabled": "disabled"}
-        size = "medium"
-        for answer in self.answers:
-            if answer.type == "range" or answer.exact.isdigit():
-                size = "mini"
-        attrib['class'] = "item input-%s" % size
+                  "disabled": "disabled",
+                  "class": "item input-%s" % size
+                  }
+
         return ET.Element("input", attrib=attrib)
 
     def check(self, response):
+
+        # parse the answers from the XML
+        node = ET.fromstring(self.xml)
+        self.from_xml(node)
+
+        # check the answer
         for answer in self.answers:
             if answer.is_correct(response):
                 return self.points, ""
         return 0, ""
 
-# TODO: make this a regular object, not tied to database
-class ShortAnswer(Base):
-    __tablename__ = "short_answers"
 
-    id = Column(Integer, primary_key=True)
-    short_answer_id = Column(Integer, ForeignKey('items.id'))
-    type = Column(String(10))  # "range" or "exact" or "expression"
-    lb = Column(Float)
-    ub = Column(Float)
-    exact = Column(String(100))
+class ShortAnswer:
 
     def from_xml(self, node):
         self.type = node.attrib['type'].lower()
@@ -370,10 +408,7 @@ class QuestionResponse(Base):
     sample = Column(Integer)
 
     def __str__(self):
-        if len(self.item_responses) == 1:
-            return self.item_responses[0].response
-        else:
-            return ""
+        return "\n\n".join(ir.response for ir in self.item_responses)
 
 
 class ItemResponse(Base):
@@ -387,35 +422,122 @@ class ItemResponse(Base):
     item_response = relationship("Item")    
 
 
-class GradingPermission(Base):
-    __tablename__ = "grading_permissions"
-    id = Column(Integer, primary_key=True)
-    sunet = Column(String(10), ForeignKey('users.sunet'))
-    question_id = Column(Integer, ForeignKey('questions.id'))
-    permissions = Column(Integer)
-    due_date = Column(DateTime)
-
-    user = relationship("User")
-    question = relationship("Question")
-
-
 class GradingTask(Base):
     __tablename__ = 'grading_tasks'
     id = Column(Integer, primary_key=True)
     grader = Column(String(10), ForeignKey('users.sunet'))
-    question_response_id = Column(Integer, ForeignKey('question_responses.id'))
-
-    question_response = relationship("QuestionResponse")
-
-
-class QuestionGrade(Base):
-    __tablename__ = 'question_grades'
-    id = Column(Integer, primary_key=True)
-    grading_task_id = Column(Integer,
-                             ForeignKey('grading_tasks.id'))
+    student = Column(String(10), ForeignKey('users.sunet'))
+    question_id = Column(Integer, ForeignKey('question.id'))
     time = Column(DateTime)
     score = Column(Float)
     comments = Column(UnicodeText)
     rating = Column(Integer)
+    permission = Column(Integer)
 
-    grading_task = relationship("GradingTask")
+    question = relationship("Question")
+
+
+class PeerReview(Question):
+
+    @staticmethod
+    def from_xml(node):
+        self.question_id = node.attrib['question_id']
+        return super(PeerReview, self).from_xml(node)
+
+    def to_html(self):
+
+        sunet = os.environ.get("WEBAUTH_USER")
+        tasks = get_grading_tasks_for_grader(self.question_id, sunet)
+        
+        html = '''
+<table>
+  <tr><td>
+    <h4>Peer Assessment</h4>
+
+    <p>Please score the following responses from your peers. You 
+should provide detailed comments, even if the response is perfect. 
+In the case of a perfect response, you should reiterate what 
+the student did well.</p>
+
+  </td></tr>
+'''
+
+        for i, task in enumerate(tasks):
+            question_response = get_last_question_response(self.question_id, task.student)
+            html += '''
+  <tr><td>
+    <table class='table table-condensed'>
+      <tr>
+        <td class='span2'><strong>Response %d</strong></td>
+        <td class='span5' style="white-space: pre-wrap;">%s</td>
+      </tr>
+      <tr class='info'>
+        <td><strong>Score</strong></td>
+        <td>
+          <input type='text' class='item input-mini' itemtype='short-answer' disabled='disabled'/> 
+	      out of %d points
+        </td>
+      </tr>
+      <tr class='info'>
+        <td><strong>Comments</strong></td>
+        <td>
+          <textarea class='item span5' itemtype='long-answer' disabled='disabled'></textarea>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+''' % (i+1, question_response.item_responses[0].response, question_response.question.id)
+
+        html += "</table>"
+        return html
+
+    def load_response(self, sunet):
+        item_responses = []
+        tasks = get_grading_tasks_for_grader(self.question_id, sunet)
+        for task in tasks:
+            item_responses.append({"response": task.score})
+            item_responses.append({"response": task.comments})
+        return {
+            "locked": (datetime.now() > self.homework.due_date),
+            "submission": {
+                "time": datetime.now(),
+                "item_responses": item_responses
+                }
+            }
+
+    def submit_response(self, sunet, responses):
+        tasks = get_grading_tasks_for_grader(self.question_id, sunet)
+        if datetime.now() <= self.homework.due_date:
+            i = 0
+            item_responses = []
+            for task in self.tasks:
+                try:
+                    0 <= float(responses[i]) <= self.points
+                except:
+                    raise Exception("Please enter a score between %f and %f." % (0, self.points))
+                if not responses[i+1].strip():
+                    raise Exception("Please enter comments for all responses.")
+                item_responses.append({"response": task.score})
+                item_responses.append({"response": task.comments})
+                task.update({
+                        "score": responses[i],
+                        "comments": responses[i+1]
+                        })
+                i += 2
+
+            session.commit()
+
+            return {
+                'locked': self.check_if_locked(question_response),
+                'submission': {
+                    "time": datetime.now(),
+                    "score": self.points,
+                    "comments": '''You've earned credit for completing the peer reviews! 
+However, your peer review grade will also depend on the accuracy of your scores and 
+the accuracy of the comments.''',
+                    "item_responses": item_responses
+                    }
+            }
+        else:
+            raise Exception("The deadline for submitting this homework has passed.")
+
