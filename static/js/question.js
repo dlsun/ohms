@@ -47,7 +47,7 @@ var OHMS = (function(OHMS) {
 	    })
 	    this.element.find(".source").blur(function () {
 		$.ajax({
-		    url : "../admin.cgi/update_question",
+		    url : "update_question",
 		    type : "POST",
 		    dataType : "json",
 		    data : {
@@ -59,7 +59,7 @@ var OHMS = (function(OHMS) {
 			that.element.find(".editable").html(data.html).show();
 		    }, 
 		    error : function () {
-			alert("Update not successful.");
+			add_alert("Update not successful.");
 		    }
 		});
 	    })
@@ -93,9 +93,9 @@ var OHMS = (function(OHMS) {
 
 	Question.prototype.load_response_error = function (xhr) {
 	    if(xhr.responseText)
-		alert(xhr.responseText);
+		add_alert(xhr.responseText);
 	    else
-		alert("Unknown error");
+		add_alert("Unknown error");
 	}
 
 	Question.prototype.submit_response = function () {
@@ -103,7 +103,7 @@ var OHMS = (function(OHMS) {
 	    var data = new FormData();
 	    for (var i=0; i<this.items.length; i++) {
 		if (this.items[i].get_value() == undefined) {
-		    alert("You must make a selection for all multiple choice questions.");
+		    add_alert("You must make a selection for all multiple choice questions.");
 		    that.unlock();
 		    return false;
 		}
@@ -132,9 +132,9 @@ var OHMS = (function(OHMS) {
 	Question.prototype.submit_response_error = function (xhr) {
 	    this.unlock();
 	    if(xhr.responseText)
-		alert(xhr.responseText);
+		add_alert(xhr.responseText);
 	    else
-		alert("Unknown error");
+		add_alert("Unknown error");
 	}
 
 	Question.prototype.lock = function () {
@@ -162,10 +162,7 @@ var OHMS = (function(OHMS) {
 				   "Congrats! You've earned all " + 
 				   this.points + " points.");
 		score_element.attr("class","score alert alert-success");
-	    } else if (score == null) {
-		score_element.html("SCORE PENDING");
-		score_element.attr("class","score alert-info");
-	    } else {
+	    } else if (score != null) {
 		score_element.html("<strong>You have earned " + score + 
 			   " out of " + this.points + 
 			   " points.</strong>");

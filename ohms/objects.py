@@ -72,17 +72,19 @@ class Question(Base):
         # if question already has ID assigned, fetch instance; otherwise create new
         if 'id' in node.attrib:
             question = session.query(Question).get(node.attrib['id'])
+            question.points = 0
         else:
             if 'type' in node.attrib and node.attrib['type'] == 'peer_review':
                 question = PeerReview()
+                question.points = node.attrib['points']
             else:
                 question = Question()
+                question.points = 0
             session.add(question)
             session.flush()
             node.attrib['id'] = str(question.id)
         # question properties
         question.name = node.attrib['name'] if 'name' in node.attrib else ""
-        question.points = 0
         question.items = []
         # iterate over items
         for e in node.iter():
@@ -401,6 +403,7 @@ class User(Base):
     name = Column(String(100))
     type = Column(String(10))
     group = Column(Integer)
+    proxy = Column(String(10)) # allows admin to be a proxy for another user
 
 
 class QuestionResponse(Base):
@@ -450,19 +453,26 @@ class GradingTask(Base):
 class PeerReview(Question):
     __mapper_args__ = {'polymorphic_identity': 'Peer Review'}
 
+    def set_metadata(self):
+        node = ET.fromstring(self.xml)
+        self.question_id = int(node.attrib['question_id'])
+        self.points = float(node.attrib['points'])
+
     def to_html(self):
 
-        from queries import get_last_question_response, get_grading_tasks_for_grader
-        question_id = ET.fromstring(self.xml).attrib['question_id']
+        from queries import get_last_question_response, get_peer_tasks_for_grader, get_self_tasks_for_student
+
+        self.set_metadata()
+
         sunet = os.environ.get("WEBAUTH_USER")
-        tasks = get_grading_tasks_for_grader(question_id, sunet)
+        peer_tasks = get_peer_tasks_for_grader(self.question_id, sunet)
         
         html = '''
 <table>
   <tr><td>
-    <h4>Peer Assessment</h4>
+    <h4>Peer Review</h4>
 
-    <p>Please score the following responses from your peers. You 
+    <p>Please review the following responses from your peers. You 
 should provide detailed comments, even if the response is perfect. 
 In the case of a perfect response, you should reiterate what 
 the student did well.</p>
@@ -470,8 +480,8 @@ the student did well.</p>
   </td></tr>
 '''
 
-        for i, task in enumerate(tasks):
-            question_response = get_last_question_response(question_id, task.student)
+        for i, task in enumerate(peer_tasks):
+            question_response = get_last_question_response(self.question_id, task.student)
             html += '''
   <tr><td>
     <table class='table table-condensed'>
@@ -494,66 +504,121 @@ the student did well.</p>
       </tr>
     </table>
   </td></tr>
-''' % (i+1, question_response.item_responses[0].response, question_response.question.id)
+''' % (i+1, question_response.item_responses[0].response, question_response.question.points)
 
         html += "</table>"
+
+        self_tasks = get_self_tasks_for_student(self.question_id, sunet)
+        if self_tasks:
+            html += '''
+<table>
+  <tr><td>
+    <h4>Self Reflection</h4>
+
+    <p>Now, please score your own response. The comments here are primarily for yourself. Feel free to 
+leave just a brief note if you feel you've mastered the concept; otherwise, you may want to jot down some 
+concepts to review.</p>
+  </td></tr>
+'''
+            question_response = get_last_question_response(self.question_id, sunet)
+            if question_response:
+                html += '''
+  <tr><td>
+    <table class='table table-condensed'>
+      <tr>
+        <td class='span2'><strong>My Response</strong></td>
+        <td class='span5' style="white-space: pre-wrap;">%s</td>
+      </tr>
+      <tr class='info'>
+        <td><strong>Score</strong></td>
+        <td>
+          <input type='text' class='item input-mini' itemtype='short-answer' disabled='disabled'/> 
+	      out of %d points
+        </td>
+      </tr>
+      <tr class='info'>
+        <td><strong>Comments</strong></td>
+        <td>
+          <textarea class='item span5' itemtype='long-answer' disabled='disabled'></textarea>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+
+</table>
+''' % (question_response, question_response.question.points)
+
+            else:
+                html += '''
+  <tr><td><i>You did not submit a response to this question.</i></td></tr>
+
+</table>
+'''
+
         return html
 
     def load_response(self, sunet):
 
-        from queries import get_grading_tasks_for_grader
+        from queries import get_peer_tasks_for_grader, get_self_tasks_for_student
+        self.set_metadata()
+        
+        # get peer and self assessment tasks
+        tasks = get_peer_tasks_for_grader(self.question_id, sunet)
+        tasks.extend(get_self_tasks_for_student(self.question_id, sunet))
 
-        question_id = ET.fromstring(self.xml).attrib['question_id']
         item_responses = []
-        tasks = get_grading_tasks_for_grader(question_id, sunet)
         time = None
         for task in tasks:
             item_responses.append({"response": task.score})
             item_responses.append({"response": task.comments})
             time = task.time
-        out = {
+
+        submission = { "item_responses": item_responses }
+        if time: submission['time'] = time
+
+        return {
             "locked": (datetime.now() > self.homework.due_date),
-            "submission": { "item_responses": item_responses }
+            "submission": submission
             }
-        if time:
-            out['submission']['time'] = time
 
     def submit_response(self, sunet, responses):
 
-        from queries import get_grading_tasks_for_grader
+        from queries import get_peer_tasks_for_grader, get_self_tasks_for_student
+        self.set_metadata()
 
-        question_id = ET.fromstring(self.xml).attrib['question_id']
-        tasks = get_grading_tasks_for_grader(question_id, sunet)
         if datetime.now() <= self.homework.due_date:
+
+            # get peer and self assessment tasks
+            tasks = get_peer_tasks_for_grader(self.question_id, sunet)
+            tasks.extend(get_self_tasks_for_student(self.question_id, sunet))
+
             i = 0
             item_responses = []
-            for task in self.tasks:
+            while i < len(responses):
+                task = tasks[int(i/2)]
                 if task.grader != sunet:
                     raise Exception("You are not authorized to grade this response.")
                 try:
-                    0 <= float(responses[i]) <= self.points
+                    assert(0 <= float(responses[i]) <= task.question.points)
                 except:
-                    raise Exception("Please enter a score between %f and %f." % (0, tasks.question.points))
+                    raise Exception("Please enter a score between %f and %f." % (0, task.question.points))
                 if not responses[i+1].strip():
                     raise Exception("Please enter comments for all responses.")
+
                 item_responses.append({"response": task.score})
                 item_responses.append({"response": task.comments})
-                task.update({
-                    "time": datetime.now(), 
-                    "score": responses[i],
-                    "comments": responses[i+1]
-                })
+                task.time = datetime.now()
+                task.score = responses[i]
+                task.comments = responses[i+1]
                 i += 2
-
             session.commit()
-
+            
             return {
-                'locked': self.check_if_locked(question_response),
+                'locked': (datetime.now() > self.homework.due_date),
                 'submission': {
                     "time": datetime.now(),
-                    "score": self.points,
-                    "comments": '''You've earned credit for completing the peer reviews, 
-but your peer review grade will also depend on the accuracy and quality of your feedback.''',
+                    #"score": self.points,
+                    "comments": '''You've earned credit for completing the peer reviews, but your peer review grade will also depend on the accuracy and quality of your feedback.''',
                     "item_responses": item_responses
                     }
             }

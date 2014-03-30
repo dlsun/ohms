@@ -16,6 +16,8 @@
       are accurate (according to the rubric) and fair.
     </p>
 
+    <p>Note: the ratings are saved automatically!</p> 
+
     {% for task in grading_tasks %}
 
     <h4>Comment {{loop.index}}</h4>
@@ -24,40 +26,52 @@
     
     <h5>Your Rating</h5>
     
-    <div class='question' id='r{{task.id}}'>
+    <div class='question' id='{{task.id}}'>
       
       <div class="item" itemtype="multiple-choice">
-	<p><input type="radio" name='r{{task.id}}' value="4" disabled='disabled'>
+
+	<p><input type="radio" name='{{task.id}}' value="4" {% if task.rating == 4 %} checked {% endif %}>
 	  The comments responded thoughtfully and accurately to my response.
 	</input></p>
-	<p><input type="radio" name='r{{task.id}}' value="3" disabled='disabled'>
+	<p><input type="radio" name='{{task.id}}' value="3" {% if task.rating == 3 %} checked {% endif %}>
 	  The comments were mostly accurate, but could be more detailed or 
 	  were slightly inaccurate in places.
 	</input></p>
-	<p><input type="radio" name='r{{task.id}}' value="2" disabled='disabled'>
+	<p><input type="radio" name='{{task.id}}' value="2" {% if task.rating == 2 %} checked {% endif %}>
 	  The comments missed a key component of my response.
 	</input></p>
-	<p><input type="radio" name='r{{task.id}}' value="1" disabled='disabled'>
+	<p><input type="radio" name='{{task.id}}' value="1" {% if task.rating == 1 %} checked {% endif %}>
 	  The comments demonstrate no engagement with my response.
 	</input></p>
       </div>
 
-      <button class='submit' disabled>Submit Rating</button>
-      <p class='comments'></p>
-      
     </div>
 
     {% endfor %}
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script src="{{options.static}}/js/bootstrap.min.js?V=1"></script>
-    <script src="{{options.static}}/js/namespace.js?V=1"></script>
-    <script src="{{options.static}}/js/item.js?V=1"></script>
-    <script src="{{options.static}}/js/homework.js?V=1"></script>
-    <script src="{{options.static}}/js/question.js?V=1"></script>
-    <script src="{{options.static}}/js/multiplechoiceitem.js?V=1"></script>
-    <script src="{{options.static}}/js/hw.js?V=1"></script>
+    <script type="text/javascript">
+$("input").click(function () {
+  var e = $(this);
+  var p = e.parent();
+  p.siblings().css("background-color", "");
+  $.ajax({
+    url : "rate_submit",
+    type : "POST",
+    dataType : "text",
+    data : {
+      task_id: e.attr("name"),
+      rating: e.val(),
+    },
+    success : function (data) {
+      p.css("background-color", "#dff0d8");
+    },
+    error : function () {
+      alert("Your rating was not recorded successfully.");
+    }
+  })
+})
+    </script>
 
   </body>
   

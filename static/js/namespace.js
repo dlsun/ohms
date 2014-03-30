@@ -16,3 +16,10 @@ MathJax.Hub.Config({
 		skipTags: ["script","noscript","style","textarea","code"]
 		},
 	    });
+
+var add_alert = function (msg) {
+    $("body").append("\
+<div class='alert alert-block alert-error error'>\
+<button type='button' class='close' data-dismiss='alert'>&times;</button>\
+<strong>Error:</strong> " + msg + "</div>");
+}

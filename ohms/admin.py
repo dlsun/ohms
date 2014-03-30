@@ -10,26 +10,40 @@ from datetime import datetime
 import random
 
 from base import session
-from objects import User, Homework, Question, QuestionResponse, QuestionGrade, GradingPermission, GradingTask, LongAnswerItem
-from queries import get_user, get_question_grades, get_grading_tasks_for_response
+from objects import User, Homework, Question, QuestionResponse, GradingTask, LongAnswerItem
+from queries import get_user
 from send_email import send_all
 import options
 
 import smtplib
 
+if options.target == "local":
+    app = Flask(__name__, static_url_path="/static", static_folder="../static")
+    sunet = "test"
+    user = User(sunet=sunet,
+                name="Test User",
+                type="admin",
+                group=0)
+else:
+    app = Flask(__name__)
+    app.debug = (options.target != "prod")
 
-# Configuration based on deploy target
-app = Flask(__name__)
-app.debug = (options.target != "prod")
-sunet = os.environ.get("WEBAUTH_USER")
-if not sunet:
-    raise Exception("You are no longer logged in. Please refresh the page.")
-try:
-    user = get_user(sunet)
-    assert(user.type == "admin")
-except:
-    raise Exception("You are not authorized to view this page.")
+    @app.errorhandler(Exception)
+    def handle_exceptions(error):
+        return make_response(error.message, 403)
 
+    ### THIS IS STUFF THAT SHOULD BE FACTORED OUT
+    sunet = os.environ.get("WEBAUTH_USER")
+    if not sunet:
+        raise Exception("You are no longer logged in. Please refresh the page.")
+    try:
+        user = get_user(sunet)
+    except:
+        user = User(sunet=sunet,
+                    name=os.environ.get("WEBAUTH_LDAP_DISPLAYNAME"),
+                    type="student")
+        session.add(user)
+        session.commit()
 
 @app.route("/")
 def index():
@@ -219,7 +233,6 @@ def update_response(response_id):
 Successfully updated response %d! 
 <script type="text/javascript">window.close();</script>
 ''' % response.id
-
 
 @app.route("/rate", methods=['GET'])
 def view_peer_comments():

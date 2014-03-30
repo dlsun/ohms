@@ -31,9 +31,9 @@ ol.ohms-ol ol.ohms-ol {
 
 .error {
     position:fixed;
-    width: 500px;
+    width:500px;
     left:50%;
     top:50%;
-    margin-top:-100px;
+    margin-top:-200px;
     margin-left:-250px;
 }

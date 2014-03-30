@@ -56,17 +56,25 @@ def set_grading_permissions(question_id, sunet, permissions):
 def get_grading_task(grading_task_id):
     return session.query(GradingTask).get(grading_task_id)
 
-def get_grading_tasks_for_grader(question_id, sunet):
+def get_peer_tasks_for_grader(question_id, sunet):
     return session.query(GradingTask).\
         filter_by(grader=sunet).join(Question).\
         filter(Question.id == question_id).\
+        filter(GradingTask.student != sunet).\
         order_by(GradingTask.id).all()
 
-def get_grading_tasks_for_student(question_id, sunet):
+def get_self_tasks_for_student(question_id, sunet):
     return session.query(GradingTask).\
-        filter_by(student=sunet).join(QuestionResponse).\
         filter_by(grader=sunet).join(Question).\
         filter(Question.id == question_id).\
+        filter(GradingTask.student == sunet).\
+        all()
+
+def get_peer_tasks_for_student(question_id, sunet):
+    return session.query(GradingTask).\
+        filter_by(student=sunet).join(Question).\
+        filter(Question.id == question_id).\
+        filter(GradingTask.grader != sunet).\
         order_by(GradingTask.id).all()
 
 def get_sample_responses(question_id):

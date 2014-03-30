@@ -13,29 +13,23 @@ from objects import Question, QuestionResponse, ItemResponse, User
 from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
     set_grading_permissions, get_peer_review_questions, \
-    get_grading_tasks_for_grader, get_grading_tasks_for_student, \
+    get_peer_tasks_for_grader, get_self_tasks_for_student, \
+    get_peer_tasks_for_student, get_grading_task, \
     get_sample_responses
 import options
 from collections import defaultdict
 
-
 # Configuration based on deploy target
 if options.target == "local":
     app = Flask(__name__, static_url_path="/static", static_folder="../static")
-    sunet = "test"
-    user = User(sunet=sunet,
-                name="Test User",
-                type="admin",
-                group=0)
+    sunet = "jsmith"
+    os.environ["WEBAUTH_USER"] = "jsmith"
+    user = User(sunet=sunet, name="John Smith", type="admin")
+
 else:
     app = Flask(__name__)
     app.debug = (options.target != "prod")
 
-    @app.errorhandler(Exception)
-    def handle_exceptions(error):
-        return make_response(error.message, 403)
-
-    ### THIS IS STUFF THAT SHOULD BE FACTORED OUT
     sunet = os.environ.get("WEBAUTH_USER")
     if not sunet:
         raise Exception("You are no longer logged in. Please refresh the page.")
@@ -48,6 +42,15 @@ else:
         session.add(user)
         session.commit()
 
+    @app.errorhandler(Exception)
+    def handle_exceptions(error):
+        return make_response(error.message, 403)
+
+# allow admins to view other users' account
+if user.type == "admin" and user.proxy:
+    print user.proxy
+    sunet = user.proxy
+    user = get_user(sunet)
 
 @app.route("/")
 def index():
@@ -60,17 +63,17 @@ def index():
     peer_review_questions = get_peer_review_questions()
     for prq in peer_review_questions:
 
-        response = get_last_question_response(prq.question_id, user.sunet)
+        prq.set_metadata()
+        response = get_last_question_response(prq.question_id, sunet)
         # if deadline has passed...
         if prq.homework.due_date < datetime.now():
-
-            ### THIS STATEMENT IS A BUG ###
-            tasks = get_grading_tasks_for_student(prq.question_id, user.sunet)
-            # if student doesn't have score, tabulate scores from peer reviews
+            tasks = get_peer_tasks_for_student(prq.question_id, sunet)
+            # if student doesn't have score, tabulate it from peer reviews
             if response.score is None:
                 scores = [t.score for t in tasks if t is not None]
                 if scores:
                     response.score = sorted(scores)[len(scores) // 2]
+                    response.comments = "Click <a href='rate?id=%d'>here</a> to view comments" % prq.question_id
                     session.commit()
             # check that student has rated all the peer reviews
             for task in tasks:
@@ -81,158 +84,72 @@ def index():
                            user=user,
                            options=options,
                            current_time=datetime.now(),
-                           to_do=to_do
-    )
+                           to_do=to_do)
 
 
 @app.route("/hw", methods=['GET'])
 def hw():
     hw_id = request.args.get("id")
-    homework = get_homework(hw_id)
-    if user.type != "admin" and homework.start_date and homework.start_date > datetime.now():
+    hw = get_homework(hw_id)
+    if user.type != "admin" and hw.start_date and hw.start_date > datetime.now():
         raise Exception("This homework has not yet been released.")
     else:
         return render_template("hw.html",
-                               homework=homework,
+                               homework=hw,
                                user=user,
                                options=options)
 
 
 @app.route("/rate", methods=['GET'])
 def rate():
-
-    out = {}
-    question_response_id = request.args.get("id")
-
-    # check that student is the one who submitted this QuestionResponse
-    question_response = get_question_response(question_response_id)
-    if question_response.sunet != sunet and user.type != "admin":
-        raise Exception("You are not authorized to rate this response.")
-
-    # fetch all peers that were assigned to grade this QuestionResponse
-    grading_tasks = get_grading_tasks_for_response(question_response_id)
-
-    return render_template("rate.html", 
-                           grading_tasks=grading_tasks,
+    question_id = request.args.get("id")
+    tasks = get_peer_tasks_for_student(question_id, sunet)
+    return render_template("rate.html",
+                           grading_tasks=tasks,
                            options=options)
+
+@app.route("/rate_submit", methods=['POST'])
+def rate_submit():
+    task = get_grading_task(request.form.get('task_id'))
+    task.rating = int(request.form.get('rating'))
+    session.commit()
+    return ""
 
 
 @app.route("/load", methods=['GET'])
 def load():
-
-    out = {}
     q_id = request.args.get("q_id")
-
-    # if loading a student response to a question
-    if q_id[0] == "q":
-        question_id = q_id[1:]
-        question = get_question(question_id)
-        out = question.load_response(sunet)
-
-    # if loading a student's scores for a sample response (not currently functional)
-    elif q_id[0] == "s":
-        question_id = q_id[1:]
-        question = get_question(question_id)
-        out['locked'] = (datetime.now() > question.homework.due_date)
-
-    # if loading a student rating to a peer grade
-    elif q_id[0] == "r":
-        grading_task_id = q_id[1:]
-        grading_task = get_grading_task(grading_task_id)
-        if grading_task.rating:
-            out['submission'] = {
-                "item_responses": [ {"response": grading_task.rating} ]
-                }
-        out['locked'] = False
-
-    return json.dumps(out, cls=NewEncoder)
+    question = get_question(q_id)
+    return json.dumps(question.load_response(sunet), cls=NewEncoder)
 
 
 @app.route("/submit", methods=['POST'])
 def submit():
     q_id = request.args.get("q_id")
-    submit_type = q_id[0]
-    id = q_id[1:]
-
+    question = get_question(q_id)
     responses = request.form.getlist('responses')
+    return json.dumps(question.submit_response(sunet, responses),
+                      cls=NewEncoder)
 
-    if submit_type == "q":
-        question = get_question(q_id[1:])
-        out = question.submit_response(sunet, responses)
 
-    # Sample question grading submission
-    elif submit_type == "s":
+if user.type == "admin":
 
-        question_response = QuestionResponse(
-        sunet=sunet,
-        time=datetime.now(),
-        question_id=id
-        )
+    @app.route("/update_question", methods=['POST'])
+    def update_question():
+        q_id = request.form['q_id']
+        xml_new = request.form['xml']
+        import elementtree.ElementTree as ET
+        question = Question.from_xml(ET.fromstring(xml_new))
+        return json.dumps({
+            "xml": question.xml,
+            "html": question.to_html(),
+        })
 
-        is_locked = False
-
-        sample_responses = get_sample_responses(id)
-
-        assigned_scores = [float(resp) for resp in responses]
-        true_scores = [float(resp.score) for resp in sample_responses]
-
-        if assigned_scores == true_scores:
-            set_grading_permissions(id, sunet, 1)
-            summary_comment = '''
-<p>Congratulations! You are now
-qualified to grade this question. Please refresh the 
-page to see the student responses.</p>'''
-        else:
-            summary_comment = '''
-<p>Sorry, but there's a discrepancy between your score and the 
-instructor scores for these sample responses. Please try again.</p>'''
-
-        summary_comment += '''
-<p>Instructor comments for each response should now appear 
-above. They are intended to help you determine why each response earned 
-the score it did.</p>'''
-
-        question_response.comments = [r.comments for r in sample_responses]
-        question_response.comments.append(summary_comment)
-
-        out = json.dumps({
-            "locked": is_locked,
-            "submission": question_response
+    @app.route("/change_user/<string:student>")
+    def change_user(student):
+        session.query(User).filter_by(sunet=sunet).update({
+            "proxy": student
             })
-
-    # Rating the peer reviews
-    elif submit_type == "r":
-        is_locked = False
-
-        # Make sure student was assigned to rate this
-        rating = request.form.getlist('responses')[0]
-        grading_task = get_grading_task(id)
-        if grading_task.student == sunet:
-            grading_task.rating = rating
-            session.commit()
-        else:
-            raise Exception("You are not authorized to rate this comment.")
-
-        # Make question_response object to return
-        question_response = QuestionResponse(
-            sunet=sunet,
-            time=datetime.now(),
-            question_id=id,
-            comments="Rating submitted successfully!"
-            )
-
-        out = json.dumps({
-            "locked": is_locked,
-            "submission": question_response
-            })
-        
-    # Wrong submit_type
-    else:
-        raise Exception("Invalid submission.")
-
-    # Add response to what to return to the user
-    return json.dumps(out, cls=NewEncoder)
-
 
 # For local development--this does not run in prod or test
 if __name__ == "__main__":
