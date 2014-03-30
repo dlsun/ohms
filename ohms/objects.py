@@ -105,7 +105,7 @@ class Question(Base):
 
         return question
 
-    def to_html(self):
+    def to_html(self, include_items=True):
 
         node = ET.fromstring(self.xml)
         parent_map = dict((c, p) for p in node.iter() for c in p)
@@ -119,7 +119,7 @@ class Question(Base):
                 for j, child in enumerate(parent):
                     if child == e:
                         parent.remove(e)
-                        parent.insert(j, e_new)
+                        if include_items: parent.insert(j, e_new)
                         break
                 i += 1
         return ET.tostring(node, method="html")
@@ -460,15 +460,23 @@ class PeerReview(Question):
 
     def to_html(self):
 
-        from queries import get_last_question_response, get_peer_tasks_for_grader, get_self_tasks_for_student
+        from queries import get_question, get_last_question_response, get_peer_tasks_for_grader, get_self_tasks_for_student
 
         self.set_metadata()
 
         sunet = os.environ.get("WEBAUTH_USER")
+        question = get_question(self.question_id)
         peer_tasks = get_peer_tasks_for_grader(self.question_id, sunet)
         
         html = '''
 <table>
+  <tr><td>
+    <h4>Original Question</h4>
+      %s
+    <div class='alert alert-success'>
+      %s
+    </div>
+  </td></tr>
   <tr><td>
     <h4>Peer Review</h4>
 
@@ -478,7 +486,8 @@ In the case of a perfect response, you should reiterate what
 the student did well.</p>
 
   </td></tr>
-'''
+''' % (question.to_html(include_items=False),
+       "<br/>".join(i.solution for i in question.items))
 
         for i, task in enumerate(peer_tasks):
             question_response = get_last_question_response(self.question_id, task.student)
@@ -595,7 +604,7 @@ concepts to review.</p>
             i = 0
             item_responses = []
             while i < len(responses):
-                task = tasks[int(i/2)]
+                task = tasks[i // 2]
                 if task.grader != sunet:
                     raise Exception("You are not authorized to grade this response.")
                 try:

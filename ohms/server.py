@@ -56,25 +56,22 @@ if user.type == "admin" and user.proxy:
 def index():
     hws = get_homework()
     
-    # a to-do list
+    # to-do list for peer reviews
     to_do = defaultdict(int)
-
-    # get all peer review items
     peer_review_questions = get_peer_review_questions()
     for prq in peer_review_questions:
-
         prq.set_metadata()
         response = get_last_question_response(prq.question_id, sunet)
         # if deadline has passed...
         if prq.homework.due_date < datetime.now():
+            # compute updated score for student
             tasks = get_peer_tasks_for_student(prq.question_id, sunet)
-            # if student doesn't have score, tabulate it from peer reviews
-            if response.score is None:
-                scores = [t.score for t in tasks if t.score is not None]
-                if scores:
-                    response.score = sorted(scores)[len(scores) // 2]
-                    response.comments = "Click <a href='rate?id=%d'>here</a> to view comments" % prq.question_id
-                    session.commit()
+            scores = [t.score for t in tasks if t.score is not None]
+            new_score = sorted(scores)[len(scores) // 2] # median
+            if response.score != new_score:
+                response.score = new_score
+                response.comments = "Click <a href='rate?id=%d'>here</a> to view comments" % prq.question_id
+                session.commit()
             # check that student has rated all the peer reviews
             for task in tasks:
                 if task.score is not None and task.rating is None:
@@ -104,6 +101,7 @@ def hw():
 def rate():
     question_id = request.args.get("id")
     tasks = get_peer_tasks_for_student(question_id, sunet)
+    tasks = [t for t in tasks if t.score is not None]
     return render_template("rate.html",
                            grading_tasks=tasks,
                            options=options)
