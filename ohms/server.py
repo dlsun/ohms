@@ -70,7 +70,7 @@ def index():
             tasks = get_peer_tasks_for_student(prq.question_id, sunet)
             # if student doesn't have score, tabulate it from peer reviews
             if response.score is None:
-                scores = [t.score for t in tasks if t is not None]
+                scores = [t.score for t in tasks if t.score is not None]
                 if scores:
                     response.score = sorted(scores)[len(scores) // 2]
                     response.comments = "Click <a href='rate?id=%d'>here</a> to view comments" % prq.question_id
