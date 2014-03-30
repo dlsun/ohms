@@ -167,6 +167,9 @@ var OHMS = (function(OHMS) {
 			   " out of " + this.points + 
 			   " points.</strong>");
 		score_element.attr("class","score alert alert-error");
+	    } else {
+		score_element.html("<strong>This problem is worth " + this.points + " points.</strong>");
+		score_element.attr("class","score");
 	    }
 
 	    // update comments

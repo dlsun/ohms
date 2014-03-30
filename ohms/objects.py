@@ -10,8 +10,9 @@ import elementtree.ElementTree as ET
 import re
 from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, UnicodeText
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm.session import make_transient
 from base import Base, session
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # helper function that strips tail from element and returns tail
 def strip_and_save_tail(element):
@@ -136,11 +137,23 @@ class Question(Base):
         due_date = self.homework.due_date
         return due_date and due_date < datetime.now()
 
+    def delay_feedback(self, submission):
+        if submission is None or submission.score is None:
+            return submission
+        submission.item_responses # instantiate item responses before we detach object from session
+        make_transient(submission) # detaches SQLAlchemy object from session
+        now = datetime.now()
+        time_available = submission.time + timedelta(minutes=30)
+        if now < time_available:
+            submission.score = None
+            submission.comments = '''Feedback on your submission will be available in %s minutes, at %s. Please refresh the page at that time to view it.''' % (1 + (time_available - now).seconds // 60, time_available.strftime("%H:%M"))
+        return submission
+
     def load_response(self, sunet):
         from queries import get_last_question_response
         last_submission = get_last_question_response(self.id, sunet)
         out = {
-            'submission': last_submission,
+            'submission': self.delay_feedback(last_submission),
             'locked': self.check_if_locked(last_submission),
             }
         if datetime.now() > self.homework.due_date:
@@ -165,7 +178,7 @@ class Question(Base):
             session.add(question_response)
             session.commit()
             return {
-                'submission': question_response,
+                'submission': self.delay_feedback(question_response),
                 'locked': self.check_if_locked(question_response),
             }
         else:
