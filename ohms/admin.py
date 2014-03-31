@@ -195,31 +195,6 @@ OHMS
 P.S. This is an automatically generated message ;-)""")
 
     return "Sent reminder to %d recipients. You should have received an e-mail." % len(users)
-
-
-@app.route("/view_responses", methods=['POST', 'GET'])
-def view_responses():
-
-    q_id = request.args.get('q')
-    groups = request.form.getlist('group')
-    
-    users = session.query(User).filter(User.group.in_(groups)).all()
-
-    import random
-    random.seed(q_id)
-    random.shuffle(users)
-
-    user_responses = []
-    for u in users:
-        responses = session.query(QuestionResponse).\
-                   filter_by(sunet = u.sunet).\
-                   filter_by(question_id = q_id).\
-                   all()
-        if responses:
-            user_responses.append( (u, responses[-1]) )
-        
-    return render_template("admin/view_responses.html", user_responses=user_responses, options=options, user=user, groups=groups)
-
     
 @app.route("/update_response/<int:response_id>", methods=['POST'])
 def update_response(response_id):
@@ -233,37 +208,6 @@ def update_response(response_id):
 Successfully updated response %d! 
 <script type="text/javascript">window.close();</script>
 ''' % response.id
-
-@app.route("/rate", methods=['GET'])
-def view_peer_comments():
-
-    out = {}
-    question_response_id = request.args.get("id")
-
-    grading_tasks = get_grading_tasks_for_response(question_response_id)
-    question_grades = []
-    
-    for task in grading_tasks:
-        submissions = get_question_grades(task.id)
-        if submissions:
-            question_grades.append(submissions[-1])
-
-    return render_template("admin/view_comments.html",
-                           question_grades=question_grades,
-                           options=options)
-
-
-@app.route("/update_question", methods=['POST'])
-def update_question():
-    q_id = request.form['q_id']
-    xml_new = request.form['xml']
-    import elementtree.ElementTree as ET
-    question = Question.from_xml(ET.fromstring(xml_new))
-    return json.dumps({
-        "xml": question.xml,
-        "html": question.to_html(),
-    })
-
 
 @app.errorhandler(Exception)
 def handle_exceptions(error):

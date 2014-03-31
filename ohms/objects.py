@@ -188,7 +188,7 @@ class Question(Base):
         scores, comments = zip(*[item.check(response) for (item, response)
                                  in zip(self, responses)])
         if any(s is None for s in scores):
-            return None, "The score for this submission is pending, awaiting a human grader."
+            return None, "Feedback for this submission will not be available until after a peer or an instructor has reviewed it."
         else:
             return sum(scores), "<br/>".join(c for c in comments if c)
 
@@ -589,19 +589,37 @@ concepts to review.</p>
         tasks.extend(get_self_tasks_for_student(self.question_id, sunet))
 
         item_responses = []
+        ratings = []
         time = None
+        score = 0
         for task in tasks:
             item_responses.append({"response": task.score})
             item_responses.append({"response": task.comments})
+            if task.rating is not None: ratings.append(task.rating)
             time = task.time
+            if task.score and task.comments: score += self.points / len(tasks)
 
-        submission = { "item_responses": item_responses }
-        if time: submission['time'] = time
+        if len(ratings) > 1:
+            median = sorted(ratings)[len(ratings) // 2]
+            comment = "%d peers responded to your feedback. " % len(ratings)
+            if median == 4:
+                comment += "They were satisfied overall with the quality of your feedback."
+            elif median == 3:
+                comment += "Your feedback was good, but some peers felt that it could have been better."
+            elif median <= 2:
+                comment += "Your peers did not find your feedback satisfactory. If you are concerned, please see a member of the course staff to discuss how to improve."
+        else:
+            comment = "Your peers have not had the chance yet to look over their feedback. When they do, their feedback will be shown here."
 
         return {
             "locked": (datetime.now() > self.homework.due_date),
-            "submission": submission
+            "submission": { 
+                "item_responses": item_responses,
+                "score": score,
+                "comments": comment,
+                "time": time
             }
+        }
 
     def submit_response(self, sunet, responses):
 
@@ -632,6 +650,7 @@ concepts to review.</p>
                 task.time = datetime.now()
                 task.score = responses[i]
                 task.comments = responses[i+1]
+
                 i += 2
             session.commit()
             
@@ -639,7 +658,7 @@ concepts to review.</p>
                 'locked': (datetime.now() > self.homework.due_date),
                 'submission': {
                     "time": datetime.now(),
-                    #"score": self.points,
+                    "score": self.points,
                     "comments": '''You've earned credit for completing the peer reviews, but your peer review grade will also depend on the accuracy and quality of your feedback.''',
                     "item_responses": item_responses
                     }
@@ -647,3 +666,13 @@ concepts to review.</p>
         else:
             raise Exception("The deadline for submitting this homework has passed.")
 
+
+class Grades(Base):
+    __tablename__ = 'grades'
+
+    id = Column(Integer, primary_key=True)
+    student = Column(String(10), ForeignKey('users.sunet'))
+    assignment_name = Column(UnicodeText)
+    time = Column(DateTime)
+    score = Column(Float)
+    points = Column(Float)

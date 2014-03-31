@@ -80,7 +80,7 @@ var OHMS = (function(OHMS) {
 		for (var i=0; i<this.items.length; i++) {
 		    this.items[i].set_value(data.submission.item_responses[i].response);
 		}
-		this.update(data);
+		this.update(data.submission);
 	    }
 	    if (!data.locked)
 		this.unlock();
@@ -102,8 +102,8 @@ var OHMS = (function(OHMS) {
 	    var that = this;
 	    var data = new FormData();
 	    for (var i=0; i<this.items.length; i++) {
-		if (this.items[i].get_value() == undefined) {
-		    add_alert("You must make a selection for all multiple choice questions.");
+		if (this.items[i].get_value() == undefined || this.items[i].get_value() == "") {
+		    add_alert("You must answer all parts of the question before submitting.");
 		    that.unlock();
 		    return false;
 		}
@@ -124,7 +124,7 @@ var OHMS = (function(OHMS) {
 	}
 
 	Question.prototype.submit_response_success = function (data) {
-	    this.update(data);
+	    this.update(data.submission);
 	    if (!data.locked)
 		this.unlock();
 	}
@@ -151,10 +151,10 @@ var OHMS = (function(OHMS) {
 	    this.element.find(".submit").removeAttr('disabled');
 	}
 
-	Question.prototype.update = function (data) {
+	Question.prototype.update = function (submission) {
 
 	    // update score
-	    var score = data.submission.score;
+	    var score = submission.score;
 	    var score_element = this.element.find(".score");
 	    if (score === this.points) {
 		score_element.html("<img src='/class/psych10/static/img/checkmark.png' " + 
@@ -174,7 +174,7 @@ var OHMS = (function(OHMS) {
 
 	    // update comments
 	    var comment_elements = this.element.find(".comments");
-	    var comments = data.submission.comments;
+	    var comments = submission.comments;
 	    if (comments instanceof Array) {
 		for (var i=0; i<comments.length; i++) {
 		    comment_elements.eq(i).html(comments[i]);
@@ -184,8 +184,10 @@ var OHMS = (function(OHMS) {
 	    }
 
 	    // update time
-	    this.element.find(".time").html("Last submission at " +
-					    data.submission.time + " PDT");
+	    if (submission.time) {
+		this.element.find(".time").html("Last submission at " +
+						submission.time + " PDT");
+	    }
 	}
 
 	OHMS.Question = Question;

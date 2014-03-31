@@ -31,9 +31,11 @@ ol.ohms-ol ol.ohms-ol {
 
 .error {
     position:fixed;
-    width:500px;
+    height:300px;
+    width:600px;
     left:50%;
     top:50%;
+    overflow:auto;
     margin-top:-200px;
     margin-left:-250px;
 }

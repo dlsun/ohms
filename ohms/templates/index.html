@@ -6,15 +6,15 @@
 {% if to_do %}
 <div class='alert alert-error'>
 <p><strong>Attention!</strong> To encourage you to look over the 
-comments your peers have taken the time to write for you, we require 
-that you <i>rate</i> your peer comments after each peer assessment period 
-ends. Our records indicate that you are missing: 
+comments your peers have written for you, we require that you 
+provide some feedback on the peer reviews. Our records indicate 
+that you have yet to respond to:
 <ul>
   {% for homework, number in to_do.iteritems() %}
-  <li>{{ number }} rating(s) in {{ homework }}</li>
+  <li>{{ number }} review(s) in <a href="hw?id={{ homework.id }}">{{ homework.name }}</a></li>
   {% endfor %}
 </ul>
-<p>Please complete these ratings as soon as possible.</p>
+<p>Please look over this feedback as soon as possible.</p>
 </div>
 {% endif %}
 

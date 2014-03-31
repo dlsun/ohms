@@ -11,11 +11,8 @@ from datetime import datetime, timedelta
 from base import session
 from objects import Question, QuestionResponse, ItemResponse, User
 from queries import get_user, get_homework, get_question, \
-    get_question_response, get_last_question_response, \
-    set_grading_permissions, get_peer_review_questions, \
-    get_peer_tasks_for_grader, get_self_tasks_for_student, \
-    get_peer_tasks_for_student, get_grading_task, \
-    get_sample_responses
+    get_last_question_response, get_peer_review_questions, \
+    get_peer_tasks_for_student, get_grading_task
 import options
 from collections import defaultdict
 
@@ -23,7 +20,7 @@ from collections import defaultdict
 if options.target == "local":
     app = Flask(__name__, static_url_path="/static", static_folder="../static")
     sunet = "jsmith"
-    os.environ["WEBAUTH_USER"] = "jsmith"
+    os.environ["WEBAUTH_USER"] = sunet
     user = User(sunet=sunet, name="John Smith", type="admin")
 
 else:
@@ -67,7 +64,7 @@ def index():
             # compute updated score for student
             tasks = get_peer_tasks_for_student(prq.question_id, sunet)
             scores = [t.score for t in tasks if t.score is not None]
-            new_score = sorted(scores)[len(scores) // 2] # median
+            new_score = sorted(scores)[len(scores) // 2] if scores else None
             if response.score != new_score:
                 response.score = new_score
                 response.comments = "Click <a href='rate?id=%d'>here</a> to view comments" % prq.question_id
@@ -75,7 +72,7 @@ def index():
             # check that student has rated all the peer reviews
             for task in tasks:
                 if task.score is not None and task.rating is None:
-                    to_do[response.question.homework.name] += 1
+                    to_do[response.question.homework] += 1
 
     return render_template("index.html", homeworks=hws,
                            user=user,
@@ -142,6 +139,17 @@ if user.type == "admin":
             "xml": question.xml,
             "html": question.to_html(),
         })
+
+    @app.route("/view_responses")
+    def view_responses():
+        q_id = request.args.get('q')
+        users = session.query(User).all()
+        responses = []
+        for u in users:
+            response = get_last_question_response(q_id, u.sunet)
+            if response:
+                responses.append((u, response))
+        return render_template("admin/view_responses.html", user_responses=responses, options=options, user=user)
 
     @app.route("/change_user/<string:student>")
     def change_user(student):
