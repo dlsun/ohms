@@ -417,7 +417,6 @@ class User(Base):
     stuid = Column(String(10), primary_key=True)
     name = Column(String(100))
     type = Column(String(10))
-    group = Column(Integer)
     proxy = Column(String(10)) # allows admin to be a proxy for another user
 
 
@@ -460,7 +459,6 @@ class GradingTask(Base):
     score = Column(Float)
     comments = Column(UnicodeText)
     rating = Column(Integer)
-    permission = Column(Integer)
 
     question = relationship("Question")
 

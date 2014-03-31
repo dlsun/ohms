@@ -23,8 +23,7 @@ if options.target == "local":
     stuid = "test"
     user = User(stuid=stuid,
                 name="Test User",
-                type="admin",
-                group=0)
+                type="admin")
 else:
     app = Flask(__name__)
     app.debug = (options.target != "prod")
@@ -54,80 +53,63 @@ def index():
 def assign_tasks(hw_id):
 
     homework = session.query(Homework).get(hw_id)
-    groups = request.form.getlist('group')
-    
-    users = session.query(User).filter(User.group.in_(groups)).all()
     due_date = datetime.strptime(request.form["due_date"],
                                  "%Y-%m-%d %H:%M:%S")
-
-    # store the users who were not assigned because they didn't complete HW
-    not_assigned = set()
+    
+    users = session.query(User).filter(User.type == "student").order_by(User.stuid).all()
 
     for q in homework.questions:
-
         # only if this is a peer graded question
         if not isinstance(q.items[0], LongAnswerItem):
             continue
 
-        # get responses from only the relevant users
-        responses = []
-        for user in users:
-            submit = get_last_question_response(q.id, user.stuid)
-            if submit:
-                responses.append(submit)
-            else:
-                not_assigned.add(user)
+        random.seed(q.id)  # setting a seed will be useful for debugging
 
-        # shuffle the responses and iterate over them
-        n = len(responses)
-        random.seed(q.id) # setting a seed will be useful for debugging
-        random.shuffle(responses)
-        for i, r in enumerate(responses):
-            # update comments section with link to peer comments
-            r.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view and respond to feedback from your peers." % r.id
-            
-            # assign user permissions for this question
-            gp = GradingPermission(stuid=r.stuid, question_id=q.id,
-                                   permissions=1, due_date=due_date)
-            session.add(gp)
-            
-            # assign this user other responses to grade
+        responsible_kids = list()   # did the homework!
+        irresponsible_kids = list() # didn't do the homework!
+
+        # Figure out who did the homework
+        for user in users:
+            if get_last_question_response(q.id, user.stuid):
+                responsible_kids.append(user.stuid)
+            else:
+                irresponsible_kids.append(user.stuid)
+
+        # Make the assignments for the responsible kids
+        n = len(responsible_kids)
+        random.shuffle(responsible_kids)
+        for i, stuid in enumerate(responsible_kids):
+
+            # Make the assignments for this responsible student
             for offset in [1, 3, 6]:
                 j = (i + offset) % n
-                gt = GradingTask(grader=r.stuid, question_response=responses[j])
+                gt = GradingTask(grader=stuid,
+                                 student=responsible_kids[j],
+                                 question_id=q.id)
+                session.add(gt)
+
+        # Make the assignments for the irresponsible kids:
+        # Do so in round robin order, shuffling the responsible students again
+        # to minimize the number of pairs of students grading together.
+        random.shuffle(responsible_kids)
+        for i, stuid in enumerate(irresponsible_kids):
+
+            # Make the assignments for this irresponsible student
+            for offset in range(3):
+                j = (i * 3 + offset) % n
+                gt = GradingTask(grader=stuid,
+                                 student=responsible_kids[j],
+                                 question_id=q.id)
                 session.add(gt)
 
     session.commit()
 
-    # Send email notifications to studnts who were assigned to all questions
-    assigned_users = [u for u in users if u not in not_assigned]
-    send_all(assigned_users, "Peer Assessment for %s is Ready" % homework.name,
+    # Send email notifications to all the students
+    send_all(users, "Peer Assessment for %s is Ready" % homework.name,
 r"""Dear %s,
 
-You've been assigned to assess your peers this week. The assessments are 
-due {due_date}. 
-
-You will be able to view your peer's comments on your answers as they 
-are submitted, but your score will not be available until {due_date}. 
-At that time, please log in to view and respond to the comments you 
-received from your peers.
-
-Best,
-STATS 60 Staff""".format(due_date=due_date.strftime("%A, %b %d at %I:%M %p")))
-
-    # Send slightly different email to students who were not assigned to all questions
-    send_all(not_assigned, "Peer Assessment for %s is Ready" % homework.name,
-r"""Dear %s,
-
-You've been assigned to assess your peers this week. The assessments are 
-due {due_date}. 
-
-Our records indicate that you did not complete all of the free response  
-questions this week. Please note that you are allowed to evaluate others' 
-responses only if you attempted that question yourself. Therefore, you 
-may not have been assigned any evaulation tasks for some or all of the 
-questions. In the future, please be sure to finish the homework on time 
-in order to participate in peer assessment.
+We've made the peer-grading assignments for this week. The assessments
+are due {due_date}.
 
 You will be able to view your peer's comments on your answers as they 
 are submitted, but your score will not be available until {due_date}. 
