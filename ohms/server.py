@@ -68,7 +68,7 @@ def index():
             new_score = sorted(scores)[len(scores) // 2] if scores else None
             if response.score != new_score:
                 response.score = new_score
-                response.comments = "Click <a href='rate?id=%d'>here</a> to view comments" % prq.question_id
+                response.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments." % prq.question_id
                 session.commit()
             # check that student has rated all the peer reviews
             for task in tasks:
