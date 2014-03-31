@@ -15,27 +15,27 @@ from queries import get_user, get_homework, get_question, \
     get_peer_review_questions, get_peer_tasks_for_student, \
     get_grading_task, get_grades_for_student, add_grade, get_grade
 import options
+from auth import auth_stuid, auth_student_name
 from collections import defaultdict
 
 # Configuration based on deploy target
 if options.target == "local":
     app = Flask(__name__, static_url_path="/static", static_folder="../static")
     stuid = "jsmith"
-    os.environ["WEBAUTH_USER"] = stuid
     user = User(stuid=stuid, name="John Smith", type="admin")
 
 else:
     app = Flask(__name__)
     app.debug = (options.target != "prod")
 
-    stuid = os.environ.get("WEBAUTH_USER")
+    stuid = auth_stuid()
     if not stuid:
         raise Exception("You are no longer logged in. Please refresh the page.")
     try:
         user = get_user(stuid)
     except:
         user = User(stuid=stuid,
-                    name=os.environ.get("WEBAUTH_LDAP_DISPLAYNAME"),
+                    name=auth_student_name(),
                     type="student")
         session.add(user)
         session.commit()

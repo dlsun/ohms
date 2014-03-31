@@ -14,6 +14,7 @@ from objects import User, Homework, Question, QuestionResponse, GradingTask, Lon
 from queries import get_user
 from send_email import send_all
 import options
+from auth import auth_stuid, auth_student_name
 
 import smtplib
 
@@ -32,15 +33,14 @@ else:
     def handle_exceptions(error):
         return make_response(error.message, 403)
 
-    ### THIS IS STUFF THAT SHOULD BE FACTORED OUT
-    stuid = os.environ.get("WEBAUTH_USER")
+    stuid = auth_stuid()
     if not stuid:
         raise Exception("You are no longer logged in. Please refresh the page.")
     try:
         user = get_user(stuid)
     except:
         user = User(stuid=stuid,
-                    name=os.environ.get("WEBAUTH_LDAP_DISPLAYNAME"),
+                    name=auth_student_name(),
                     type="student")
         session.add(user)
         session.commit()

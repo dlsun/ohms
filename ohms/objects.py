@@ -12,6 +12,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Uni
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm.session import make_transient
 from base import Base, session
+from auth import auth_stuid
 from datetime import datetime, timedelta
 
 # helper function that strips tail from element and returns tail
@@ -478,7 +479,7 @@ class PeerReview(Question):
 
         self.set_metadata()
 
-        stuid = os.environ.get("WEBAUTH_USER")
+        stuid = auth_stuid()
         question = get_question(self.question_id)
         peer_tasks = get_peer_tasks_for_grader(self.question_id, stuid)
         
