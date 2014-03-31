@@ -18,7 +18,7 @@ def send_all(users, subject, message):
 
     for user in users:
         name = user.name
-        email = "%s@stanford.edu" % user.sunet
+        email = "%s@stanford.edu" % user.stuid
         
         msg = "\n".join(["From: Stats 60 Staff <%s>" % sender,
                          "To: %s <%s>" % (name, email),

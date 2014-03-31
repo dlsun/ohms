@@ -19,8 +19,8 @@ import smtplib
 
 if options.target == "local":
     app = Flask(__name__, static_url_path="/static", static_folder="../static")
-    sunet = "test"
-    user = User(sunet=sunet,
+    stuid = "test"
+    user = User(stuid=stuid,
                 name="Test User",
                 type="admin",
                 group=0)
@@ -33,13 +33,13 @@ else:
         return make_response(error.message, 403)
 
     ### THIS IS STUFF THAT SHOULD BE FACTORED OUT
-    sunet = os.environ.get("WEBAUTH_USER")
-    if not sunet:
+    stuid = os.environ.get("WEBAUTH_USER")
+    if not stuid:
         raise Exception("You are no longer logged in. Please refresh the page.")
     try:
-        user = get_user(sunet)
+        user = get_user(stuid)
     except:
-        user = User(sunet=sunet,
+        user = User(stuid=stuid,
                     name=os.environ.get("WEBAUTH_LDAP_DISPLAYNAME"),
                     type="student")
         session.add(user)
@@ -72,7 +72,7 @@ def assign_tasks(hw_id):
         # get responses from only the relevant users
         responses = []
         for user in users:
-            submit = get_last_question_response(q.id, user.sunet)
+            submit = get_last_question_response(q.id, user.stuid)
             if submit:
                 responses.append(submit)
             else:
@@ -87,14 +87,14 @@ def assign_tasks(hw_id):
             r.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view and respond to feedback from your peers." % r.id
             
             # assign user permissions for this question
-            gp = GradingPermission(sunet=r.sunet, question_id=q.id,
+            gp = GradingPermission(stuid=r.stuid, question_id=q.id,
                                    permissions=1, due_date=due_date)
             session.add(gp)
             
             # assign this user other responses to grade
             for offset in [1, 3, 6]:
                 j = (i + offset) % n
-                gt = GradingTask(grader=r.sunet, question_response=responses[j])
+                gt = GradingTask(grader=r.stuid, question_response=responses[j])
                 session.add(gt)
 
     session.commit()
@@ -187,7 +187,7 @@ Stats 60 Staff
 """Hey %s (and other staff),
 
 A reminder e-mail was just sent to the following users to remind them to complete their 
-peer assessments.\n\n""" + "\n".join(u.sunet for u in users) + """
+peer assessments.\n\n""" + "\n".join(u.stuid for u in users) + """
 
 Sincerely,
 OHMS

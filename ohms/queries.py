@@ -28,53 +28,53 @@ def get_peer_review_questions():
 def get_question_response(question_response_id):
     return session.query(QuestionResponse).get(question_response_id)
 
-def get_question_responses(question_id, sunet):
+def get_question_responses(question_id, stuid):
     return session.query(QuestionResponse).\
-        filter_by(sunet=sunet).\
+        filter_by(stuid=stuid).\
         filter_by(question_id=question_id).\
         order_by(QuestionResponse.time).all()
 
-def get_last_question_response(question_id, sunet):
+def get_last_question_response(question_id, stuid):
     qrs = session.query(QuestionResponse).\
-        filter_by(sunet=sunet).\
+        filter_by(stuid=stuid).\
         filter_by(question_id=question_id).\
         order_by(QuestionResponse.time).all()
     return qrs[-1] if qrs else None
 
-def grading_permissions_query(question_id, sunet):
+def grading_permissions_query(question_id, stuid):
     return session.query(GradingTask.permission).\
-        filter_by(sunet=sunet).\
+        filter_by(stuid=stuid).\
         filter_by(question_id=question_id)
 
-def get_grading_permissions(question_id, sunet):
-    return grading_permissions_query(question_id, sunet).all()
+def get_grading_permissions(question_id, stuid):
+    return grading_permissions_query(question_id, stuid).all()
 
-def set_grading_permissions(question_id, sunet, permissions):
-    grading_permissions_query(question_id, sunet).update({"permissions": permissions})
+def set_grading_permissions(question_id, stuid, permissions):
+    grading_permissions_query(question_id, stuid).update({"permissions": permissions})
     session.commit()
 
 def get_grading_task(grading_task_id):
     return session.query(GradingTask).get(grading_task_id)
 
-def get_peer_tasks_for_grader(question_id, sunet):
+def get_peer_tasks_for_grader(question_id, stuid):
     return session.query(GradingTask).\
-        filter_by(grader=sunet).join(Question).\
+        filter_by(grader=stuid).join(Question).\
         filter(Question.id == question_id).\
-        filter(GradingTask.student != sunet).\
+        filter(GradingTask.student != stuid).\
         order_by(GradingTask.id).all()
 
-def get_self_tasks_for_student(question_id, sunet):
+def get_self_tasks_for_student(question_id, stuid):
     return session.query(GradingTask).\
-        filter_by(grader=sunet).join(Question).\
+        filter_by(grader=stuid).join(Question).\
         filter(Question.id == question_id).\
-        filter(GradingTask.student == sunet).\
+        filter(GradingTask.student == stuid).\
         all()
 
-def get_peer_tasks_for_student(question_id, sunet):
+def get_peer_tasks_for_student(question_id, stuid):
     return session.query(GradingTask).\
-        filter_by(student=sunet).join(Question).\
+        filter_by(student=stuid).join(Question).\
         filter(Question.id == question_id).\
-        filter(GradingTask.grader != sunet).\
+        filter(GradingTask.grader != stuid).\
         order_by(GradingTask.id).all()
 
 def get_sample_responses(question_id):
@@ -82,13 +82,13 @@ def get_sample_responses(question_id):
         filter_by(question_id=question_id).\
         order_by(QuestionResponse.id).all()
 
-def get_grade(sunet, assignment):
-    grades = session.query(Grade).filter_by(student=sunet).\
+def get_grade(stuid, assignment):
+    grades = session.query(Grade).filter_by(student=stuid).\
         filter_by(assignment=assignment).all()
     return grades[0] if grades else None
 
-def get_grades_for_student(sunet):
-    return session.query(Grade).filter_by(student=sunet).\
+def get_grades_for_student(stuid):
+    return session.query(Grade).filter_by(student=stuid).\
         order_by(Grade.time).all()
 
 def add_grade(student, assignment, time, score, points):
@@ -97,8 +97,8 @@ def add_grade(student, assignment, time, score, points):
     session.add(grade)
     session.commit()
     
-def get_user(sunet):
-    return session.query(User).filter_by(sunet=sunet).one()
+def get_user(stuid):
+    return session.query(User).filter_by(stuid=stuid).one()
 
 
 

@@ -27,7 +27,7 @@ def add_sample_responses(question_id):
         item_id=question.items[0].id, 
         response="This is a test response.")
     qr = QuestionResponse(
-        sunet="joeshmoe",
+        stuid="joeshmoe",
         time=datetime.now(),
         question_id=question_id,
         item_responses=[ir])
@@ -37,7 +37,7 @@ def add_sample_responses(question_id):
         item_id=question.items[0].id, 
         response="This is another test response.")
     qr = QuestionResponse(
-        sunet="janedoe",
+        stuid="janedoe",
         time=datetime.now(),
         question_id=question_id,
         item_responses=[ir])

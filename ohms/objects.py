@@ -150,9 +150,9 @@ class Question(Base):
             submission.comments = '''Feedback on your submission will be available in %s minutes, at %s. Please refresh the page at that time to view it.''' % (1 + (time_available - now).seconds // 60, time_available.strftime("%H:%M"))
         return submission
 
-    def load_response(self, sunet):
+    def load_response(self, stuid):
         from queries import get_last_question_response
-        last_submission = get_last_question_response(self.id, sunet)
+        last_submission = get_last_question_response(self.id, stuid)
         out = {
             'submission': self.delay_feedback(last_submission),
             'locked': self.check_if_locked(last_submission),
@@ -161,15 +161,15 @@ class Question(Base):
             out['solution'] = [item.solution for item in self.items]
         return out
 
-    def submit_response(self, sunet, responses):
+    def submit_response(self, stuid, responses):
         from queries import get_last_question_response
-        last_submission = get_last_question_response(self.id, sunet)
+        last_submission = get_last_question_response(self.id, stuid)
         if not self.check_if_locked(last_submission):
             item_responses = [ItemResponse(item_id=item.id, response=response) \
                                   for item, response in zip(self.items, responses)]
             score, comments = self.check(responses)
             question_response = QuestionResponse(
-                sunet=sunet,
+                stuid=stuid,
                 time=datetime.now(),
                 question_id=self.id,
                 item_responses=item_responses,
@@ -413,7 +413,7 @@ class LongAnswerItem(Item):
 
 class User(Base):
     __tablename__ = 'users'
-    sunet = Column(String(10), primary_key=True)
+    stuid = Column(String(10), primary_key=True)
     name = Column(String(100))
     type = Column(String(10))
     group = Column(Integer)
@@ -423,7 +423,7 @@ class User(Base):
 class QuestionResponse(Base):
     __tablename__ = 'question_responses'
     id = Column(Integer, primary_key=True)
-    sunet = Column(String(10), ForeignKey('users.sunet'))
+    stuid = Column(String(10), ForeignKey('users.stuid'))
     question_id = Column(Integer, ForeignKey('questions.id'))
     question = relationship("Question")
     time = Column(DateTime)
@@ -452,8 +452,8 @@ class ItemResponse(Base):
 class GradingTask(Base):
     __tablename__ = 'grading_tasks'
     id = Column(Integer, primary_key=True)
-    grader = Column(String(10), ForeignKey('users.sunet'))
-    student = Column(String(10), ForeignKey('users.sunet'))
+    grader = Column(String(10), ForeignKey('users.stuid'))
+    student = Column(String(10), ForeignKey('users.stuid'))
     question_id = Column(Integer, ForeignKey('questions.id'))
     time = Column(DateTime)
     score = Column(Float)
@@ -478,9 +478,9 @@ class PeerReview(Question):
 
         self.set_metadata()
 
-        sunet = os.environ.get("WEBAUTH_USER")
+        stuid = os.environ.get("WEBAUTH_USER")
         question = get_question(self.question_id)
-        peer_tasks = get_peer_tasks_for_grader(self.question_id, sunet)
+        peer_tasks = get_peer_tasks_for_grader(self.question_id, stuid)
         
         html = '''
 <table>
@@ -531,7 +531,7 @@ the student did well.</p>
 
         html += "</table>"
 
-        self_tasks = get_self_tasks_for_student(self.question_id, sunet)
+        self_tasks = get_self_tasks_for_student(self.question_id, stuid)
         if self_tasks:
             html += '''
 <table>
@@ -543,7 +543,7 @@ leave just a brief note if you feel you've mastered the concept; otherwise, you 
 concepts to review.</p>
   </td></tr>
 '''
-            question_response = get_last_question_response(self.question_id, sunet)
+            question_response = get_last_question_response(self.question_id, stuid)
             if question_response:
                 html += '''
   <tr><td>
@@ -580,14 +580,14 @@ concepts to review.</p>
 
         return html
 
-    def load_response(self, sunet):
+    def load_response(self, stuid):
 
         from queries import get_peer_tasks_for_grader, get_self_tasks_for_student
         self.set_metadata()
         
         # get peer and self assessment tasks
-        tasks = get_peer_tasks_for_grader(self.question_id, sunet)
-        tasks.extend(get_self_tasks_for_student(self.question_id, sunet))
+        tasks = get_peer_tasks_for_grader(self.question_id, stuid)
+        tasks.extend(get_self_tasks_for_student(self.question_id, stuid))
         item_responses = []
         ratings = []
         time = None
@@ -621,7 +621,7 @@ concepts to review.</p>
             }
         }
 
-    def submit_response(self, sunet, responses):
+    def submit_response(self, stuid, responses):
 
         from queries import get_peer_tasks_for_grader, get_self_tasks_for_student
         self.set_metadata()
@@ -629,15 +629,15 @@ concepts to review.</p>
         if datetime.now() <= self.homework.due_date:
 
             # get peer and self assessment tasks
-            tasks = get_peer_tasks_for_grader(self.question_id, sunet)
-            tasks.extend(get_self_tasks_for_student(self.question_id, sunet))
+            tasks = get_peer_tasks_for_grader(self.question_id, stuid)
+            tasks.extend(get_self_tasks_for_student(self.question_id, stuid))
 
             i = 0
             score = 0
             item_responses = []
             while i < len(responses):
                 task = tasks[i // 2]
-                if task.grader != sunet:
+                if task.grader != stuid:
                     raise Exception("You are not authorized to grade this response.")
                 try:
                     assert(0 <= float(responses[i]) <= task.question.points)
