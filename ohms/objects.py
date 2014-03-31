@@ -140,10 +140,11 @@ class Question(Base):
     def delay_feedback(self, submission):
         if submission is None or submission.score is None:
             return submission
+        due_date = submission.question.homework.due_date
         submission.item_responses # instantiate item responses before we detach object from session
         make_transient(submission) # detaches SQLAlchemy object from session
         now = datetime.now()
-        time_available = submission.time + timedelta(minutes=30)
+        time_available = min(submission.time + timedelta(minutes=30), due_date)
         if now < time_available:
             submission.score = None
             submission.comments = '''Feedback on your submission will be available in %s minutes, at %s. Please refresh the page at that time to view it.''' % (1 + (time_available - now).seconds // 60, time_available.strftime("%H:%M"))
@@ -669,12 +670,11 @@ concepts to review.</p>
             raise Exception("The deadline for submitting this homework has passed.")
 
 
-class Grades(Base):
+class Grade(Base):
     __tablename__ = 'grades'
 
-    id = Column(Integer, primary_key=True)
-    student = Column(String(10), ForeignKey('users.sunet'))
-    assignment_name = Column(UnicodeText)
+    student = Column(String(10), primary_key=True)
+    assignment = Column(UnicodeText, primary_key=True)
     time = Column(DateTime)
     score = Column(Float)
     points = Column(Float)

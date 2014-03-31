@@ -9,7 +9,7 @@ from collections import defaultdict
 
 from base import session
 from objects import QuestionResponse, GradingTask, User
-from objects import Homework, Question, PeerReview
+from objects import Homework, Question, PeerReview, Grade
 
 
 def get_homework(hw_id=None):
@@ -82,6 +82,21 @@ def get_sample_responses(question_id):
         filter_by(question_id=question_id).\
         order_by(QuestionResponse.id).all()
 
+def get_grade(sunet, assignment):
+    grades = session.query(Grade).filter_by(student=sunet).\
+        filter_by(assignment=assignment).all()
+    return grades[0] if grades else None
+
+def get_grades_for_student(sunet):
+    return session.query(Grade).filter_by(student=sunet).\
+        order_by(Grade.time).all()
+
+def add_grade(student, assignment, time, score, points):
+    grade = Grade(student=student, assignment=assignment, 
+                  time=time, score=score, points=points)
+    session.add(grade)
+    session.commit()
+    
 def get_user(sunet):
     return session.query(User).filter_by(sunet=sunet).one()
 

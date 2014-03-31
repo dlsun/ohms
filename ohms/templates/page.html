@@ -10,12 +10,9 @@
     <div class="container">
       <div class="page-header">
 	<h1>STATS 60/160<br>
-	<small>Professor Mike Baiocchi</small></h1>
+	<small>Professor Jonathan Taylor</small></h1>
 	<p id="studentName" class="lead">You are logged in as 
-	  <strong>{{user.name}}</strong>. 
-	  {% if user.type == "admin" %}
-	  You are an <a href="../admin.cgi/">administrator</a>.
-	  {% endif %}
+	  <strong>{{user.name}}</strong>. You are an administrator.
 	</p>
 
       </div>
@@ -23,11 +20,9 @@
 	<div class="span2">
 
 	  <ul class="nav nav-pills">
-      <li><a href="{{options.cgi}}/handouts">Handouts</a></li>
+<!--      <li><a href="{{options.cgi}}/handouts">Handouts</a></li> !-->
       <li><a href="{{options.cgi}}/">Homeworks</a></li>
-      <li><a href="{{options.cgi}}/staff">Teaching Staff</a></li>
-<!--      <li><a href="{{options.cgi}}/tips">Tips for Success</a></li>
-      <li><a href="{{options.cgi}}/grading">Grading</a></li> !-->
+      <li><a href="{{options.cgi}}/grades">Grades</a></li>
 	  </ul>
 	</div>
 

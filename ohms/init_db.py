@@ -58,6 +58,11 @@ def add_sample_responses(question_id):
                      question_id=question_id)
     session.add(gt)
 
+    gt = GradingTask(grader="joeshmoe",
+                     student="jsmith",
+                     question_id=question_id)
+    session.add(gt)
+
     session.commit()
 
 

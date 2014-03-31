@@ -1,0 +1,26 @@
+{% extends "page.html" %}
+
+{% block content %}
+<h3>Grades</h3>
+
+<table class="table table-striped" id="homeworks">
+  <thead>
+    <th>Assignment</th>
+    <th>Date</th>
+    <th>Score</th>
+  </thead>
+  <tbody>
+
+  {% for grade in grades %}
+
+  <tr>
+    <td>{{ grade.assignment }}</td>
+    <td>{{ grade.time }}</td>
+    <td>{{ grade.score }} / {{ grade.points }}</td>
+  </tr>
+
+  {% endfor %}
+
+  </tbody>
+</table>
+{% endblock %}
