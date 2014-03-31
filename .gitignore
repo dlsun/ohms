@@ -1,3 +1,4 @@
 *.pyc
 *.db
+*.db-journal
 ohms/options.py
