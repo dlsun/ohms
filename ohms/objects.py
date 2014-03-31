@@ -572,7 +572,7 @@ concepts to review.</p>
 
             else:
                 html += '''
-  <tr><td><i>You did not submit a response to this question.</i></td></tr>
+  <tr><td><i>You did not submit a response to this question. You cannot earn the credit for the self-reflection component.</i></td></tr>
 
 </table>
 '''
@@ -587,7 +587,6 @@ concepts to review.</p>
         # get peer and self assessment tasks
         tasks = get_peer_tasks_for_grader(self.question_id, sunet)
         tasks.extend(get_self_tasks_for_student(self.question_id, sunet))
-
         item_responses = []
         ratings = []
         time = None
@@ -633,6 +632,7 @@ concepts to review.</p>
             tasks.extend(get_self_tasks_for_student(self.question_id, sunet))
 
             i = 0
+            score = 0
             item_responses = []
             while i < len(responses):
                 task = tasks[i // 2]
@@ -651,6 +651,8 @@ concepts to review.</p>
                 task.score = responses[i]
                 task.comments = responses[i+1]
 
+                if task.score and task.comments: score += self.points / len(tasks)
+
                 i += 2
             session.commit()
             
@@ -658,7 +660,7 @@ concepts to review.</p>
                 'locked': (datetime.now() > self.homework.due_date),
                 'submission': {
                     "time": datetime.now(),
-                    "score": self.points,
+                    "score": score,
                     "comments": '''You've earned credit for completing the peer reviews, but your peer review grade will also depend on the accuracy and quality of your feedback.''',
                     "item_responses": item_responses
                     }

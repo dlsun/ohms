@@ -9,9 +9,10 @@ from utils import NewEncoder
 from datetime import datetime, timedelta
 
 from base import session
-from objects import Question, QuestionResponse, ItemResponse, User
+from objects import Question, QuestionResponse, User
 from queries import get_user, get_homework, get_question, \
-    get_last_question_response, get_peer_review_questions, \
+    get_question_response, get_last_question_response, \
+    get_peer_review_questions, \
     get_peer_tasks_for_student, get_grading_task
 import options
 from collections import defaultdict
@@ -139,6 +140,16 @@ if user.type == "admin":
             "xml": question.xml,
             "html": question.to_html(),
         })
+        
+    @app.route("/update_response", methods=['POST'])
+    def update_response():
+        response_id = request.form["response_id"]
+        response = get_question_response(response_id)
+        score = request.form["score"]
+        response.score = float(score) if score else None
+        response.comments = request.form["comments"]
+        session.commit()
+        return ""
 
     @app.route("/view_responses")
     def view_responses():

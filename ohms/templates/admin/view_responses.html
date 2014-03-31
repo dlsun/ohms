@@ -22,17 +22,15 @@
 	  <p><tt>{{ user_response[1].sunet }}</tt></p>
 	  <p>{{ user_response[1].time }}</p>
 	</td><td class='span5'>
-	  {% if user_response[1].item_responses|length > 1 %}
-	  <ul><li>
-	  {% endif %}
+	  <ul>
 	  {% for item_response in user_response[1].item_responses %}
-	  <div style="white-space: pre-wrap">{{ item_response.response }}</div>
+	    <li>
+	      <div style="white-space: pre-wrap">{{ item_response.response }}</div>
+	    </li>
 	  {% endfor %}
-	  {% if user_response[1].item_responses|length > 1 %}
-	  </li></ul>
-	  {% endif %}
+	  </ul>
 	</td><td class='span6' {% if user_response[1].score != None %}style='background-color:#dff0d8;'{% endif %}>
-	  <form method='POST' action='update_response/{{ user_response[1].id }}' target='_blank'>
+	  <div class="response" id='{{ user_response[1].id }}'>
 	    <table>
 	      <tr>
 		<td><b>Score:</b></td>
@@ -46,15 +44,44 @@
 	      </tr>
 	      <tr>
 		<td colspan=2></td>
-		<td align='right'><input type='submit'/></td>
+		<td align='right'>
+		  <button class='submit'>Update</button>
+		</td>
 	      </tr>
 	    </table>
-	  </form>
+	  </div>
       </td></tr>
       {% endfor %}
     </table>
 
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript">
+$(".submit").click(function () {
+  var div = $(this).parents(".response").eq(0);
+  var response_id = div.attr("id");
+  var score = div.find("input").val();
+  var comments = div.find("textarea").val();
+  $.ajax({
+    url : "update_response",
+    type : "POST",
+    dataType : "text",
+    data : {
+      response_id: response_id,
+      score: score,
+      comments: comments
+    },
+    success : function (data) {
+      div.css("background-color", "#dff0d8");
+    },
+    error : function () {
+      alert("Your update was not recorded successfully.");
+    }
+  })
+})
+    </script>
+
 
   </body>
 

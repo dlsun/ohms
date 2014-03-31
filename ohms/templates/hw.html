@@ -29,7 +29,7 @@
     <tr><td class='alert'><h5>Comments:</h5> <p class='comments' style="white-space: pre-wrap"></p></td></tr>
     <tr><td class='body'>
 	{% if user.type == "admin" %}
-	<textarea class="source span8" style="display:none;" rows="50">{{q.xml}}</textarea>
+	<textarea class="source span8" style="display:none;" rows="30">{{q.xml}}</textarea>
 	<div class="editable">
 	{% endif %}
 	{{q|safe}}

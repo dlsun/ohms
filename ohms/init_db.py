@@ -26,7 +26,6 @@ def add_sample_responses(question_id):
     ir = ItemResponse(
         item_id=question.items[0].id, 
         response="This is a test response.")
-
     qr = QuestionResponse(
         sunet="joeshmoe",
         time=datetime.now(),
@@ -34,8 +33,23 @@ def add_sample_responses(question_id):
         item_responses=[ir])
     session.add(qr)
 
+    ir = ItemResponse(
+        item_id=question.items[0].id, 
+        response="This is another test response.")
+    qr = QuestionResponse(
+        sunet="janedoe",
+        time=datetime.now(),
+        question_id=question_id,
+        item_responses=[ir])
+    session.add(qr)
+
     gt = GradingTask(grader="jsmith",
                      student="joeshmoe",
+                     question_id=question_id)
+    session.add(gt)
+
+    gt = GradingTask(grader="jsmith",
+                     student="janedoe",
                      question_id=question_id)
     session.add(gt)
 

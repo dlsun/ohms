@@ -196,19 +196,6 @@ P.S. This is an automatically generated message ;-)""")
 
     return "Sent reminder to %d recipients. You should have received an e-mail." % len(users)
     
-@app.route("/update_response/<int:response_id>", methods=['POST'])
-def update_response(response_id):
-    from objects import QuestionResponse
-    response = session.query(QuestionResponse).get(response_id)
-    score = request.form['score']
-    response.score = int(score) if score else None
-    response.comments = request.form['comments']
-    session.commit()
-    return r'''
-Successfully updated response %d! 
-<script type="text/javascript">window.close();</script>
-''' % response.id
-
 @app.errorhandler(Exception)
 def handle_exceptions(error):
     return make_response(error.message, 403)
