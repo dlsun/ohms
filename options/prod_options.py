@@ -1,5 +1,5 @@
 target = "prod"
-class_prefix = "/class/psych10"
-cgi = "/class/psych10/cgi-bin/index.cgi"
-static = "/class/psych10/static"
-db = 'mysql://cpsych10prod:biemoeta@mysql-user-master.stanford.edu/c_psych10_prod?charset=utf8'
+class_prefix = "/class/stats60"
+cgi = "/class/stats60/cgi-bin/index.cgi"
+static = "/class/stats60/static"
+db = 'mysql://cstats60prod1:aequieva@mysql-user-master.stanford.edu/c_stats60_prod1?charset=utf8'

@@ -181,3 +181,7 @@ P.S. This is an automatically generated message ;-)""")
 @app.errorhandler(Exception)
 def handle_exceptions(error):
     return make_response(error.message, 403)
+
+# For local development--this does not run in prod or test
+if __name__ == "__main__":
+    app.run(debug=True)
