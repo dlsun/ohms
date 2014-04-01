@@ -673,7 +673,7 @@ class Grade(Base):
     __tablename__ = 'grades'
 
     student = Column(String(10), primary_key=True)
-    assignment = Column(UnicodeText, primary_key=True)
+    assignment = Column(String(50), primary_key=True)
     time = Column(DateTime)
     score = Column(Float)
     points = Column(Float)

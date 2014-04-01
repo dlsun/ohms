@@ -3,8 +3,7 @@ auth.py
 
 Abstracted out authorization routines.
 """
-import options
-
+import options, os
 
 def auth_stuid():
     """Must return the student id, and guarantee that it's authorized."""
