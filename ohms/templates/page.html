@@ -12,7 +12,10 @@
 	<h1>STATS 60/160<br>
 	<small>Professor Jonathan Taylor</small></h1>
 	<p id="studentName" class="lead">You are logged in as 
-	  <strong>{{user.name}}</strong>. You are an administrator.
+  <strong>{{user.name}}</strong>.
+  {% if user.type == "admin" %}
+  You are an administrator.
+  {% endif %}
 	</p>
 
       </div>
