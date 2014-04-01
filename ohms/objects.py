@@ -479,105 +479,24 @@ class PeerReview(Question):
 
         stuid = auth_stuid()
         question = get_question(self.question_id)
+
         peer_tasks = get_peer_tasks_for_grader(self.question_id, stuid)
-        
-        html = '''
-<table>
-  <tr><td>
-    <h4>Original Question</h4>
-      %s
-    <div class='alert alert-success'>
-      %s
-    </div>
-  </td></tr>
-  <tr><td>
-    <h4>Peer Review</h4>
-
-    <p>Please review the following responses from your peers. You 
-should provide detailed comments, even if the response is perfect. 
-In the case of a perfect response, you should reiterate what 
-the student did well.</p>
-
-  </td></tr>
-''' % (question.to_html(include_items=False),
-       "<br/>".join(i.solution for i in question.items))
-
-        for i, task in enumerate(peer_tasks):
-            question_response = get_last_question_response(self.question_id, task.student)
-            html += '''
-  <tr><td>
-    <table class='table table-condensed'>
-      <tr>
-        <td class='span2'><strong>Response %d</strong></td>
-        <td class='span5' style="white-space: pre-wrap;">%s</td>
-      </tr>
-      <tr class='info'>
-        <td><strong>Score</strong></td>
-        <td>
-          <input type='text' class='item input-mini' itemtype='short-answer' disabled='disabled'/> 
-	      out of %d points
-        </td>
-      </tr>
-      <tr class='info'>
-        <td><strong>Comments</strong></td>
-        <td>
-          <textarea class='item span5' itemtype='long-answer' disabled='disabled'></textarea>
-        </td>
-      </tr>
-    </table>
-  </td></tr>
-''' % (i+1, question_response.item_responses[0].response, question_response.question.points)
-
-        html += "</table>"
-
         self_tasks = get_self_tasks_for_student(self.question_id, stuid)
-        if self_tasks:
-            html += '''
-<table>
-  <tr><td>
-    <h4>Self Reflection</h4>
 
-    <p>Now, please score your own response. The comments here are primarily for yourself. Feel free to 
-leave just a brief note if you feel you've mastered the concept; otherwise, you may want to jot down some 
-concepts to review.</p>
-  </td></tr>
-'''
-            question_response = get_last_question_response(self.question_id, stuid)
-            if question_response:
-                html += '''
-  <tr><td>
-    <table class='table table-condensed'>
-      <tr>
-        <td class='span2'><strong>My Response</strong></td>
-        <td class='span5' style="white-space: pre-wrap;">%s</td>
-      </tr>
-      <tr class='info'>
-        <td><strong>Score</strong></td>
-        <td>
-          <input type='text' class='item input-mini' itemtype='short-answer' disabled='disabled'/> 
-	      out of %d points
-        </td>
-      </tr>
-      <tr class='info'>
-        <td><strong>Comments</strong></td>
-        <td>
-          <textarea class='item span5' itemtype='long-answer' disabled='disabled'></textarea>
-        </td>
-      </tr>
-    </table>
-  </td></tr>
+        self_reflection = True if self_tasks else False
+        peer_question_responses = [get_last_question_response(self.question_id, task.student) for task in peer_tasks]
+        self_question_response = get_last_question_response(self.question_id, stuid) if self_tasks else None
 
-</table>
-''' % (question_response, question_response.question.points)
+        # jinja2 stuff
+        from jinja2 import Environment, FileSystemLoader
+        env = Environment(loader=FileSystemLoader("templates"))
+        template = env.get_template("peer_review_question.html")
 
-            else:
-                html += '''
-  <tr><td><i>You did not submit a response to this question. You cannot earn the credit for the self-reflection component.</i></td></tr>
-
-</table>
-'''
-
-        return html
+        return template.render(question=question, 
+                        peer_question_responses=peer_question_responses,
+                        self_reflection=self_reflection,
+                        self_question_response=self_question_response
+                        )
 
     def load_response(self, stuid):
 
@@ -587,6 +506,8 @@ concepts to review.</p>
         # get peer and self assessment tasks
         tasks = get_peer_tasks_for_grader(self.question_id, stuid)
         tasks.extend(get_self_tasks_for_student(self.question_id, stuid))
+
+        # get grading tasks
         item_responses = []
         ratings = []
         time = None
@@ -595,9 +516,10 @@ concepts to review.</p>
             item_responses.append({"response": task.score})
             item_responses.append({"response": task.comments})
             if task.rating is not None: ratings.append(task.rating)
-            time = task.time
             if task.score and task.comments: score += self.points / len(tasks)
+            time = task.time
 
+        # provide some feedback to grader if at least 2 students have rated feedback
         if len(ratings) > 1:
             median = sorted(ratings)[len(ratings) // 2]
             comment = "%d peers responded to your feedback. " % len(ratings)
@@ -606,9 +528,11 @@ concepts to review.</p>
             elif median == 3:
                 comment += "Your feedback was good, but some peers felt that it could have been better."
             elif median <= 2:
-                comment += "Your peers did not find your feedback satisfactory. If you are concerned, please see a member of the course staff to discuss how to improve."
-        else:
+                comment += "Your peers did not find your feedback satisfactory. If you are concerned, please see a member of the course staff to discuss strategies to improve."
+        elif score:
             comment = "Your peers have not had the chance yet to look over their feedback. When they do, their feedback will be shown here."
+        else:
+            comment = ""
 
         return {
             "locked": (datetime.now() > self.homework.due_date),
