@@ -370,6 +370,7 @@ class ShortAnswer:
 
     def is_correct(self, response):
         if self.type == "range":
+            response = "".join([c for c in response if c in '1234567890.'])
             try:
                 num_response = float(response)
             except ValueError:
@@ -488,8 +489,8 @@ class PeerReview(Question):
         self_question_response = get_last_question_response(self.question_id, stuid) if self_tasks else None
 
         # jinja2 stuff
-        from jinja2 import Environment, FileSystemLoader
-        env = Environment(loader=FileSystemLoader("templates"))
+        from jinja2 import Environment, PackageLoader
+        env = Environment(loader=PackageLoader("ohms", "templates"))
         template = env.get_template("peer_review_question.html")
 
         return template.render(question=question, 
