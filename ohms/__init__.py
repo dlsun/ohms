@@ -2,68 +2,67 @@
 OHMS: Online Homework Management System
 """
 
-import os
 from flask import Flask, request, render_template, make_response
 import json
 from utils import NewEncoder
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from base import session
-from objects import Question, QuestionResponse, User
+from objects import Question, User
 from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
     get_peer_review_questions, get_peer_tasks_for_student, \
     get_grading_task, get_grades_for_student, add_grade, get_grade
 import options
 from auth import auth_stuid, auth_student_name
-from collections import defaultdict
 
 # Configuration based on deploy target
 if options.target == "local":
     app = Flask(__name__, static_url_path="/static", static_folder="../static")
-    stuid = "jsmith"
-    user = User(stuid=stuid, name="John Smith", type="admin")
-
 else:
     app = Flask(__name__)
     app.debug = (options.target != "prod")
-
-    stuid = auth_stuid()
-    if not stuid:
-        raise Exception("You are no longer logged in. Please refresh the page.")
-    try:
-        user = get_user(stuid)
-    except:
-        user = User(stuid=stuid,
-                    name=auth_student_name(),
-                    type="student")
-        session.add(user)
-        session.commit()
 
     @app.errorhandler(Exception)
     def handle_exceptions(error):
         return make_response(error.message, 403)
 
-# allow admins to view other users' account
-if user.type == "admin" and user.proxy:
-    print user.proxy
-    stuid = user.proxy
-    user = get_user(stuid)
+def validate_user():
+    stuid = auth_stuid()
+    try:
+        user = get_user(stuid)
+    except:
+        user_type = "admin" if stuid in options.admins else "student"
+        user = User(stuid=stuid,
+                    name=auth_student_name(),
+                    type=user_type)
+        session.add(user)
+        session.commit()
+    return user
+
+def validate_admin():
+    user = validate_user()
+    if not user.type == "admin":
+        raise Exception("You are not authorized to view this page.")
+    return user
+
 
 @app.route("/")
 def index():
+    user = validate_user()
     hws = get_homework()
     
     # to-do list for peer reviews
+    from collections import defaultdict
     to_do = defaultdict(int)
     peer_review_questions = get_peer_review_questions()
     for prq in peer_review_questions:
         prq.set_metadata()
-        response = get_last_question_response(prq.question_id, stuid)
+        response = get_last_question_response(prq.question_id, user.stuid)
         # if deadline has passed...
         if prq.homework.due_date < datetime.now():
             # compute updated score for student
-            tasks = get_peer_tasks_for_student(prq.question_id, stuid)
+            tasks = get_peer_tasks_for_student(prq.question_id, user.stuid)
             scores = [t.score for t in tasks if t.score is not None]
             new_score = sorted(scores)[len(scores) // 2] if scores else None
             if response.score != new_score:
@@ -84,6 +83,7 @@ def index():
 
 @app.route("/hw", methods=['GET'])
 def hw():
+    user = validate_user()
     hw_id = request.args.get("id")
     hw = get_homework(hw_id)
     if user.type != "admin" and hw.start_date and hw.start_date > datetime.now():
@@ -97,8 +97,9 @@ def hw():
 
 @app.route("/rate", methods=['GET'])
 def rate():
+    user = validate_user()
     question_id = request.args.get("id")
-    tasks = get_peer_tasks_for_student(question_id, stuid)
+    tasks = get_peer_tasks_for_student(question_id, user.stuid)
     tasks = [t for t in tasks if t.score is not None]
     return render_template("rate.html",
                            grading_tasks=tasks,
@@ -106,6 +107,7 @@ def rate():
 
 @app.route("/rate_submit", methods=['POST'])
 def rate_submit():
+    user = validate_user()
     task = get_grading_task(request.form.get('task_id'))
     task.rating = int(request.form.get('rating'))
     session.commit()
@@ -114,22 +116,26 @@ def rate_submit():
 
 @app.route("/load", methods=['GET'])
 def load():
+    user = validate_user()
     q_id = request.args.get("q_id")
     question = get_question(q_id)
-    return json.dumps(question.load_response(stuid), cls=NewEncoder)
+    return json.dumps(question.load_response(user.stuid), cls=NewEncoder)
 
 
 @app.route("/submit", methods=['POST'])
 def submit():
+    user = validate_user()
     q_id = request.args.get("q_id")
     question = get_question(q_id)
     responses = request.form.getlist('responses')
-    return json.dumps(question.submit_response(stuid, responses),
+    return json.dumps(question.submit_response(user.stuid, responses),
                       cls=NewEncoder)
 
 
 @app.route("/grades")
 def grades():
+    user = validate_user()
+
     # update grades
     homeworks = get_homework()
     for hw in homeworks:
@@ -139,7 +145,7 @@ def grades():
         complete = True
         for q in hw.questions:
             points += q.points
-            response = get_last_question_response(q.id, stuid)
+            response = get_last_question_response(q.id, user.stuid)
             if response:
                 try:
                     score += response.score
@@ -147,9 +153,9 @@ def grades():
                     complete = False
                     break # skip hws with scoreless responses
         if complete:
-            grade = get_grade(stuid, hw.name)
+            grade = get_grade(user.stuid, hw.name)
             if not grade:
-                add_grade(stuid, hw.name, hw.due_date, score, points)
+                add_grade(user.stuid, hw.name, hw.due_date, score, points)
             else:
                 grade.time = hw.due_date
                 grade.score = score
@@ -157,47 +163,54 @@ def grades():
                 session.commit()
     
     # fetch grades from gradebook
-    return render_template("grades.html", grades=get_grades_for_student(stuid), 
+    return render_template("grades.html", grades=get_grades_for_student(user.stuid), 
                            options=options, user=user)
 
 
-if user.type == "admin":
-
-    @app.route("/update_question", methods=['POST'])
-    def update_question():
-        q_id = request.form['q_id']
-        xml_new = request.form['xml']
-        import elementtree.ElementTree as ET
-        question = Question.from_xml(ET.fromstring(xml_new))
-        return json.dumps({
-            "xml": question.xml,
-            "html": question.to_html(),
-        })
+# ADMIN FUNCTIONS
+@app.route("/update_question", methods=['POST'])
+def update_question():
+    user = validate_admin()
+    
+    q_id = request.form['q_id']
+    xml_new = request.form['xml']
+    import elementtree.ElementTree as ET
+    question = Question.from_xml(ET.fromstring(xml_new))
+    return json.dumps({
+        "xml": question.xml,
+        "html": question.to_html(),
+    })
         
-    @app.route("/update_response", methods=['POST'])
-    def update_response():
-        response_id = request.form["response_id"]
-        response = get_question_response(response_id)
-        score = request.form["score"]
-        response.score = float(score) if score else None
-        response.comments = request.form["comments"]
-        session.commit()
-        return ""
+@app.route("/update_response", methods=['POST'])
+def update_response():
+    user = validate_admin()
 
-    @app.route("/view_responses")
-    def view_responses():
-        q_id = request.args.get('q')
-        users = session.query(User).all()
-        responses = []
-        for u in users:
-            response = get_last_question_response(q_id, u.stuid)
-            if response:
-                responses.append((u, response))
-        return render_template("admin/view_responses.html", user_responses=responses, options=options, user=user)
+    response_id = request.form["response_id"]
+    response = get_question_response(response_id)
+    score = request.form["score"]
+    response.score = float(score) if score else None
+    response.comments = request.form["comments"]
+    session.commit()
+    return ""
+    
+@app.route("/view_responses")
+def view_responses():
+    user = validate_admin()
 
-    @app.route("/change_user/<string:student>")
-    def change_user(student):
-        session.query(User).filter_by(stuid=stuid).update({
-            "proxy": student
-            })
+    q_id = request.args.get('q')
+    users = session.query(User).all()
+    responses = []
+    for u in users:
+        response = get_last_question_response(q_id, u.stuid)
+        if response:
+            responses.append(response)
+    return render_template("admin/view_responses.html", responses=responses, options=options, user=user)
+
+@app.route("/change_user/<string:student>")
+def change_user(student):
+    user = validate_admin()
+
+    session.query(User).filter_by(stuid=stuid).update({
+        "proxy": student
+    })
 

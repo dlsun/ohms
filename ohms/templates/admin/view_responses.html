@@ -12,34 +12,34 @@
 
     <h3>Viewing Student Responses</h3>
 
-    <p class='lead'>Showing {{ user_responses|length }} Responses</p>
+    <p class='lead'>Showing {{ responses|length }} Responses</p>
 
     <table class='table'>
-      {% for user_response in user_responses %}
+      {% for response in responses %}
       <tr>
 	<td class='span1'>  
-	  <p>{{ user_response[0].name }}</p>
-	  <p><tt>{{ user_response[1].stuid }}</tt></p>
-	  <p>{{ user_response[1].time }}</p>
+	  <p>{{ response.user.name }}</p>
+	  <p><tt>{{ response.stuid }}</tt></p>
+	  <p>{{ response.time }}</p>
 	</td><td class='span5'>
 	  <ul>
-	  {% for item_response in user_response[1].item_responses %}
+	  {% for item_response in response.item_responses %}
 	    <li>
 	      <div style="white-space: pre-wrap">{{ item_response.response }}</div>
 	    </li>
 	  {% endfor %}
 	  </ul>
-	</td><td class='span6' {% if user_response[1].score != None %}style='background-color:#dff0d8;'{% endif %}>
-	  <div class="response" id='{{ user_response[1].id }}'>
+	</td><td class='span6' {% if response.score != None %}style='background-color:#dff0d8;'{% endif %}>
+	  <div class="response" id='{{ response.id }}'>
 	    <table>
 	      <tr>
 		<td><b>Score:</b></td>
-		<td>{{ user_response[1].score }}</td>
+		<td>{{ response.score }}</td>
 		<td><input class='input-mini' name='score' type='text'/></td>
 	      </tr>
 	      <tr>
 		<td colspan="2"><b>Comments:</b>
-		<div style="white-space: pre-wrap;">{{ user_response[1].comments|safe }}</div></td>
+		<div style="white-space: pre-wrap;">{{ response.comments|safe }}</div></td>
 		<td><textarea name='comments' rows="5"></textarea></td>
 	      </tr>
 	      <tr>

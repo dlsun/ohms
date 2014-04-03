@@ -4,9 +4,8 @@ init_db.py
 Initializes the database from scratch.
 """
 
-import os
-import sys
 from ohms.objects import *
+import sys
 
 def prod_init_db(file):
 

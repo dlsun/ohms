@@ -5,7 +5,6 @@ Defines the database objects.
 """
 
 from __future__ import division
-import os
 import elementtree.ElementTree as ET
 import re
 from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, UnicodeText
@@ -227,9 +226,9 @@ class Item(Base):
                 raise ValueError
             session.add(item)
 
+        item.points = float(node.attrib['points'])
         item.from_xml(node)
         item.xml = ET.tostring(node)
-        item.points = float(node.attrib['points'])
         session.flush()
         return item
 
@@ -244,38 +243,57 @@ class MultipleChoiceItem(Item):
     __mapper_args__ = {'polymorphic_identity': 'Multiple Choice'}
 
     def from_xml(self, node):
-
         self.options = []
-        self.solution = None
+        solutions = []
         for i, option in enumerate(node.iter('option')):
-            match = re.match("<option.*?>(?P<inner>.*)</option>",
-                             ET.tostring(option), re.DOTALL)
-            self.options.append( match.group('inner') if match else "" )
-            if 'correct' in option.attrib:
-                if option.attrib['correct'].lower() == "true":
-                    self.solution = i
+            option_obj = Option(option.text)
+            if 'correct' in option.attrib and option.attrib['correct'].lower() == "true":
+                option_obj.points = self.points
+                solutions.append(str(i))
+            else:
+                option_obj.points = float(option.attrib['points']) if 'points' in option.attrib else 0
+            for comment in option.findall('comment'):
+                option_obj.comment = comment.text
+            self.options.append(option_obj)
+        self.solution = ", ".join(solutions)
 
     def to_html(self):
+
+        self.from_xml(ET.fromstring(self.xml))
+
         attrib = {"class": "item",
                   "itemtype": "multiple-choice"}
         root = ET.Element("div", attrib=attrib)
-
-        node = ET.fromstring(self.xml)
-        self.from_xml(node)
         for i, option in enumerate(self.options):
-            root.append(ET.fromstring(r'''
-<p><input type='radio' name='%d' value='%d' disabled='disabled'> %s</input></p>
-                ''' % (self.id, i, option)))
+            node = ET.fromstring(r'''
+<p><input type='radio' name='%d' value='%d' disabled='disabled'></input></p>
+''' % (self.id, i))
+            node[0].text = " " + str(option)
+            root.append(node)
 
         return root
 
     def check(self, response):
-        if response == self.solution:
-            return self.points, ""
-        elif self.solution is None:
-            return self.points, ""
-        else:
-            return 0, ""
+
+        # parse the answers from the XML
+        self.from_xml(ET.fromstring(self.xml))
+
+        try:
+            option = self.options[int(response)]
+            return option.points, option.comment
+        except:
+            raise Exception("Invalid multiple choice answer.")
+
+
+class Option:
+    points = None
+    comment = ""
+
+    def __init__(self, text):
+        self.text = text
+
+    def __str__(self):
+        return self.text
 
 
 class ShortAnswerItem(Item):
@@ -288,6 +306,7 @@ class ShortAnswerItem(Item):
         for a in node.findall("answer"):
             answer = ShortAnswer()
             answer.from_xml(a)
+            answer.points = float(node.attrib['points']) if 'points' in node.attrib else self.points
             if answer.type in ["exact", "expression"]:
                 solutions.append(answer.exact)
             self.answers.append(answer)
@@ -320,7 +339,7 @@ class ShortAnswerItem(Item):
         # check the answer
         for answer in self.answers:
             if answer.is_correct(response):
-                return self.points, ""
+                return answer.points, answer.comment
         return 0, ""
 
 
@@ -328,6 +347,9 @@ class ShortAnswer:
 
     def from_xml(self, node):
         self.type = node.attrib['type'].lower()
+        self.comment = ""
+        for comment in node.findall('comment'):
+            self.comment += comment.text
         data = node.text
         if self.type == "range":
             lb, ub = data.split(",")
@@ -374,11 +396,10 @@ class ShortAnswer:
             try:
                 num_response = float(response)
             except ValueError:
-                return False
+                raise Exception("I didn't understand your response. Please try again.")
             return self.lb - 1e-10 <= num_response <= self.ub + 1e-10
         elif self.type == "exact":
             str_response = response.strip().lower()
-            # TODO: make this an edit distance comparison
             return str_response == self.exact
         elif self.type == "expression":
             if response:
@@ -389,13 +410,10 @@ class ShortAnswer:
                     resp = eval(processed_response, {"__builtins__": None})
                 except:
                     raise Exception("I'm sorry, but I did not understand the expression you typed in. Please check the expression and try again.")
-                return abs(resp - ans) < 1e-15 
-            else:
-                return False
+                return abs(resp - ans) < 1e-15
         else:
-            raise NotImplementedError("ShortAnswer type=%s is not implemented"
-                                      % self.type)
-
+            raise Exception("Answer type not supported.")
+        return False
 
 class LongAnswerItem(Item):
     __mapper_args__ = {'polymorphic_identity': 'Long Answer'}
@@ -434,6 +452,8 @@ class QuestionResponse(Base):
     score = Column(Float)
     comments = Column(UnicodeText)
     sample = Column(Integer)
+
+    user = relationship("User")
 
     def __str__(self):
         return "\n\n".join(ir.response for ir in self.item_responses)
