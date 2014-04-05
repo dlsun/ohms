@@ -306,7 +306,7 @@ class ShortAnswerItem(Item):
         for a in node.findall("answer"):
             answer = ShortAnswer()
             answer.from_xml(a)
-            answer.points = float(node.attrib['points']) if 'points' in node.attrib else self.points
+            answer.points = float(a.attrib['points']) if 'points' in a.attrib else self.points
             if answer.type in ["exact", "expression"]:
                 solutions.append(answer.exact)
             self.answers.append(answer)
