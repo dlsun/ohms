@@ -392,7 +392,7 @@ class ShortAnswer:
 
     def is_correct(self, response):
         if self.type == "range":
-            response = "".join([c for c in response if c in '1234567890.'])
+            response = "".join([c for c in response if c in '1234567890.-'])
             try:
                 num_response = float(response)
             except ValueError:

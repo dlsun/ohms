@@ -34,12 +34,12 @@
 	    <table>
 	      <tr>
 		<td><b>Score:</b></td>
-		<td>{{ response.score }}</td>
+		<td class='score'>{{ response.score }}</td>
 		<td><input class='input-mini' name='score' type='text'/></td>
 	      </tr>
 	      <tr>
 		<td colspan="2"><b>Comments:</b>
-		<div style="white-space: pre-wrap;">{{ response.comments|safe }}</div></td>
+		<div class='comments' style="white-space: pre-wrap;">{{ response.comments|safe }}</div></td>
 		<td><textarea name='comments' rows="5"></textarea></td>
 	      </tr>
 	      <tr>
@@ -73,6 +73,8 @@ $(".submit").click(function () {
       comments: comments
     },
     success : function (data) {
+      div.find(".score").text(score);
+      div.find(".comments").text(comments);
       div.css("background-color", "#dff0d8");
     },
     error : function () {
