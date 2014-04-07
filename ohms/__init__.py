@@ -264,7 +264,13 @@ def add_question():
 
     import elementtree.ElementTree as ET
     xml = request.form['xml']
-    question = Question.from_xml(ET.fromstring(xml))
+    node = ET.fromstring(xml)
+
+    # remove any ID tags
+    for e in node.iter():
+        if "id" in e.attrib: e.attrib.pop("id")
+
+    question = Question.from_xml(node)
     question.homework = get_homework(request.form['hw_id'])
 
     session.commit()
