@@ -12,6 +12,15 @@ from objects import QuestionResponse, GradingTask, User
 from objects import Homework, Question, PeerReview, Grade
 
 
+def get_last_due_homework():
+    """Returns the last homework that was due"""
+    now = datetime.now()
+    hws = reversed(session.query(Homework).order_by(Homework.due_date).all())
+    for hw in hws:
+        if hw.due_date < now:
+            return hw
+
+
 def get_homework(hw_id=None):
     if hw_id is None:
         return session.query(Homework).order_by(Homework.due_date).all()
