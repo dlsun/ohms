@@ -53,6 +53,16 @@ that you have yet to respond to:
 
   {% endfor %}
 
+  {% if user.type == "admin" %}
+  <form action="add_homework" method="POST">
+  <tr>
+    <td><input type="text" name="name"/></td>
+    <td><input type="text" name="start_date" value="MM/DD/YYYY HH:MM:SS"/></td>
+    <td><input type="text" name="due_date" value="MM/DD/YYYY HH:MM:SS"/> <input type="submit" name="Add Homework!"></td>
+  </tr>
+  </form>
+  {% endif %}
+
   </tbody>
 </table>
 

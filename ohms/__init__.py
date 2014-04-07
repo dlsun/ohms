@@ -237,3 +237,37 @@ def change_user():
 
     return "Successfully changed user to %s" % user.proxy
 
+@app.route("/add_homework", methods=['POST'])
+def add_homework():
+    user = validate_admin()
+
+    name = request.form['name']
+    start_date = datetime.strptime(request.form['start_date'],
+                                   "%m/%d/%Y %H:%M:%S")
+    due_date = datetime.strptime(request.form['due_date'],
+                                 "%m/%d/%Y %H:%M:%S")
+
+    from objects import Homework
+    homework = Homework(name=name,
+                        start_date=start_date,
+                        due_date=due_date)
+    session.add(homework)
+    session.commit()
+
+    return "%s added successfully!" % name
+
+@app.route("/add_question", methods=['POST'])
+def add_question():
+    user = validate_admin()
+
+    print request.form['hw_id']
+
+    import elementtree.ElementTree as ET
+    xml = request.form['xml']
+    question = Question.from_xml(ET.fromstring(xml))
+    question.homework = get_homework(request.form['hw_id'])
+
+    session.commit()
+
+    return "Question added successfully!"
+

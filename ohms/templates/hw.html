@@ -45,6 +45,21 @@
 <hr/>
 {% endfor %}
 
+
+{% if user.type == "admin" %}
+<h3>Add a Question</h3>
+<form action="add_question" method="POST">
+
+  <p>Enter XML source code here.</p>
+
+  <input type="hidden" name="hw_id" value={{ homework.id }} />
+  <textarea class="span8" name="xml" rows="30"></textarea>
+
+  <p><input type="submit" value="Add Question!"/></p>
+
+</form>
+{% endif %}
+
 </div>
 {% endblock %}
 
