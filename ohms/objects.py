@@ -11,7 +11,6 @@ from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Uni
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm.session import make_transient
 from base import Base, session
-from auth import auth_stuid
 from datetime import datetime, timedelta
 
 # helper function that strips tail from element and returns tail
@@ -495,18 +494,19 @@ class PeerReview(Question):
     def to_html(self):
 
         from queries import get_question, get_last_question_response, get_peer_tasks_for_grader, get_self_tasks_for_student
+        from auth import validate_user
 
         self.set_metadata()
 
-        stuid = auth_stuid()
+        user = validate_user()
         question = get_question(self.question_id)
 
-        peer_tasks = get_peer_tasks_for_grader(self.question_id, stuid)
-        self_tasks = get_self_tasks_for_student(self.question_id, stuid)
+        peer_tasks = get_peer_tasks_for_grader(self.question_id, user.stuid)
+        self_tasks = get_self_tasks_for_student(self.question_id, user.stuid)
 
         self_reflection = True if self_tasks else False
         peer_question_responses = [get_last_question_response(self.question_id, task.student) for task in peer_tasks]
-        self_question_response = get_last_question_response(self.question_id, stuid) if self_tasks else None
+        self_question_response = get_last_question_response(self.question_id, user.stuid) if self_tasks else None
 
         # jinja2 stuff
         from jinja2 import Environment, PackageLoader

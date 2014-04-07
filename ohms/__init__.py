@@ -7,14 +7,13 @@ import json
 from utils import NewEncoder
 from datetime import datetime
 
-from base import session
-from objects import Question, User
+from objects import session, Question, User
 from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
     get_peer_review_questions, get_peer_tasks_for_student, \
     get_grading_task, get_grades_for_student, add_grade, get_grade
 import options
-from auth import auth_stuid, auth_student_name
+from auth import validate_user, validate_admin
 
 # Configuration based on deploy target
 if options.target == "local":
@@ -26,33 +25,6 @@ else:
     @app.errorhandler(Exception)
     def handle_exceptions(error):
         return make_response(error.message, 403)
-
-def validate_user():
-    stuid = auth_stuid()
-    try:
-        user = get_user(stuid)
-    except:
-        user = User(stuid=stuid,
-                    name=auth_student_name(),
-                    type="student")
-        session.add(user)
-        session.commit()
-    if user.type == "admin" and user.proxy:
-        user = session.query(User).get(user.proxy)
-    return user
-
-def validate_admin():
-    stuid = auth_stuid()
-    user = get_user(stuid)
-    if not user.type == "admin":
-        if user.stuid in options.admins:
-            session.query(User).filter_by(stuid=user.stuid).update({
-                "type": "admin"
-            })
-            session.commit()
-        else:
-            raise Exception("You are not authorized to view this page.")
-    return user
 
 
 @app.route("/")

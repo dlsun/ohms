@@ -1,0 +1,85 @@
+<table>
+  <tr><td>
+    <h4>Original Question</h4>
+      {{ question.to_html(include_items=False) }}
+    <div class='alert alert-success'>
+      {% for item in question.items %}
+      {{ item.solution }}
+      {% endfor %}
+    </div>
+  </td></tr>
+  <tr><td>
+    <h4>Peer Review</h4>
+
+    <p>Please review the following responses from your peers. You 
+should provide detailed comments, even if the response is perfect. 
+In the case of a perfect response, you should reiterate what 
+the student did well.</p>
+  </td></tr>
+
+  {% for qr in peer_question_responses %}
+  <tr><td>
+    <table class='table table-condensed'>
+      <tr>
+        <td class='span2'><strong>Response {{ loop.index }}</strong></td>
+        <td class='span5' style="white-space: pre-wrap;">{{ qr }}</td>
+      </tr>
+      <tr class='info'>
+        <td><strong>Score</strong></td>
+        <td>
+          <input type='text' class='item input-mini' itemtype='short-answer' disabled='disabled'/> 
+	      out of {{ qr.question.points }} points
+        </td>
+      </tr>
+      <tr class='info'>
+        <td><strong>Comments</strong></td>
+        <td>
+          <textarea class='item span5' itemtype='long-answer' disabled='disabled'></textarea>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+  {% endfor %}
+</table>
+
+{% if self_reflection %}
+<table>
+  <tr><td>
+    <h4>Self Reflection</h4>
+
+    <p>Now, please score your own response. The comments here are primarily for yourself. Feel free to 
+leave just a brief note if you feel you've mastered the concept; otherwise, you may want to jot down some 
+concepts to review.</p>
+  </td></tr>
+
+  {% if self_question_response %}
+  <tr><td>
+    <table class='table table-condensed'>
+      <tr>
+        <td class='span2'><strong>My Response</strong></td>
+        <td class='span5' style="white-space: pre-wrap;">{{ self_question_response }}</td>
+      </tr>
+      <tr class='info'>
+        <td><strong>Score</strong></td>
+        <td>
+          <input type='text' class='item input-mini' itemtype='short-answer' disabled='disabled'/> 
+	      out of {{ self_question_response.question.points }} points
+        </td>
+      </tr>
+      <tr class='info'>
+        <td><strong>Comments</strong></td>
+        <td>
+          <textarea class='item span5' itemtype='long-answer' disabled='disabled'></textarea>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+  {% else %}
+  <tr><td>
+      <i>You did not submit a response to this question. 
+	You cannot earn the credit for the self-reflection component.</i>
+  </td></tr>
+  {% endif %}
+
+</table>
+{% endif %}

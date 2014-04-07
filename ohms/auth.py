@@ -4,19 +4,47 @@ auth.py
 Abstracted out authorization routines.
 """
 import options, os
+from objects import session, User
+from queries import get_user
 
-def auth_stuid():
-    """Must return the student id, and guarantee that it's authorized."""
-
+def auth():
     if options.target == "local":
-        return "jsmith"
+        stuid = "jsmith"
+        name = "John Smith"
+    else:
+        stuid = os.environ.get("WEBAUTH_USER")
+        name = os.environ.get("WEBAUTH_LDAP_DISPLAYNAME")
+    return stuid, name
 
-    return os.environ.get("WEBAUTH_USER")
+def validate_user():
 
+    stuid, name = auth()
 
-def auth_student_name():
-    """Must return the student's name, and guarantee that it's authorized."""
-    if options.target == "local":
-        return "John Smith"
+    try:
+        user = get_user(stuid)
+    except:
+        user = User(stuid=stuid,
+                    name=name,
+                    type="student")
+        session.add(user)
+        session.commit()
 
-    return os.environ.get("WEBAUTH_LDAP_DISPLAYNAME")
+    if user.type == "admin" and user.proxy:
+        user = session.query(User).get(user.proxy)
+
+    return user
+
+def validate_admin():
+
+    stuid, name = auth()
+
+    user = get_user(stuid)
+    if not user.type == "admin":
+        if user.stuid in options.admins:
+            session.query(User).filter_by(stuid=user.stuid).update({
+                "type": "admin"
+            })
+            session.commit()
+        else:
+            raise Exception("You are not authorized to view this page.")
+    return user
