@@ -32,18 +32,26 @@ def validate_user():
     try:
         user = get_user(stuid)
     except:
-        user_type = "admin" if stuid in options.admins else "student"
         user = User(stuid=stuid,
                     name=auth_student_name(),
-                    type=user_type)
+                    type="student")
         session.add(user)
         session.commit()
+    if user.type == "admin" and user.proxy:
+        user = session.query(User).get(user.proxy)
     return user
 
 def validate_admin():
-    user = validate_user()
+    stuid = auth_stuid()
+    user = get_user(stuid)
     if not user.type == "admin":
-        raise Exception("You are not authorized to view this page.")
+        if user.stuid in options.admins:
+            session.query(User).filter_by(stuid=user.stuid).update({
+                "type": "admin"
+            })
+            session.commit()
+        else:
+            raise Exception("You are not authorized to view this page.")
     return user
 
 
@@ -168,6 +176,12 @@ def grades():
 
 
 # ADMIN FUNCTIONS
+@app.route("/admin")
+def admin():
+    user = validate_admin()
+
+    return render_template("admin/index.html", options=options)
+
 @app.route("/update_question", methods=['POST'])
 def update_question():
     user = validate_admin()
@@ -206,11 +220,20 @@ def view_responses():
             responses.append(response)
     return render_template("admin/view_responses.html", responses=responses, options=options, user=user)
 
-@app.route("/change_user/<string:student>")
-def change_user(student):
+@app.route("/change_user", methods=['POST'])
+def change_user():
     user = validate_admin()
+    student = request.form['user']
 
-    session.query(User).filter_by(stuid=stuid).update({
+    try:
+        session.query(User).get(student)
+    except:
+        raise Exception("No user exists with the given ID.")
+
+    session.query(User).filter_by(stuid=user.stuid).update({
         "proxy": student
     })
+    session.commit()
+
+    return "Successfully changed user to %s" % user.proxy
 
