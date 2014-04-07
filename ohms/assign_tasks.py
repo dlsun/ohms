@@ -62,6 +62,13 @@ def assign_tasks(hw_id, due_date):
                                  question_id=q.id)
                 session.add(gt)
 
+        # Make all self-assignments
+        for stuid in (responsible_kids + irresponsible_kids):
+            gt = GradingTask(grader=stuid,
+                             student=stuid,
+                             question_id=q.id)
+            session.add(gt)
+
     session.commit()
 
     # Send email notifications to all the students
