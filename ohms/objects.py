@@ -376,7 +376,7 @@ class ShortAnswer(object):
         elif self.type == "exact" or self.type == "expression":
             self.exact = data.strip().lower()
         else:
-            raise NotImplementedError("ShortSelf type=%s is not implemented"
+            raise NotImplementedError("ShortAnswer type=%s is not implemented"
                                       % self.type)        
 
     @staticmethod
