@@ -232,8 +232,6 @@ def add_homework():
 def add_question():
     user = validate_admin()
 
-    print request.form['hw_id']
-
     import elementtree.ElementTree as ET
     xml = request.form['xml']
     node = ET.fromstring(xml)
