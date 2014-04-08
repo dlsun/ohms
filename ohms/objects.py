@@ -19,7 +19,6 @@ def strip_and_save_tail(element):
     element.tail = None
     return tail
 
-
 class Homework(Base):
     __tablename__ = 'hws'
 
@@ -30,26 +29,25 @@ class Homework(Base):
 
     questions = relationship("Question", order_by="Question.id", backref="hw")
 
-    def from_xml(self, filename):
-        tree = ET.parse(filename)
-        root = tree.getroot()
-        self.name = root.attrib['name']
-        if 'start_date' in root.attrib:
-            self.start_date = datetime.strptime(root.attrib['start_date'],
+    @staticmethod
+    def from_xml(node):
+        hw = Homework(name=node.attrib['name'])
+        if 'start_date' in node.attrib:
+            hw.start_date = datetime.strptime(node.attrib['start_date'],
                                                 "%m/%d/%Y %H:%M:%S")
         else:
-            self.start_date = None
-        if 'due_date' in root.attrib:
-            self.due_date = datetime.strptime(root.attrib['due_date'],
+            hw.start_date = None
+        if 'due_date' in node.attrib:
+            hw.due_date = datetime.strptime(node.attrib['due_date'],
                                               "%m/%d/%Y %H:%M:%S")
         else:
-            self.due_date = None
-        for i, q in enumerate(root.iter('question')):
+            hw.due_date = None
+        for i, q in enumerate(node.iter('question')):
             print 'Processing Question %d' % (i+1)
             q_object = Question.from_xml(q)
-            q_object.hw = self
+            q_object.hw = hw
             session.add(q_object)
-
+        return hw
 
 class Question(Base):
     __tablename__ = 'questions'
@@ -76,7 +74,7 @@ class Question(Base):
         else:
             if 'type' in node.attrib and node.attrib['type'] == 'peer_review':
                 question = PeerReview()
-                question.points = node.attrib['points']
+                question.points = float(node.attrib['points'])
             else:
                 question = Question()
                 question.points = 0
@@ -94,7 +92,7 @@ class Question(Base):
                 # fetch item object
                 item = Item.from_xml(e)
                 # add item to question
-                question.points += item.points
+                question.points += float(item.points)
                 question.items.append(item)
                 # update the item with its ID, re-append the tail
                 e.attrib['id'] = str(item.id)
@@ -210,24 +208,24 @@ class Item(Base):
     def from_xml(node):
         """Constructs a Item object from an xml node"""
 
+        klass_map = {'Multiple Choice': MultipleChoiceItem,
+                     'Long Answer': LongAnswerItem,
+                     'Short Answer': ShortAnswerItem}
+        if node.attrib['type'] in klass_map:
+            klass = klass_map[node.attrib['type']]
+        else:
+            raise ValueError('type of question not recognized, options are %s' % `klass_map.keys()`)
+
         # get existing item based on ID, if specified
         if 'id' in node.attrib:
             item = session.query(Item).get(node.attrib['id'])
         # otherwise create new item
         else:
-            if node.attrib['type'] == 'Multiple Choice':
-                item = MultipleChoiceItem()
-            elif node.attrib['type'] == 'Long Answer':
-                item = LongAnswerItem()
-            elif node.attrib['type'] == 'Short Answer':
-                item = ShortAnswerItem()
-            else:
-                raise ValueError
+            item = klass()
             session.add(item)
 
-        item.points = float(node.attrib['points'])
-        item.from_xml(node)
-        item.xml = ET.tostring(node)
+        item.sync_from_node(node)
+        item.xml = ET.tostring(node, method="xml")
         session.flush()
         return item
 
@@ -236,12 +234,29 @@ class Item(Base):
 
     def check(self, response):
         return None, ""
+       
+    def sync_from_node(self, node):
+        """
+        Abstract method.
 
+        Set appropriate attributes of `self` from `node.attrib`.
+
+        Called during instance creation through `Item.from_xml` constructor,
+        also typically called in `Item.to_html` when 
+        the instance may have been loaded from database and not
+        have all pythonic attributes set because they were not stored
+        in the database.
+        """
+        raise NotImplementedError
 
 class MultipleChoiceItem(Item):
     __mapper_args__ = {'polymorphic_identity': 'Multiple Choice'}
 
-    def from_xml(self, node):
+    def sync_from_node(self, node):
+        """
+        Set appropriate attributes of `self` from `node.attrib`.
+        """
+        self.points = float(node.attrib['points'])
         self.options = []
         solutions = []
         for i, option in enumerate(node.iter('option')):
@@ -258,7 +273,7 @@ class MultipleChoiceItem(Item):
 
     def to_html(self):
 
-        self.from_xml(ET.fromstring(self.xml))
+        self.sync_from_node(ET.fromstring(self.xml))
 
         attrib = {"class": "item",
                   "itemtype": "multiple-choice"}
@@ -275,14 +290,13 @@ class MultipleChoiceItem(Item):
     def check(self, response):
 
         # parse the answers from the XML
-        self.from_xml(ET.fromstring(self.xml))
+        self.sync_from_node(ET.fromstring(self.xml))
 
         try:
             option = self.options[int(response)]
             return option.points, option.comment
         except:
             raise Exception("Invalid multiple choice answer.")
-
 
 class Option:
     points = None
@@ -298,14 +312,17 @@ class Option:
 class ShortAnswerItem(Item):
     __mapper_args__ = {'polymorphic_identity': 'Short Answer'}
 
-    def from_xml(self, node):
-
+    def sync_from_node(self, node):
+        """
+        Set appropriate attributes of `self` from `node.attrib`.
+        """
+        self.points = float(node.attrib['points'])
         self.answers = []
         solutions = []
-        for a in node.findall("answer"):
-            answer = ShortAnswer()
-            answer.from_xml(a)
-            answer.points = float(a.attrib['points']) if 'points' in a.attrib else self.points
+        for answer_node in node.findall("answer"):
+            answer = ShortAnswer(answer_node)
+            answer.points = answer.points or self.points # this seems like the
+                                                         # xml is probably not quite correct?
             if answer.type in ["exact", "expression"]:
                 solutions.append(answer.exact)
             self.answers.append(answer)
@@ -316,8 +333,7 @@ class ShortAnswerItem(Item):
     def to_html(self):
 
         # parse the answers from the XML
-        node = ET.fromstring(self.xml)
-        self.from_xml(node)
+        self.sync_from_node(ET.fromstring(self.xml))
 
         # set attributes of textbox
         size = "medium" if any(a.type == "expression" for a in self.answers) else "mini"
@@ -332,8 +348,7 @@ class ShortAnswerItem(Item):
     def check(self, response):
 
         # parse the answers from the XML
-        node = ET.fromstring(self.xml)
-        self.from_xml(node)
+        self.from_xml(ET.fromstring(self.xml))
 
         # check the answer
         for answer in self.answers:
@@ -341,23 +356,27 @@ class ShortAnswerItem(Item):
                 return answer.points, answer.comment
         return 0, ""
 
+class ShortAnswer(object):
 
-class ShortAnswer:
+    def __init__(self, node):
+        if 'points' in node.attrib:
+            self.points = float(a.attrib['points'])
+        else:
+            self.points = None 
 
-    def from_xml(self, node):
         self.type = node.attrib['type'].lower()
         self.comment = ""
         for comment in node.findall('comment'):
             self.comment += comment.text
         data = node.text
-        if self.type == "range":
+        if self.type == "range": # why have the range as list in a string -- why not upper and lower?
             lb, ub = data.split(",")
             self.lb = float(lb.strip().lstrip("["))
             self.ub = float(ub.strip().rstrip("]"))
         elif self.type == "exact" or self.type == "expression":
             self.exact = data.strip().lower()
         else:
-            raise NotImplementedError("ShortAnswer type=%s is not implemented"
+            raise NotImplementedError("ShortSelf type=%s is not implemented"
                                       % self.type)        
 
     @staticmethod
@@ -417,7 +436,11 @@ class ShortAnswer:
 class LongAnswerItem(Item):
     __mapper_args__ = {'polymorphic_identity': 'Long Answer'}
 
-    def from_xml(self, node):
+    def sync_from_node(self, node):
+        """
+        Set appropriate attributes of `self` from `node.attrib`.
+        """
+        self.points = float(node.attrib['points'])
         solution = node.find('solution')
         self.solution = ET.tostring(solution) if solution is not None else ""
 
@@ -493,7 +516,8 @@ class PeerReview(Question):
 
     def to_html(self):
 
-        from queries import get_question, get_last_question_response, get_peer_tasks_for_grader, get_self_tasks_for_student
+        # not good to have imports here...
+        from queries import get_question, get_last_question_response, get_peer_tasks_for_grader, get_self_tasks_for_student 
         from auth import validate_user
 
         self.set_metadata()
