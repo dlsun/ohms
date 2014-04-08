@@ -6,6 +6,8 @@ from flask import Flask, request, render_template, make_response
 import json
 from utils import NewEncoder
 from datetime import datetime
+import elementtree.ElementTree as ET
+from collections import defaultdict
 
 from objects import session, Question, User
 from queries import get_user, get_homework, get_question, \
@@ -33,7 +35,7 @@ def index():
     hws = get_homework()
     
     # to-do list for peer reviews
-    from collections import defaultdict
+
     to_do = defaultdict(int)
     peer_review_questions = get_peer_review_questions()
     for prq in peer_review_questions:
@@ -160,8 +162,9 @@ def update_question():
     
     q_id = request.form['q_id']
     xml_new = request.form['xml']
-    import elementtree.ElementTree as ET
-    question = Question.from_xml(ET.fromstring(xml_new))
+    node = ET.fromstring(xml_new)
+    node.attrib['id'] = q_id
+    question = Question.from_xml(node)
     return json.dumps({
         "xml": question.xml,
         "html": question.to_html(),
