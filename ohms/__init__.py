@@ -13,6 +13,7 @@ from objects import session, Question, User
 from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
     get_peer_review_questions, get_peer_tasks_for_student, \
+    get_peer_tasks_for_grader, get_self_tasks_for_student, \
     get_grading_task, get_grades_for_student, add_grade, get_grade
 import options
 from auth import validate_user, validate_admin
@@ -127,13 +128,21 @@ def grades():
         complete = True
         for q in hw.questions:
             points += q.points
-            response = get_last_question_response(q.id, user.stuid)
-            if response:
-                try:
-                    score += response.score
-                except:
-                    complete = False
-                    break # skip hws with scoreless responses
+            if q.type == "question":
+                response = get_last_question_response(q.id, user.stuid)
+                if response:
+                    try: 
+                        score += response.score
+                    except:
+                        complete = False
+                        break # skip hws with scoreless responses
+            elif q.type == "Peer Review":
+                q.set_metadata()
+                tasks = get_peer_tasks_for_grader(q.question_id, user.stuid)
+                tasks.extend(get_self_tasks_for_student(q.question_id, user.stuid))
+                for task in tasks:
+                    if task.score and task.comments: 
+                        score += 1. * q.points / len(tasks)
         if complete:
             grade = get_grade(user.stuid, hw.name)
             if not grade:
