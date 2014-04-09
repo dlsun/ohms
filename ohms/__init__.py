@@ -42,7 +42,7 @@ def index():
         prq.set_metadata()
         response = get_last_question_response(prq.question_id, user.stuid)
         # if deadline has passed...
-        if prq.homework.due_date < datetime.now():
+        if response and prq.homework.due_date < datetime.now():
             # compute updated score for student
             tasks = get_peer_tasks_for_student(prq.question_id, user.stuid)
             scores = [t.score for t in tasks if t.score is not None]
