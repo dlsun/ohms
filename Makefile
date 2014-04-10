@@ -16,7 +16,7 @@ static-test-deploy:
 
 ohms-test-deploy:
 	cp options/test_options.py ohms/options.py
-	rync -avz --exclude --delete-excluded ohms/ corn.stanford.edu:/afs/ir.stanford.edu/class/stats60/ohms_test/
+	rsync -avz --exclude --delete-excluded ohms/ corn.stanford.edu:/afs/ir.stanford.edu/class/stats60/ohms_test/
 
 static-prod-deploy:
 	rsync -avz static/ corn.stanford.edu:/afs/ir.stanford.edu/class/stats60/WWW/static
