@@ -14,7 +14,7 @@ def send_all(users, subject, message):
     """Message should have a '%s' for their name"""
 
     smtpObj = smtplib.SMTP('localhost')
-    sender = 'psych10-win1314-staff@lists.stanford.edu'
+    sender = 'stats60-spr1314-staff@lists.stanford.edu'
 
     for user in users:
         name = user.name

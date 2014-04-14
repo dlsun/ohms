@@ -76,7 +76,7 @@ def assign_tasks(hw_id, due_date):
 r"""Dear %s,
 
 We've made the peer-grading assignments for this week. The assessments
-are due {due_date}.
+are due {due_date}, and you can start after lecture today at 11:00AM.
 
 You will be able to view your peer's comments on your answers as they 
 are submitted, but your score will not be available until {due_date}. 
@@ -93,9 +93,6 @@ r"""Dear %s (and other members of the STATS 60 Staff),
 
 Just letting you know that the peer assessment for this week was just released. 
 It is due at {due_date}.
-
-If you were assigned to grade for this week, please do so between now and 
-{due_date}.
 
 Sincerely,
 OHMS
@@ -119,7 +116,7 @@ def auto_assign():
     # Determine the homework to assign, which is the last thing due.
     hw_id = get_last_due_homework().id
     
-    assign_tasks(hw_id, due_date)
+    print assign_tasks(hw_id, due_date)
 
 
 if __name__ == "__main__":
