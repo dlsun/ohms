@@ -31,7 +31,7 @@ def get_question(question_id):
     return session.query(Question).get(question_id)
 
 def get_peer_review_questions():
-    return session.query(PeerReview).all()
+    return session.query(PeerReview).filter(PeerReview.hw_id != None).all()
 
 
 def get_question_response(question_response_id):
