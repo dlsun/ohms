@@ -537,7 +537,7 @@ class PeerReview(Question):
             item_responses.append({"response": task.score})
             item_responses.append({"response": task.comments})
             if task.rating is not None: ratings.append(task.rating)
-            if task.comments: score += self.points / len(tasks)
+            if task.comments is not None: score += self.points / len(tasks)
             time = task.time
 
         # provide some feedback to grader if at least 2 students have rated feedback
@@ -596,7 +596,7 @@ class PeerReview(Question):
                 task.score = responses[i]
                 task.comments = responses[i+1]
 
-                if task.comments: score += self.points / len(tasks)
+                if task.comments is not None: score += self.points / len(tasks)
 
                 i += 2
             session.commit()

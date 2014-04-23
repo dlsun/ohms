@@ -141,7 +141,7 @@ def grades():
                 tasks = get_peer_tasks_for_grader(q.question_id, user.stuid)
                 tasks.extend(get_self_tasks_for_student(q.question_id, user.stuid))
                 for task in tasks:
-                    if task.score and task.comments: 
+                    if task.comments is not None:
                         score += 1. * q.points / len(tasks)
         if complete:
             grade = get_grade(user.stuid, hw.name)
