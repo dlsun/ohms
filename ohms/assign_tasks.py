@@ -8,11 +8,11 @@ import random
 
 from base import session
 from objects import User, Homework, Question, QuestionResponse, GradingTask, LongAnswerItem
-from queries import get_last_question_response, get_last_due_homework
+from queries import get_last_question_response, get_last_two_due_homeworks
 from send_email import send_all
 
 
-def assign_tasks(hw_id, due_date):
+def assign_tasks(hw_id, due_date, send_emails=False):
 
     homework = session.query(Homework).get(hw_id)
     
@@ -71,8 +71,11 @@ def assign_tasks(hw_id, due_date):
 
     session.commit()
 
+    if not send_emails:
+        return "Successfully assigned %d students"
+
     # Send email notifications to all the students
-    send_all(users, "Peer Assessment for %s is Ready" % homework.name,
+    send_all(users, "Peer Assessment for %s is Ready" % homework.name[:-1],
 r"""Dear %s,
 
 We've made the peer-grading assignments for this week. The assessments
@@ -88,7 +91,7 @@ STATS 60 Staff""".format(due_date=due_date.strftime("%A, %b %d at %I:%M %p")))
 
     # Send email to the course staff
     admins = session.query(User).filter_by(type="admin").all()
-    send_all(admins, "Peer Assessment for %s is Ready" % homework.name,
+    send_all(admins, "Peer Assessment for %s is Ready" % homework.name[:-1],
 r"""Dear %s (and other members of the STATS 60 Staff),
 
 Just letting you know that the peer assessment for this week was just released. 
@@ -113,10 +116,11 @@ def auto_assign():
         this_time += timedelta(days=1) 
     due_date = datetime(this_time.year, this_time.month, this_time.day, 17, 0)
 
-    # Determine the homework to assign, which is the last thing due.
-    hw_id = get_last_due_homework().id
+    # Determine the homeworks to assign, which are the two last things due
+    hw_a, hw_b = get_last_two_due_homeworks()
     
-    print assign_tasks(hw_id, due_date)
+    print assign_tasks(hw_a.id, due_date, send_emails=False)
+    print assign_tasks(hw_b.id, due_date, send_emails=True)
 
 
 if __name__ == "__main__":

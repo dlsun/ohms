@@ -20,6 +20,12 @@ def get_last_due_homework():
         if hw.due_date < now:
             return hw
 
+def get_last_two_due_homeworks():
+    now = datetime.now()
+    hws = session.query(Homework).order_by(Homework.due_date).all()
+    due_hws = [hw for hw in hws if hw.due_date < now]
+    return due_hws[-2:]
+ 
 
 def get_homework(hw_id=None):
     if hw_id is None:
