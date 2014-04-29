@@ -510,7 +510,7 @@ class PeerReview(Question):
 
         # jinja2 stuff
         from jinja2 import Environment, PackageLoader
-        env = Environment(loader=PackageLoader("ohms", "templates"))
+        env = Environment(autoescape=True, loader=PackageLoader("ohms", "templates"))
         template = env.get_template("peer_review_question.html")
 
         return template.render(question=question, 
