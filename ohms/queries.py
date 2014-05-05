@@ -10,18 +10,19 @@ from collections import defaultdict
 from base import session
 from objects import QuestionResponse, GradingTask, User
 from objects import Homework, Question, PeerReview, Grade
+from pdt import pdt_now
 
 
 def get_last_due_homework():
     """Returns the last homework that was due"""
-    now = datetime.now()
+    now = pdt_now()
     hws = reversed(session.query(Homework).order_by(Homework.due_date).all())
     for hw in hws:
         if hw.due_date < now:
             return hw
 
 def get_last_two_due_homeworks():
-    now = datetime.now()
+    now = pdt_now()
     hws = session.query(Homework).order_by(Homework.due_date).all()
     due_hws = [hw for hw in hws if hw.due_date < now]
     return due_hws[-2:]

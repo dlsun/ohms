@@ -16,6 +16,7 @@ from queries import get_user, get_homework, get_question, \
     get_peer_tasks_for_grader, get_self_tasks_for_student, \
     get_grading_task, get_grades_for_student, add_grade, get_grade
 import options
+from pdt import pdt_now
 from auth import validate_user, validate_admin
 
 # Configuration based on deploy target
@@ -43,7 +44,7 @@ def index():
         prq.set_metadata()
         response = get_last_question_response(prq.question_id, user.stuid)
         # if deadline has passed...
-        if response and prq.homework.due_date < datetime.now():
+        if response and prq.homework.due_date < pdt_now():
             # compute updated score for student
             tasks = get_peer_tasks_for_student(prq.question_id, user.stuid)
             scores = [t.score for t in tasks if t.score is not None]
@@ -60,7 +61,7 @@ def index():
     return render_template("index.html", homeworks=hws,
                            user=user,
                            options=options,
-                           current_time=datetime.now(),
+                           current_time=pdt_now(),
                            to_do=to_do)
 
 
@@ -69,7 +70,7 @@ def hw():
     user = validate_user()
     hw_id = request.args.get("id")
     hw = get_homework(hw_id)
-    if user.type != "admin" and hw.start_date and hw.start_date > datetime.now():
+    if user.type != "admin" and hw.start_date and hw.start_date > pdt_now():
         raise Exception("This homework has not yet been released.")
     else:
         return render_template("hw.html",
@@ -122,7 +123,7 @@ def grades():
     # update grades
     homeworks = get_homework()
     for hw in homeworks:
-        if hw.due_date > datetime.now():
+        if hw.due_date > pdt_now():
             continue
         score, points = 0, 0
         complete = True

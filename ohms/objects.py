@@ -12,6 +12,7 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm.session import make_transient
 from base import Base, session
 from datetime import datetime, timedelta
+from pdt import pdt_now
 
 # helper function that strips tail from element and returns tail
 def strip_and_save_tail(element):
@@ -134,7 +135,7 @@ class Question(Base):
 
     def check_if_locked(self, last_submission):
         due_date = self.homework.due_date
-        return due_date and due_date < datetime.now()
+        return due_date and due_date < pdt_now()
 
     def delay_feedback(self, submission):
         if submission is None or submission.score is None:
@@ -142,7 +143,7 @@ class Question(Base):
         due_date = submission.question.homework.due_date
         submission.item_responses # instantiate item responses before we detach object from session
         make_transient(submission) # detaches SQLAlchemy object from session
-        now = datetime.now()
+        now = pdt_now()
         time_available = min(submission.time + timedelta(minutes=30), due_date)
         if now < time_available:
             submission.score = None
@@ -156,7 +157,7 @@ class Question(Base):
             'submission': self.delay_feedback(last_submission),
             'locked': self.check_if_locked(last_submission),
             }
-        if datetime.now() > self.homework.due_date:
+        if pdt_now() > self.homework.due_date:
             out['solution'] = [item.solution for item in self.items]
         return out
 
@@ -169,7 +170,7 @@ class Question(Base):
             score, comments = self.check(responses)
             question_response = QuestionResponse(
                 stuid=stuid,
-                time=datetime.now(),
+                time=pdt_now(),
                 question_id=self.id,
                 item_responses=item_responses,
                 score=score,
@@ -556,7 +557,7 @@ class PeerReview(Question):
             comment = ""
 
         return {
-            "locked": (datetime.now() > self.homework.due_date),
+            "locked": (pdt_now() > self.homework.due_date),
             "submission": { 
                 "item_responses": item_responses,
                 "score": score,
@@ -570,7 +571,7 @@ class PeerReview(Question):
         from queries import get_peer_tasks_for_grader, get_self_tasks_for_student
         self.set_metadata()
 
-        if datetime.now() <= self.homework.due_date:
+        if pdt_now() <= self.homework.due_date:
 
             # get peer and self assessment tasks
             tasks = get_peer_tasks_for_grader(self.question_id, stuid)
@@ -592,7 +593,7 @@ class PeerReview(Question):
 
                 item_responses.append({"response": task.score})
                 item_responses.append({"response": task.comments})
-                task.time = datetime.now()
+                task.time = pdt_now()
                 task.score = responses[i]
                 task.comments = responses[i+1]
 
@@ -602,9 +603,9 @@ class PeerReview(Question):
             session.commit()
             
             return {
-                'locked': (datetime.now() > self.homework.due_date),
+                'locked': (pdt_now() > self.homework.due_date),
                 'submission': {
-                    "time": datetime.now(),
+                    "time": pdt_now(),
                     "score": score,
                     "comments": '''You've earned credit for completing the peer reviews, but your peer review grade will also depend on the accuracy and quality of your feedback.''',
                     "item_responses": item_responses

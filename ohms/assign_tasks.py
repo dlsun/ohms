@@ -10,6 +10,7 @@ from base import session
 from objects import User, Homework, Question, QuestionResponse, GradingTask, LongAnswerItem
 from queries import get_last_question_response, get_last_two_due_homeworks
 from send_email import send_all
+from pdt import pdt_now
 
 
 def assign_tasks(hw_id, due_date, send_emails=False):
@@ -111,7 +112,7 @@ def auto_assign():
     """Assignment for STATS 60, spring quarter"""
 
     # Determine the due date, which the next Tuesday at 5 PM.
-    this_time = datetime.now()
+    this_time = pdt_now()
     while this_time.weekday() != 1:  # 0 == Monday, 1 == Tuesday...
         this_time += timedelta(days=1) 
     due_date = datetime(this_time.year, this_time.month, this_time.day, 17, 0)
