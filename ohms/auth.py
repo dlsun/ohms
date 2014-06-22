@@ -23,9 +23,10 @@ def validate_user():
     try:
         user = get_user(stuid)
     except:
+        type = "admin" if stuid in options.admins else "student"
         user = User(stuid=stuid,
                     name=name,
-                    type="student")
+                    type=type)
         session.add(user)
         session.commit()
 
