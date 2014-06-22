@@ -5,6 +5,7 @@ Initializes the database from scratch.
 """
 
 from ohms.objects import *
+import elementtree.ElementTree as ET
 import sys
 
 def prod_init_db(file):
@@ -12,8 +13,8 @@ def prod_init_db(file):
     from ohms.base import Base, session, engine
 
     Base.metadata.create_all(engine)
-    homework = Homework()
-    homework.from_xml(file)
+    node = ET.parse(file).getroot()
+    homework = Homework.from_xml(node)
     session.add(homework)
     session.commit()
 
