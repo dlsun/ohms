@@ -349,7 +349,7 @@ class ShortAnswerItem(Item):
     def check(self, response):
 
         # parse the answers from the XML
-        self.from_xml(ET.fromstring(self.xml))
+        self.sync_from_node(ET.fromstring(self.xml))
 
         # check the answer
         for answer in self.answers:
