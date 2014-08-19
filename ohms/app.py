@@ -206,7 +206,10 @@ def update_question():
     
     q_id = request.form['q_id']
     xml_new = request.form['xml']
-    node = ET.fromstring(xml_new)
+    try:
+        node = ET.fromstring(xml_new)
+    except Exception as e:
+        raise Exception(str(e))
     node.attrib['id'] = q_id
     question = Question.from_xml(node)
     return json.dumps({

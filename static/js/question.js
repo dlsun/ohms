@@ -58,8 +58,8 @@ var OHMS = (function(OHMS) {
 			that.element.find(".source").val(data.xml).hide();
 			that.element.find(".editable").html(data.html).show();
 		    }, 
-		    error : function () {
-			add_alert("Update not successful.");
+		    error : function (xhr) {
+			add_alert("The update failed because <br><br>" + xhr.responseText);
 		    }
 		});
 	    })
