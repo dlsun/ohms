@@ -14,7 +14,7 @@ from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
     get_peer_review_questions, get_peer_tasks_for_student, \
     get_peer_tasks_for_grader, get_self_tasks_for_student, \
-    get_grading_task, get_grades_for_student, add_grade, get_grade
+    get_grading_task, add_grade, get_grade
 import options
 from pdt import pdt_now
 from auth import validate_user, validate_admin
@@ -116,17 +116,17 @@ def submit():
                       cls=NewEncoder)
 
 
-@app.route("/grades")
-def grades():
-    user = validate_user()
+def update_grades_for_user(user):
 
-    # update grades
     homeworks = get_homework()
+    homeworks = [hw for hw in homeworks if hw.due_date <= pdt_now()]
+
+    grades = []
+
     for hw in homeworks:
-        if hw.due_date > pdt_now():
-            continue
+
+        # total up the points
         score, points = 0, 0
-        complete = True
         for q in hw.questions:
             points += q.points
             if q.type == "question":
@@ -135,8 +135,7 @@ def grades():
                     try: 
                         score += response.score
                     except:
-                        complete = False
-                        break # skip hws with scoreless responses
+                        pass
             elif q.type == "Peer Review":
                 q.set_metadata()
                 tasks = get_peer_tasks_for_grader(q.question_id, user.stuid)
@@ -144,31 +143,70 @@ def grades():
                 for task in tasks:
                     if task.comments is not None:
                         score += 1. * q.points / len(tasks)
-        if complete:
-            grade = get_grade(user.stuid, hw.name)
-            if not grade:
-                add_grade(user.stuid, hw.name, hw.due_date, score, points)
-            else:
-                grade.time = hw.due_date
-                grade.score = score
-                grade.points = points
-                session.commit()
+
+        # fill in grades
+        grade = get_grade(user.stuid, hw.name)
+        if not grade:
+            add_grade(user.stuid, hw.name, hw.due_date, score, points)
+        else:
+            grade.time = hw.due_date
+            grade.score = score
+            grade.points = points
+            session.commit()
+
+        grades.append(grade)
+
+    return grades
+
+
+@app.route("/grades")
+def grades():
+    user = validate_user()
+
+    grades = update_grades_for_user(user)
     
     # fetch grades from gradebook
-    return render_template("grades.html", grades=get_grades_for_student(user.stuid), 
+    return render_template("grades.html", grades=grades, 
                            options=options, user=user)
 
 
 # ADMIN FUNCTIONS
 @app.route("/admin")
 def admin():
-    user = validate_admin()
+    admin = validate_admin()
 
-    return render_template("admin/index.html", options=options)
+    students = session.query(User).order_by(User.type.desc()).order_by(User.name).all()
+
+    gradebook = []
+    assignments = []
+    for student in students:
+        if student.type == "student":
+            grades = update_grades_for_user(student)
+            gradebook.append((student, grades))
+            if not assignments:
+                assignments = [g.assignment for g in grades]
+        else:
+            gradebook.append((student, []))
+
+    return render_template("admin/index.html", students=students, assignments=assignments, gradebook=gradebook, options=options)
+
+@app.route("/change_user_type", methods=['POST'])
+def change_user_type():
+    admin = validate_admin()
+
+    stuid = request.form['user']
+    user_type = request.form['type']
+
+    session.query(User).filter_by(stuid=stuid).update({
+        "type": user_type
+    })
+    session.commit()
+
+    return "Successfully changed user %s to %s." % (stuid, user_type)
 
 @app.route("/update_question", methods=['POST'])
 def update_question():
-    user = validate_admin()
+    admin = validate_admin()
     
     q_id = request.form['q_id']
     xml_new = request.form['xml']
@@ -182,7 +220,7 @@ def update_question():
         
 @app.route("/update_response", methods=['POST'])
 def update_response():
-    user = validate_admin()
+    admin = validate_admin()
 
     response_id = request.form["response_id"]
     response = get_question_response(response_id)
@@ -194,7 +232,7 @@ def update_response():
     
 @app.route("/view_responses")
 def view_responses():
-    user = validate_admin()
+    admin = validate_admin()
 
     q_id = request.args.get('q')
     users = session.query(User).all()
@@ -203,11 +241,11 @@ def view_responses():
         response = get_last_question_response(q_id, u.stuid)
         if response:
             responses.append(response)
-    return render_template("admin/view_responses.html", responses=responses, options=options, user=user)
+    return render_template("admin/view_responses.html", responses=responses, options=options)
 
 @app.route("/change_user", methods=['POST'])
 def change_user():
-    user = validate_admin()
+    admin = validate_admin()
     student = request.form['user']
 
     try:
@@ -215,16 +253,16 @@ def change_user():
     except:
         raise Exception("No user exists with the given ID.")
 
-    session.query(User).filter_by(stuid=user.stuid).update({
+    session.query(User).filter_by(stuid=admin.stuid).update({
         "proxy": student
     })
     session.commit()
 
-    return "Successfully changed user to %s" % user.proxy
+    return "Successfully changed user to %s" % admin.proxy
 
 @app.route("/add_homework", methods=['POST'])
 def add_homework():
-    user = validate_admin()
+    admin = validate_admin()
 
     name = request.form['name']
     start_date = datetime.strptime(request.form['start_date'],
@@ -243,7 +281,7 @@ def add_homework():
 
 @app.route("/add_question", methods=['POST'])
 def add_question():
-    user = validate_admin()
+    admin = validate_admin()
 
     import elementtree.ElementTree as ET
     xml = request.form['xml']

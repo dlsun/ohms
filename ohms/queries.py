@@ -103,10 +103,6 @@ def get_grade(stuid, assignment):
         filter_by(assignment=assignment).all()
     return grades[0] if grades else None
 
-def get_grades_for_student(stuid):
-    return session.query(Grade).filter_by(student=stuid).\
-        order_by(Grade.time).all()
-
 def add_grade(student, assignment, time, score, points):
     grade = Grade(student=student, assignment=assignment, 
                   time=time, score=score, points=points)

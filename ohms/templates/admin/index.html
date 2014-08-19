@@ -18,6 +18,42 @@
 
     <hr/>
 
+    <h3>Gradebook</h3>
+
+    <p>Grades are only shown for students in the class. To exclude a student from the list, change his or her status to "Guest".</p>
+
+    <table class="table">
+      <thead>
+	<th>Student</th>
+	<th>Type</th>
+	<th></th>
+	{% for assignment in assignments %}
+	<th>{{ assignment }}</th>
+	{% endfor %}
+      </thead>
+      {% for student, grades in gradebook %}
+        <tr>
+	  <td>{{ student.name }}</td>
+	  <form target="_blank" action="change_user_type" method="POST">
+	  <td>
+	    <input type="hidden" name="user" value="{{ student.stuid }}" />
+	    <select name="type" class="input-small">
+	      <option value="student" {% if student.type == "student" %}selected{% endif %}>Student</option>
+	      <option value="guest" {% if student.type == "guest" %}selected{% endif %}>Guest</option>
+	      <option value="admin" {% if student.type == "admin" %}selected{% endif %}>Admin</option>
+	    </select>
+	  </td>
+	  <td>
+	    <input type="submit" value="Update!" />
+	  </td>
+	  </form>
+	  {% for grade in grades %}
+	  <td>{{ grade.score }} / {{ grade.points }}</td>
+	  {% endfor %}
+	</tr>
+      {% endfor %}
+    </table>
+
     </div>
 
   </body>
