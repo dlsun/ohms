@@ -38,9 +38,9 @@
 	  <td>
 	    <input type="hidden" name="user" value="{{ student.stuid }}" />
 	    <select name="type" class="input-small">
-	      <option value="student" {% if student.type == "student" %}selected{% endif %}>Student</option>
-	      <option value="guest" {% if student.type == "guest" %}selected{% endif %}>Guest</option>
-	      <option value="admin" {% if student.type == "admin" %}selected{% endif %}>Admin</option>
+	      <option value="student" selected>Student</option>
+	      <option value="guest">Guest</option>
+	      <option value="admin">Admin</option>
 	    </select>
 	  </td>
 	  <td>
@@ -53,6 +53,57 @@
 	</tr>
       {% endfor %}
     </table>
+
+    <hr/>
+
+    <h3>Other Users</h3>
+
+    <table class="table">
+      <thead>
+	<th>Guests</th>
+	<th>Actions</th>
+      </thead>
+      {% for guest in guests %}
+        <tr>
+	  <td>{{ guest.name }}</td>
+	  <form target="_blank" action="change_user_type" method="POST">
+	  <td>
+	    <input type="hidden" name="user" value="{{ guest.stuid }}" />
+	    <select name="type" class="input-small">
+	      <option value="student">Student</option>
+	      <option value="guest" selected>Guest</option>
+	      <option value="admin">Admin</option>
+	    </select>
+	    <input type="submit" value="Update!" />
+	  </td>
+	  </form>
+	</tr>
+      {% endfor %}
+    </table>
+
+    <table class="table">
+      <thead>
+	<th>Admins</th>
+	<th>Actions</th>
+      </thead>
+      {% for admin in admins %}
+        <tr>
+	  <td>{{ admin.name }}</td>
+	  <form target="_blank" action="change_user_type" method="POST">
+	  <td>
+	    <input type="hidden" name="user" value="{{ admin.stuid }}" />
+	    <select name="type" class="input-small">
+	      <option value="student">Student</option>
+	      <option value="guest">Guest</option>
+	      <option value="admin" selected>Admin</option>
+	    </select>
+	    <input type="submit" value="Update!" />
+	  </td>
+	  </form>
+	</tr>
+      {% endfor %}
+    </table>
+
 
     </div>
 

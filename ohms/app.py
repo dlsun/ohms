@@ -4,7 +4,7 @@ OHMS: Online Homework Management System
 
 from flask import Flask, request, render_template, make_response
 import json
-from utils import NewEncoder
+from utils import NewEncoder, convert_to_last_name
 from datetime import datetime
 import elementtree.ElementTree as ET
 from collections import defaultdict
@@ -116,79 +116,78 @@ def submit():
                       cls=NewEncoder)
 
 
-def update_grades_for_user(user):
+def calculate_grade(user, hw):
 
-    homeworks = get_homework()
-    homeworks = [hw for hw in homeworks if hw.due_date <= pdt_now()]
+    # total up the points
+    score, points = 0, 0
+    for q in hw.questions:
+        points += q.points
+        if q.type == "question":
+            response = get_last_question_response(q.id, user.stuid)
+            if response:
+                try: 
+                    score += response.score
+                except:
+                    pass
+        elif q.type == "Peer Review":
+            q.set_metadata()
+            tasks = get_peer_tasks_for_grader(q.question_id, user.stuid)
+            tasks.extend(get_self_tasks_for_student(q.question_id, user.stuid))
+            for task in tasks:
+                if task.comments is not None:
+                    score += 1. * q.points / len(tasks)
 
-    grades = []
+    # fill in grades
+    grade = get_grade(user.stuid, hw.name)
+    if not grade:
+        add_grade(user.stuid, hw.name, hw.due_date, score, points)
+    else:
+        grade.time = hw.due_date
+        grade.score = score
+        grade.points = points
 
-    for hw in homeworks:
-
-        # total up the points
-        score, points = 0, 0
-        for q in hw.questions:
-            points += q.points
-            if q.type == "question":
-                response = get_last_question_response(q.id, user.stuid)
-                if response:
-                    try: 
-                        score += response.score
-                    except:
-                        pass
-            elif q.type == "Peer Review":
-                q.set_metadata()
-                tasks = get_peer_tasks_for_grader(q.question_id, user.stuid)
-                tasks.extend(get_self_tasks_for_student(q.question_id, user.stuid))
-                for task in tasks:
-                    if task.comments is not None:
-                        score += 1. * q.points / len(tasks)
-
-        # fill in grades
-        grade = get_grade(user.stuid, hw.name)
-        if not grade:
-            add_grade(user.stuid, hw.name, hw.due_date, score, points)
-        else:
-            grade.time = hw.due_date
-            grade.score = score
-            grade.points = points
-            session.commit()
-
-        grades.append(grade)
-
-    return grades
+    return grade
 
 
 @app.route("/grades")
 def grades():
     user = validate_user()
 
-    grades = update_grades_for_user(user)
+    homeworks = [hw for hw in get_homework() if hw.due_date <= pdt_now()]
+    grades = []
+
+    for hw in homeworks:
+        grades.append(calculate_grade(user, hw))
+    session.commit()
     
     # fetch grades from gradebook
     return render_template("grades.html", grades=grades, 
                            options=options, user=user)
-
 
 # ADMIN FUNCTIONS
 @app.route("/admin")
 def admin():
     admin = validate_admin()
 
-    students = session.query(User).order_by(User.type.desc()).order_by(User.name).all()
+    homeworks = [hw for hw in get_homework() if hw.due_date <= pdt_now()]
+    students = session.query(User).filter_by(type="student").all()
+    students.sort(key=lambda user: convert_to_last_name(user.name))
 
     gradebook = []
-    assignments = []
     for student in students:
-        if student.type == "student":
-            grades = update_grades_for_user(student)
-            gradebook.append((student, grades))
-            if not assignments:
-                assignments = [g.assignment for g in grades]
-        else:
-            gradebook.append((student, []))
+        grades = []
+        for hw in homeworks:
+            grades.append(calculate_grade(student, hw))
+        gradebook.append((student, grades))
+    session.commit()
 
-    return render_template("admin/index.html", students=students, assignments=assignments, gradebook=gradebook, options=options)
+    assignments = [g.assignment for g in gradebook[0][1]] if gradebook else []
+
+    guests = session.query(User).filter_by(type="guest").all()
+    admins = session.query(User).filter_by(type="admin").all()
+
+    return render_template("admin/index.html", students=students, guests=guests, admins=admins,  
+                           assignments=assignments, gradebook=gradebook, options=options)
 
 @app.route("/change_user_type", methods=['POST'])
 def change_user_type():
