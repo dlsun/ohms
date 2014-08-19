@@ -124,11 +124,8 @@ def calculate_grade(user, hw):
         points += q.points
         if q.type == "question":
             response = get_last_question_response(q.id, user.stuid)
-            if response:
-                try: 
-                    score += response.score
-                except:
-                    pass
+            if response and response.score:
+                score += response.score
         elif q.type == "Peer Review":
             q.set_metadata()
             tasks = get_peer_tasks_for_grader(q.question_id, user.stuid)
