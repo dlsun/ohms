@@ -98,6 +98,9 @@ def get_sample_responses(question_id):
         filter_by(question_id=question_id).\
         order_by(QuestionResponse.id).all()
 
+def get_all_grades(stuid):
+    return session.query(Grade).filter_by(student=stuid).order_by(Grade.time).all()
+
 def get_grade(stuid, assignment):
     grades = session.query(Grade).filter_by(student=stuid).\
         filter_by(assignment=assignment).all()

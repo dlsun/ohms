@@ -14,7 +14,7 @@ from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
     get_peer_review_questions, get_peer_tasks_for_student, \
     get_peer_tasks_for_grader, get_self_tasks_for_student, \
-    get_grading_task, add_grade, get_grade
+    get_grading_task, add_grade, get_all_grades, get_grade
 import options
 from pdt import pdt_now
 from auth import validate_user, validate_admin
@@ -37,7 +37,6 @@ def index():
     hws = get_homework()
     
     # to-do list for peer reviews
-
     to_do = defaultdict(int)
     peer_review_questions = get_peer_review_questions()
     for prq in peer_review_questions:
@@ -112,11 +111,15 @@ def submit():
     q_id = request.args.get("q_id")
     question = get_question(q_id)
     responses = request.form.getlist('responses')
-    return json.dumps(question.submit_response(user.stuid, responses),
-                      cls=NewEncoder)
+    out = question.submit_response(user.stuid, responses)
+    calculate_grade(user, question.homework)
+    return json.dumps(out, cls=NewEncoder)
 
 
 def calculate_grade(user, hw):
+    """
+    helper function that calculates a student's grade on a given homework
+    """
 
     # total up the points
     score, points = 0, 0
@@ -142,6 +145,7 @@ def calculate_grade(user, hw):
         grade.time = hw.due_date
         grade.score = score
         grade.points = points
+    session.commit()
 
     return grade
 
@@ -149,13 +153,7 @@ def calculate_grade(user, hw):
 @app.route("/grades")
 def grades():
     user = validate_user()
-
-    homeworks = [hw for hw in get_homework() if hw.due_date <= pdt_now()]
-    grades = []
-
-    for hw in homeworks:
-        grades.append(calculate_grade(user, hw))
-    session.commit()
+    grades = get_all_grades(user.stuid)
     
     # fetch grades from gradebook
     return render_template("grades.html", grades=grades, 
@@ -172,11 +170,7 @@ def admin():
 
     gradebook = []
     for student in students:
-        grades = []
-        for hw in homeworks:
-            grades.append(calculate_grade(student, hw))
-        gradebook.append((student, grades))
-    session.commit()
+        gradebook.append((student, get_all_grades(student.stuid)))
 
     assignments = [g.assignment for g in gradebook[0][1]] if gradebook else []
 
@@ -225,9 +219,12 @@ def update_response():
     response = get_question_response(response_id)
     score = request.form["score"]
     response.score = float(score) if score else None
-    response.comments = request.form["comments"]
+    response.comments = request.form["comments"]    
     session.commit()
-    return ""
+
+    calculate_grade(response.user, response.question.homework)
+
+    return "Updated score for student %s to %f." % (response.stuid, response.score)
     
 @app.route("/view_responses")
 def view_responses():
