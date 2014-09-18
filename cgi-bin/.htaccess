@@ -1,0 +1,4 @@
+AuthType WebAuth
+require valid-user
+
+ErrorDocument 401 "You have been logged out due to inactivity. Please refresh the page and log in again."
