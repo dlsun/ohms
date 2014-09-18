@@ -8,7 +8,7 @@ def run_command(cmd):
 
 out = subprocess.check_output(["fs", "la", root])
 cgi_user = re.findall('class.*\.cgi', out)[0]
-run_command("fs sa %s %s.cgi rlidwk" % (root, cgi_user))
+run_command("fs sa %s %s rlidwk" % (root, cgi_user))
 
 run_command("cp -r options/prod_options.py ohms/options.py")
 
