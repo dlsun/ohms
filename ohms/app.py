@@ -6,7 +6,7 @@ from flask import Flask, request, render_template, make_response
 import json
 from utils import NewEncoder
 from datetime import datetime
-import elementtree.ElementTree as ET
+import xml.etree.ElementTree as ET
 from collections import defaultdict
 
 from objects import session, Question, User
@@ -245,7 +245,6 @@ def add_homework():
 def add_question():
     user = validate_admin()
 
-    import elementtree.ElementTree as ET
     xml = request.form['xml']
     node = ET.fromstring(xml)
 

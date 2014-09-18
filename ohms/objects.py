@@ -5,7 +5,7 @@ Defines the database objects.
 """
 
 from __future__ import division
-import elementtree.ElementTree as ET
+import xml.etree.ElementTree as ET
 import re
 from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, UnicodeText
 from sqlalchemy.orm import relationship, backref
