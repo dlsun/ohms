@@ -8,9 +8,9 @@ from objects import session, User
 from queries import get_user
 
 def auth():
-    if options.target == "local":
-        stuid = "jsmith"
-        name = "John Smith"
+    if target == "local":
+        stuid = "test"
+        name = "Test User"
     else:
         stuid = os.environ.get("WEBAUTH_USER")
         name = os.environ.get("WEBAUTH_LDAP_DISPLAYNAME")

@@ -9,23 +9,21 @@
 
     <div class="container">
       <div class="page-header">
-	<h1>STATS 60/160<br>
-	<small>Professor Jonathan Taylor</small></h1>
-	<p id="studentName" class="lead">You are logged in as 
-  <strong>{{user.name}}</strong>.
-  {% if user.type == "admin" %}
-  You are an <a href="admin">administrator</a>.
-  {% endif %}
+	<h1>{{ options.title }}<br>
+	<small>{{ options.instructor }}</small></h1>
+	<p id="studentName" class="lead">You are logged in as <strong>{{user.name}}</strong>. 
+	  {% if user.type == "admin" %}
+	  You are an <a href="admin">administrator</a>.
+	  {% endif %}
 	</p>
-
       </div>
       <div class="row">
 	<div class="span2">
 
 	  <ul class="nav nav-pills">
-<!--      <li><a href="{{options.cgi}}/handouts">Handouts</a></li> !-->
-      <li><a href="{{options.cgi}}/">Homeworks</a></li>
-      <li><a href="{{options.cgi}}/grades">Grades</a></li>
+	    <li><a href="{{options.base_url}}">Home Page</a></li>
+	    <li><a href="{{options.base_url}}/{{options.cgi}}/">Homeworks</a></li>
+	    <li><a href="{{options.base_url}}/{{options.cgi}}/grades">Grades</a></li>
 	  </ul>
 	</div>
 
