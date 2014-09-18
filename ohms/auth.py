@@ -8,7 +8,7 @@ from objects import session, User
 from queries import get_user
 
 def auth():
-    if target == "local":
+    if options.target == "local":
         stuid = "test"
         name = "Test User"
     else:
