@@ -1,18 +1,21 @@
-import os, getpass
-user = getpass.getuser()
+import os, re, subprocess
 
 root = "../.."
 
 def run_command(cmd):
     print cmd
     os.system(cmd)
-    
-run_command("fs sa %s %s.cgi rlidwk" % (root, user))
+
+out = subprocess.check_output("fs la %s")
+m = re.match(r".*\.cgi", out)
+run_command("fs sa %s %s.cgi rlidwk" % (root, m.group))
 
 run_command("cp -r options/prod_options.py ohms/options.py")
 
 run_command("cp -r ohms %s/" % root)
 run_command("cp -r ohms %s/ohms_test" % root)
+run_command("fs sa %s/ohms system:anyuser none" % root)
+run_command("fs sa %s/ohms_test system:anyuser none" % root)
 
 run_command("cp -r static %s/WWW/" % root)
 run_command("cp -r static %s/WWW/static_test" % root)
