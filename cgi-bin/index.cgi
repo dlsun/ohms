@@ -3,6 +3,6 @@ import sys
 sys.path.append("..")
 
 from wsgiref.handlers import CGIHandler
-from ohms import app
+from ohms.app import app
 
 CGIHandler().run(app)
