@@ -4,7 +4,7 @@ OHMS: Online Homework Management System
 
 from flask import Flask, request, render_template, make_response
 import json
-from utils import NewEncoder
+from utils import NewEncoder, convert_to_last_name
 from datetime import datetime
 import xml.etree.ElementTree as ET
 from collections import defaultdict
@@ -14,7 +14,7 @@ from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
     get_peer_review_questions, get_peer_tasks_for_student, \
     get_peer_tasks_for_grader, get_self_tasks_for_student, \
-    get_grading_task, get_grades_for_student, add_grade, get_grade
+    get_grading_task, add_grade, get_all_grades, get_grade
 import options
 from pdt import pdt_now
 from auth import validate_user, validate_admin
@@ -37,7 +37,6 @@ def index():
     hws = get_homework()
     
     # to-do list for peer reviews
-
     to_do = defaultdict(int)
     peer_review_questions = get_peer_review_questions()
     for prq in peer_review_questions:
@@ -112,67 +111,99 @@ def submit():
     q_id = request.args.get("q_id")
     question = get_question(q_id)
     responses = request.form.getlist('responses')
-    return json.dumps(question.submit_response(user.stuid, responses),
-                      cls=NewEncoder)
+    out = question.submit_response(user.stuid, responses)
+    calculate_grade(user, question.homework)
+    return json.dumps(out, cls=NewEncoder)
+
+
+def calculate_grade(user, hw):
+    """
+    helper function that calculates a student's grade on a given homework
+    """
+
+    # total up the points
+    score, points = 0, 0
+    for q in hw.questions:
+        points += q.points
+        if q.type == "question":
+            response = get_last_question_response(q.id, user.stuid)
+            if response and response.score:
+                score += response.score
+        elif q.type == "Peer Review":
+            q.set_metadata()
+            tasks = get_peer_tasks_for_grader(q.question_id, user.stuid)
+            tasks.extend(get_self_tasks_for_student(q.question_id, user.stuid))
+            for task in tasks:
+                if task.comments is not None:
+                    score += 1. * q.points / len(tasks)
+
+    # fill in grades
+    grade = get_grade(user.stuid, hw.name)
+    if not grade:
+        add_grade(user.stuid, hw.name, hw.due_date, score, points)
+    else:
+        grade.time = hw.due_date
+        grade.score = score
+        grade.points = points
+    session.commit()
+
+    return grade
 
 
 @app.route("/grades")
 def grades():
     user = validate_user()
-
-    # update grades
-    homeworks = get_homework()
-    for hw in homeworks:
-        if hw.due_date > pdt_now():
-            continue
-        score, points = 0, 0
-        complete = True
-        for q in hw.questions:
-            points += q.points
-            if q.type == "question":
-                response = get_last_question_response(q.id, user.stuid)
-                if response:
-                    try: 
-                        score += response.score
-                    except:
-                        complete = False
-                        break # skip hws with scoreless responses
-            elif q.type == "Peer Review":
-                q.set_metadata()
-                tasks = get_peer_tasks_for_grader(q.question_id, user.stuid)
-                tasks.extend(get_self_tasks_for_student(q.question_id, user.stuid))
-                for task in tasks:
-                    if task.comments is not None:
-                        score += 1. * q.points / len(tasks)
-        if complete:
-            grade = get_grade(user.stuid, hw.name)
-            if not grade:
-                add_grade(user.stuid, hw.name, hw.due_date, score, points)
-            else:
-                grade.time = hw.due_date
-                grade.score = score
-                grade.points = points
-                session.commit()
+    grades = get_all_grades(user.stuid)
     
     # fetch grades from gradebook
-    return render_template("grades.html", grades=get_grades_for_student(user.stuid), 
+    return render_template("grades.html", grades=grades, 
                            options=options, user=user)
-
 
 # ADMIN FUNCTIONS
 @app.route("/admin")
 def admin():
-    user = validate_admin()
+    admin = validate_admin()
 
-    return render_template("admin/index.html", options=options)
+    homeworks = [hw for hw in get_homework() if hw.due_date <= pdt_now()]
+    students = session.query(User).filter_by(type="student").all()
+    students.sort(key=lambda user: convert_to_last_name(user.name))
+
+    gradebook = []
+    for student in students:
+        gradebook.append((student, get_all_grades(student.stuid)))
+
+    assignments = [g.assignment for g in gradebook[0][1]] if gradebook else []
+
+    guests = session.query(User).filter_by(type="guest").all()
+    admins = session.query(User).filter_by(type="admin").all()
+
+    return render_template("admin/index.html", students=students, guests=guests, admins=admins,  
+                           assignments=assignments, gradebook=gradebook, options=options)
+
+@app.route("/change_user_type", methods=['POST'])
+def change_user_type():
+    admin = validate_admin()
+
+    stuid = request.form['user']
+    user_type = request.form['type']
+
+    session.query(User).filter_by(stuid=stuid).update({
+        "type": user_type
+    })
+    session.commit()
+
+    return "Successfully changed user %s to %s." % (stuid, user_type)
 
 @app.route("/update_question", methods=['POST'])
 def update_question():
-    user = validate_admin()
+    admin = validate_admin()
     
     q_id = request.form['q_id']
     xml_new = request.form['xml']
-    node = ET.fromstring(xml_new)
+    try:
+        node = ET.fromstring(xml_new)
+    except Exception as e:
+        raise Exception(str(e))
     node.attrib['id'] = q_id
     question = Question.from_xml(node)
     return json.dumps({
@@ -182,19 +213,22 @@ def update_question():
         
 @app.route("/update_response", methods=['POST'])
 def update_response():
-    user = validate_admin()
+    admin = validate_admin()
 
     response_id = request.form["response_id"]
     response = get_question_response(response_id)
     score = request.form["score"]
     response.score = float(score) if score else None
-    response.comments = request.form["comments"]
+    response.comments = request.form["comments"]    
     session.commit()
-    return ""
+
+    calculate_grade(response.user, response.question.homework)
+
+    return "Updated score for student %s to %f." % (response.stuid, response.score)
     
 @app.route("/view_responses")
 def view_responses():
-    user = validate_admin()
+    admin = validate_admin()
 
     q_id = request.args.get('q')
     users = session.query(User).all()
@@ -203,11 +237,11 @@ def view_responses():
         response = get_last_question_response(q_id, u.stuid)
         if response:
             responses.append(response)
-    return render_template("admin/view_responses.html", responses=responses, options=options, user=user)
+    return render_template("admin/view_responses.html", responses=responses, options=options)
 
 @app.route("/change_user", methods=['POST'])
 def change_user():
-    user = validate_admin()
+    admin = validate_admin()
     student = request.form['user']
 
     try:
@@ -215,16 +249,16 @@ def change_user():
     except:
         raise Exception("No user exists with the given ID.")
 
-    session.query(User).filter_by(stuid=user.stuid).update({
+    session.query(User).filter_by(stuid=admin.stuid).update({
         "proxy": student
     })
     session.commit()
 
-    return "Successfully changed user to %s" % user.proxy
+    return "Successfully changed user to %s" % admin.proxy
 
 @app.route("/add_homework", methods=['POST'])
 def add_homework():
-    user = validate_admin()
+    admin = validate_admin()
 
     name = request.form['name']
     start_date = datetime.strptime(request.form['start_date'],
@@ -243,7 +277,7 @@ def add_homework():
 
 @app.route("/add_question", methods=['POST'])
 def add_question():
-    user = validate_admin()
+    admin = validate_admin()
 
     xml = request.form['xml']
     node = ET.fromstring(xml)

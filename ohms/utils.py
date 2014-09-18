@@ -20,3 +20,7 @@ class NewEncoder(json.JSONEncoder):
                 d[column.name] = getattr(obj, column.name)
             return d
         return json.JSONEncoder.default(self, obj)
+
+def convert_to_last_name(name):
+    x = name.split()
+    return x[-1] + ', ' + " ".join(x[:-1])
