@@ -5,7 +5,7 @@ title = "OHMS"
 instructor = "Dennis Sun and Naftali Harris"
 
 # specify the directories that you use for your course
-class_prefix = "http://www.stanford.edu/class/stats60"
+base_url = "http://www.stanford.edu/class/stats60"
 cgi = "cgi-bin/index.cgi"
 static = "static"
 
