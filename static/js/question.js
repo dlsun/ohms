@@ -57,6 +57,7 @@ var OHMS = (function(OHMS) {
 		    success : function (data) {
 			that.element.find(".source").val(data.xml).hide();
 			that.element.find(".editable").html(data.html).show();
+			MathJax.Hub.Typeset(that.element.get(0));
 		    }, 
 		    error : function (xhr) {
 			add_alert("The update failed because <br><br>" + xhr.responseText);
