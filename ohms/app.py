@@ -9,7 +9,7 @@ from datetime import datetime
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 
-from objects import session, Question, User, GradingTask
+from objects import session, Homework, Question, User, GradingTask
 from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
     get_all_responses_to_question, get_grading_tasks_for_question, \
@@ -300,7 +300,6 @@ def add_homework():
     due_date = datetime.strptime(request.form['due_date'],
                                  "%m/%d/%Y %H:%M:%S")
 
-    from objects import Homework
     homework = Homework(name=name,
                         start_date=start_date,
                         due_date=due_date)
@@ -308,6 +307,23 @@ def add_homework():
     session.commit()
 
     return "%s added successfully!" % name
+
+@app.route("/update_due_date", methods=['POST'])
+def update_due_date():
+    admin = validate_admin()
+
+    hw_id = request.form['hw_id']
+    start_date = datetime.strptime(request.form['start_date'],
+                                   "%m/%d/%Y %H:%M:%S")
+    due_date = datetime.strptime(request.form['due_date'],
+                                 "%m/%d/%Y %H:%M:%S")
+    homework = get_homework(hw_id)
+    homework.start_date = start_date
+    homework.due_date = due_date
+    session.commit()
+
+    return "Due date for %s updated successfully!" % homework.name
+
 
 @app.route("/add_question", methods=['POST'])
 def add_question():

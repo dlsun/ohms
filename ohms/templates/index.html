@@ -29,26 +29,36 @@ that you have yet to respond to:
   {% for hw in homeworks %}
 
   <tr>
-    <td>
-      {% if hw.start_date==None or hw.start_date < current_time %}
-        <a href="hw?id={{hw.id}}">{{hw.name}}</a>
-      {% else %}
-        <p class="muted">{{hw.name}}</p>
-	{% if user.type=="admin" %}
-	(<a href="hw?id={{hw.id}}">Preview</a>)
+    <form action="update_due_date" method="POST">
+      <input type="hidden" name="hw_id" value='{{ hw.id }}'>
+      <td>
+	{% if hw.start_date==None or hw.start_date < current_time %}
+          <a href="hw?id={{hw.id}}">{{hw.name}}</a>
+	{% else %}
+          <p class="muted">{{hw.name}}</p>
+	  {% if user.type=="admin" %}
+	  (<a href="hw?id={{hw.id}}">Preview</a>)
+	  {% endif %}
+        {% endif %}
+      </td>
+      <td>
+        {% if user.type == "admin" %}
+          <input type="text" name="start_date" value='{% if hw.start_date %}{{ hw.start_date.strftime("%m/%d/%Y %H:%M:%S") }}{% endif %}'/>
+        {% elif hw.start_date %}
+          {{hw.start_date.strftime("%a, %b %d at %I:%M %p")}}
+        {% endif %}
+      </td>
+      <td>
+        {% if user.type == "admin" %}
+          <input type="text" name="due_date" value='{% if hw.due_date %}{{ hw.due_date.strftime("%m/%d/%Y %H:%M:%S") }}{% endif %}'/>
+        {% elif hw.due_date %}
+          {{hw.due_date.strftime("%a, %b %d at %I:%M %p")}}
+        {% endif %}
+	{% if user.type == "admin" %}
+	  <input type="submit" value="Update!"/>
 	{% endif %}
-      {% endif %}
-    </td>
-    <td>
-      {% if hw.start_date %}
-        {{hw.start_date.strftime("%a, %b %d at %I:%M %p")}}
-      {% endif %}
-    </td>
-    <td>
-      {% if hw.due_date %}
-        {{hw.due_date.strftime("%a, %b %d at %I:%M %p")}}
-      {% endif %}
-    </td>
+      </td>
+    </form>
   </tr>
 
   {% endfor %}
@@ -58,7 +68,7 @@ that you have yet to respond to:
   <tr>
     <td><input type="text" name="name"/></td>
     <td><input type="text" name="start_date" value="MM/DD/YYYY HH:MM:SS"/></td>
-    <td><input type="text" name="due_date" value="MM/DD/YYYY HH:MM:SS"/> <input type="submit" name="Add Homework!"></td>
+    <td><input type="text" name="due_date" value="MM/DD/YYYY HH:MM:SS"/> <input type="submit" value="Add Homework!"></td>
   </tr>
   </form>
   {% endif %}
