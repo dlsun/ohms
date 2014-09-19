@@ -8,7 +8,7 @@ def update_options(type):
 
 def static_deploy(type):
     out = update_options(type)
-    os.system("rsync -avz static/ corn.stanford.edu:%s/static%s" % out)
+    os.system("rsync -avz static/ corn.stanford.edu:%s/WWW/static%s" % out)
     print "Successfully deployed static files to %s!" % type
 
 def code_deploy(type):
