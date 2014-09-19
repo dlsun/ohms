@@ -72,6 +72,12 @@ that you have yet to respond to:
   </tbody>
 </table>
 
+{% endblock %}
+
+{% block javascript %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="{{options.base_url}}/{{options.static}}/js/bootstrap.min.js"></script>
 
 {% if user.type == "admin" %}
 <script type="text/javascript">
@@ -118,4 +124,3 @@ $(".add").click(function (event) {
 {% endif %}
 
 {% endblock %}
-
