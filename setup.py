@@ -6,6 +6,8 @@ def run_command(cmd):
     print cmd
     os.system(cmd)
 
+run_command("fs sa . system:anyuser none")
+
 out = subprocess.check_output(["fs", "la", root])
 cgi_user = re.findall('class.*\.cgi', out)[0]
 run_command("fs sa -dir `find %s -type d -print` -acl %s rlidwk" % (root, cgi_user))
