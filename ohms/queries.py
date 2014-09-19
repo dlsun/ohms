@@ -57,20 +57,20 @@ def get_last_question_response(question_id, stuid):
         order_by(QuestionResponse.time).all()
     return qrs[-1] if qrs else None
 
-def grading_permissions_query(question_id, stuid):
-    return session.query(GradingTask.permission).\
-        filter_by(stuid=stuid).\
-        filter_by(question_id=question_id)
-
-def get_grading_permissions(question_id, stuid):
-    return grading_permissions_query(question_id, stuid).all()
-
-def set_grading_permissions(question_id, stuid, permissions):
-    grading_permissions_query(question_id, stuid).update({"permissions": permissions})
-    session.commit()
+def get_all_responses_to_question(question_id):
+    users = session.query(User).all()
+    responses = []
+    for u in users:
+        response = get_last_question_response(question_id, u.stuid)
+        if response:
+            responses.append(response)
+    return responses
 
 def get_grading_task(grading_task_id):
     return session.query(GradingTask).get(grading_task_id)
+
+def get_grading_tasks_for_question(question_id):
+    return session.query(GradingTask).filter_by(question_id=question_id).all()
 
 def get_peer_tasks_for_grader(question_id, stuid):
     return session.query(GradingTask).\

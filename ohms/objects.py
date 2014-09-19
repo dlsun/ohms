@@ -515,6 +515,10 @@ class PeerReview(Question):
         node = ET.fromstring(self.xml)
         self.question_id = int(node.attrib['question_id'])
         self.points = float(node.attrib['points'])
+        if 'n_reviews' in node.attrib:
+            self.n_reviews = int(node.attrib['n_reviews'])
+        else:
+            self.n_reviews = 3
 
     def to_html(self):
 

@@ -9,9 +9,10 @@ from datetime import datetime
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 
-from objects import session, Question, User
+from objects import session, Question, User, GradingTask
 from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
+    get_all_responses_to_question, get_grading_tasks_for_question, \
     get_peer_review_questions, get_peer_tasks_for_student, \
     get_peer_tasks_for_grader, get_self_tasks_for_student, \
     get_grading_task, add_grade, get_all_grades, get_grade
@@ -36,26 +37,63 @@ def index():
     user = validate_user()
     hws = get_homework()
     
-    # to-do list for peer reviews
-    to_do = defaultdict(int)
+    to_do = defaultdict(int) # to-do list for peer reviews
+
+    # iterate over the questions that are peer review questions
     peer_review_questions = get_peer_review_questions()
     for prq in peer_review_questions:
+
+        # instantiate the object with data from the XML
         prq.set_metadata()
+
+        # get student's response to the original question, if any
         response = get_last_question_response(prq.question_id, user.stuid)
-        # if deadline has passed...
-        if response and prq.homework.due_date < pdt_now():
-            # compute updated score for student
-            tasks = get_peer_tasks_for_student(prq.question_id, user.stuid)
-            scores = [t.score for t in tasks if t.score is not None]
-            new_score = sorted(scores)[len(scores) // 2] if scores else None
-            if response.score != new_score:
-                response.score = new_score
-                response.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments." % prq.question_id
-                session.commit()
-            # check that student has rated all the peer reviews
-            for task in tasks:
-                if task.score is not None and task.rating is None:
-                    to_do[response.question.homework] += 1
+
+        # if student answered the question
+        if response:
+
+            # check if the homework deadline has passed
+            if response.question.homework.due_date < pdt_now():
+                q_id = response.question_id
+                # check if student has already been assigned tasks
+                tasks = get_peer_tasks_for_grader(q_id, user.stuid)
+                n = len(tasks)
+                m = prq.n_reviews
+                # if not, assign the tasks
+                if n < m:
+                    responses = get_all_responses_to_question(q_id)
+                    tasks = get_grading_tasks_for_question(q_id)
+                    pool = []
+                    for r in responses:
+                        if r.stuid == user.stuid:
+                            continue
+                        i = len([t for t in tasks if t.student == r.stuid])
+                        pool.extend([r.stuid]*(m-i))
+                    while n < m:
+                        import random
+                        student = random.choice(pool)
+                        gt = GradingTask(grader=user.stuid,
+                                         student=student,
+                                         question_id=q_id)
+                        session.add(gt)
+                        pool = [p for p in pool if p != student]
+                        n += 1
+                    session.commit()
+
+            # check if peer grading deadling has passed
+            if prq.homework.due_date < pdt_now():
+                # compute updated score for student
+                tasks = get_peer_tasks_for_student(prq.question_id, user.stuid)
+                scores = [t.score for t in tasks if t.score is not None]
+                new_score = sorted(scores)[len(scores) // 2] if scores else None
+                if response.score != new_score:
+                    response.score = new_score
+                    response.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments." % prq.question_id
+                    session.commit()
+                # check that student has rated all the peer reviews
+                for task in tasks:
+                    if task.score is not None and task.rating is None:
+                        to_do[response.question.homework] += 1
 
     return render_template("index.html", homeworks=hws,
                            user=user,
@@ -231,12 +269,8 @@ def view_responses():
     admin = validate_admin()
 
     q_id = request.args.get('q')
-    users = session.query(User).all()
-    responses = []
-    for u in users:
-        response = get_last_question_response(q_id, u.stuid)
-        if response:
-            responses.append(response)
+    responses = get_all_responses_to_question(q_id)
+
     return render_template("admin/view_responses.html", responses=responses, options=options)
 
 @app.route("/change_user", methods=['POST'])
