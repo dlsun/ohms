@@ -24,3 +24,10 @@ run_command("cp cgi-bin/* %s/cgi-bin/" % root)
 run_command("cp -r cgi-bin %s/cgi-bin/test" % root)
 run_command("chmod 700 %s/cgi-bin/index.cgi" % root)
 run_command("chmod 700 %s/cgi-bin/test/index.cgi" % root)
+
+# initialize empty database
+print "Now initializing the database..."
+from ohms.objects import Base
+from ohms.base import engine
+Base.metadata.create_all(engine)
+
