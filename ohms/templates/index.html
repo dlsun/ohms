@@ -87,7 +87,7 @@ $(".update").click(function(event) {
     type : "POST",
     dataType : "text",
     data : {
-      hw_id: row.find("input[name='hw_id']"),
+      hw_id: row.attr("value"),
       start_date: row.find("input[name='start_date']").val(),
       due_date: row.find("input[name='due_date']").val()
     },
@@ -107,7 +107,7 @@ $(".add").click(function (event) {
     type : "POST",
     dataType : "text",
     data : {
-      name: row.val(),
+      name: row.find("input[name='name']").val(),
       start_date: row.find("input[name='start_date']").val(),
       due_date: row.find("input[name='due_date']").val()
     },
