@@ -446,11 +446,14 @@ class LongAnswerItem(Item):
         self.solution = ET.tostring(solution) if solution is not None else ""
 
     def to_html(self):
-        attrib = {"class": "item span7",
+        attrib = {"class": "item span5",
                   "itemtype": "long-answer",
-                  "rows": "4",
+                  "rows": "8",
                   "disabled": "disabled"}
-        node = ET.Element("textarea", attrib=attrib)
+        node = ET.Element("div")
+        ET.SubElement(node, "textarea", attrib=attrib)
+        ET.SubElement(node, "div", attrib={"class": "preview"})
+        
         return node
 
 
