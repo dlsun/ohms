@@ -83,7 +83,7 @@ that you have yet to respond to:
 $(".update").click(function(event) {
   var row = $(this).parents("tr").eq(0);
   $.ajax({
-    url : "update_due_date",
+    url : "{{options.base_url}}/{{options.cgi}}/update_due_date",
     type : "POST",
     dataType : "text",
     data : {
@@ -103,7 +103,7 @@ $(".update").click(function(event) {
 $(".add").click(function (event) {
   var row = $(this).parents("tr").eq(0);
   $.ajax({
-    url : "add_homework",
+    url : "{{options.base_url}}/{{options.cgi}}/add_homework",
     type : "POST",
     dataType : "text",
     data : {
