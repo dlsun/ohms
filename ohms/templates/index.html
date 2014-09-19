@@ -29,15 +29,15 @@ that you have yet to respond to:
   {% for hw in homeworks %}
 
   <tr>
-    <form action="update_due_date" method="POST">
+    <form action="{{options.base_url}}/{{options.cgi}}/update_due_date" method="POST">
       <input type="hidden" name="hw_id" value='{{ hw.id }}'>
       <td>
 	{% if hw.start_date==None or hw.start_date < current_time %}
-          <a href="hw?id={{hw.id}}">{{hw.name}}</a>
+          <a href="{{options.base_url}}/{{options.cgi}}/hw?id={{hw.id}}">{{hw.name}}</a>
 	{% else %}
           <p class="muted">{{hw.name}}</p>
 	  {% if user.type=="admin" %}
-	  (<a href="hw?id={{hw.id}}">Preview</a>)
+	  (<a href="{{options.base_url}}/{{options.cgi}}/hw?id={{hw.id}}">Preview</a>)
 	  {% endif %}
         {% endif %}
       </td>
@@ -64,7 +64,7 @@ that you have yet to respond to:
   {% endfor %}
 
   {% if user.type == "admin" %}
-  <form action="add_homework" method="POST">
+  <form action="{{options.base_url}}/{{options.cgi}}/add_homework" method="POST">
   <tr>
     <td><input type="text" name="name"/></td>
     <td><input type="text" name="start_date" value="MM/DD/YYYY HH:MM:SS"/></td>
