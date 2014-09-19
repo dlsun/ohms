@@ -28,8 +28,7 @@ that you have yet to respond to:
 
   {% for hw in homeworks %}
 
-  <tr>
-    <input type="hidden" name="hw_id" value="{{ hw.id }}"/>
+  <tr value="{{ hw.id }}"/>
       <td>
 	{% if hw.start_date==None or hw.start_date < current_time %}
           <a href="{{options.base_url}}/{{options.cgi}}/hw?id={{hw.id}}">{{hw.name}}</a>
@@ -108,7 +107,7 @@ $(".add").click(function (event) {
     type : "POST",
     dataType : "text",
     data : {
-      name: row.find("input[name='name']").val(),
+      name: row.val(),
       start_date: row.find("input[name='start_date']").val(),
       due_date: row.find("input[name='due_date']").val()
     },
