@@ -31,12 +31,12 @@ run_command("cp cgi-bin/index.cgi %s/cgi-bin/" % root)
 run_command("chmod 700 %s/cgi-bin/index.cgi" % root)
 
 # set .htaccess file appropriately
-try:
-    from options import htaccess
-    if htaccess:
-        run_command("cp %s %s/cgi-bin/.htaccess" % (htaccess, root))
-    else:
-        run_command("cp cgi-bin/.htaccess %s/cgi-bin/.htaccess" % root)
+from options import htaccess
+if htaccess:
+    run_command("cp %s %s/cgi-bin/.htaccess" % (htaccess, root))
+else:
+    run_command("cp cgi-bin/.htaccess %s/cgi-bin/.htaccess" % root)
+
 
 # initialize empty database
 print "Now initializing the database..."
