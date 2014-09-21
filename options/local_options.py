@@ -10,7 +10,8 @@ cgi = ""
 static = "/static"
 
 # using SQLite as backend for local deploy
-db = "sqlite:///ohms.db"
+def get_db():
+    return "sqlite:///ohms.db"
 
 # specify the IDs of the course administrators (e.g., instructors, TAs)
 admins = ['test']
