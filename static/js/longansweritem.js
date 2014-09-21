@@ -24,6 +24,7 @@ var OHMS = (function(OHMS) {
 	    that.preview.text(event.target.value);
 	    MathJax.Hub.Typeset(that.preview.get(0));
 	})
+	this.textarea.autosize();
     }
     
     LongAnswerItem.prototype.get_value = function () {
