@@ -31,7 +31,7 @@ run_command("cp cgi-bin/index.cgi %s/cgi-bin/" % root)
 run_command("chmod 700 %s/cgi-bin/index.cgi" % root)
 
 # set .htaccess file appropriately
-from options import htaccess
+from ohms.options import htaccess
 if htaccess:
     run_command("cp %s %s/cgi-bin/.htaccess" % (htaccess, root))
 else:
