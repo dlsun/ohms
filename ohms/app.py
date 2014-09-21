@@ -2,7 +2,7 @@
 OHMS: Online Homework Management System
 """
 
-from flask import Flask, request, render_template, make_response
+from flask import Flask, request, render_template, make_response, redirect
 import json
 from utils import NewEncoder, convert_to_last_name
 from datetime import datetime
@@ -31,9 +31,12 @@ else:
     def handle_exceptions(error):
         return make_response(error.message, 403)
 
-
 @app.route("/")
 def index():
+    return render_template("index.html", options=options)
+
+@app.route("/list")
+def list():
     user = validate_user()
     hws = get_homework()
     
@@ -95,7 +98,7 @@ def index():
                     if task.score is not None and task.rating is None:
                         to_do[response.question.homework] += 1
 
-    return render_template("index.html", homeworks=hws,
+    return render_template("list.html", homeworks=hws,
                            user=user,
                            options=options,
                            current_time=pdt_now(),
