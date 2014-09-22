@@ -12,28 +12,48 @@ var OHMS = (function(OHMS) {
     var LongAnswerItem = function (question,item) {
 	OHMS.Item.apply(this,arguments);
 	this.textarea = this.element.find("textarea");
-	this.preview = this.element.find(".preview");
-	this.bind_events();
+	this.preview = this.element.find(".response");
+	this.id = this.textarea.attr("id");
+
+	var that = this;
+	tinymce.init({
+	    selector: "textarea#" + this.id,
+	    theme: "modern",
+	    forced_root_block: false,
+	    plugins: [
+		"advlist autolink lists link image charmap hr anchor",
+		"visualblocks code",
+		"media nonbreaking save table contextmenu",
+		"paste textcolor colorpicker textpattern"
+	    ],
+	    menubar: false,
+	    toolbar1: "undo redo | alignleft aligncenter alignright | bullist numlist | link image media",
+	    toolbar2: "bold italic underline | superscript subscript | fontsizeselect forecolor | table",
+	    statusbar: false,
+	    image_advtab: true,
+	    setup: function(editor) {
+		editor.on('init', function() {
+		    that.editor = tinymce.get("long1");
+		    var doc = this.getDoc();
+		    doc.body.style.fontSize = '14px';
+		 })
+		 editor.on('keyup', function() {
+		     that.preview.html(that.editor.getContent());
+		     MathJax.Hub.Typeset(that.preview.get(0));
+		 })
+	    }
+	});
     }
     
     LongAnswerItem.prototype = new OHMS.Item();
-    
-    LongAnswerItem.prototype.bind_events = function () {
-	var that = this;
-	this.textarea.keyup(function(event) {
-	    that.preview.text(event.target.value);
-	    MathJax.Hub.Typeset(that.preview.get(0));
-	})
-	this.textarea.autosize();
-    }
-    
+        
     LongAnswerItem.prototype.get_value = function () {
-	return this.textarea.val();
+	return this.editor.getContent();
     }
 
     LongAnswerItem.prototype.set_value = function (value) {
-	this.textarea.val(value);
-	this.preview.text(value);
+	this.editor.setContent(value);
+	this.preview.html(value);
     }
 
     LongAnswerItem.prototype.unlock = function () {

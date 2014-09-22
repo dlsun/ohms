@@ -25,12 +25,12 @@
 	  <ul>
 	  {% for item_response in response.item_responses %}
 	    <li>
-	      <div class="answer" style="white-space: pre-wrap">{{ item_response.response }}</div>
+	      <div class="response">{{ item_response.response|safe }}</div>
 	    </li>
 	  {% endfor %}
 	  </ul>
 	</td><td class='span6' {% if response.score != None %}style='background-color:#dff0d8;'{% endif %}>
-	  <div class="response" id='{{ response.id }}'>
+	  <div class="grading" id='{{ response.id }}'>
 	    <table>
 	      <tr>
 		<td><b>Score:</b></td>
@@ -60,13 +60,8 @@
     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script src="{{options.base_url}}/{{options.static}}/js/namespace.js"></script>
     <script type="text/javascript">
-var answers = $(".answer");
-for(var i=0; i<answers.size(); i++) {
-  MathJax.Hub.Typeset(answers.get(i));
-}
-
 $(".submit").click(function () {
-  var div = $(this).parents(".response").eq(0);
+  var div = $(this).parents(".grading").eq(0);
   var response_id = div.attr("id");
   var score = div.find("input").val();
   var comments = div.find("textarea").val();
