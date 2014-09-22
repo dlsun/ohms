@@ -69,7 +69,7 @@ def get_all_responses_to_question(question_id):
 def get_grading_task(grading_task_id):
     return session.query(GradingTask).get(grading_task_id)
 
-def get_grading_tasks_for_question(question_id):
+def get_all_peer_tasks_for_question(question_id):
     return session.query(GradingTask).filter_by(question_id=question_id).all()
 
 def get_peer_tasks_for_grader(question_id, stuid):

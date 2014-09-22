@@ -33,7 +33,7 @@ var OHMS = (function(OHMS) {
 	    image_advtab: true,
 	    setup: function(editor) {
 		editor.on('init', function() {
-		    that.editor = tinymce.get("long1");
+		    that.editor = tinymce.get(that.id);
 		    var doc = this.getDoc();
 		    doc.body.style.fontSize = '14px';
 		 })
@@ -52,8 +52,10 @@ var OHMS = (function(OHMS) {
     }
 
     LongAnswerItem.prototype.set_value = function (value) {
-	this.editor.setContent(value);
-	this.preview.html(value);
+	if (value !== null) {
+	    this.editor.setContent(value);
+	    this.preview.html(value);
+	}
     }
 
     LongAnswerItem.prototype.unlock = function () {

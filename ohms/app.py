@@ -12,7 +12,7 @@ from collections import defaultdict
 from objects import session, Homework, Question, User, GradingTask
 from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
-    get_all_responses_to_question, get_grading_tasks_for_question, \
+    get_all_responses_to_question, get_all_peer_tasks_for_question, \
     get_peer_review_questions, get_peer_tasks_for_student, \
     get_peer_tasks_for_grader, get_self_tasks_for_student, \
     get_grading_task, add_grade, get_all_grades, get_grade
@@ -73,7 +73,7 @@ def list():
                 # if not, assign the tasks
                 if n < m:
                     responses = get_all_responses_to_question(q_id)
-                    tasks = get_grading_tasks_for_question(q_id)
+                    tasks = get_all_peer_tasks_for_question(q_id)
                     pool = []
                     for r in responses:
                         if r.stuid == user.stuid:

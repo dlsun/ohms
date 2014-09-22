@@ -527,8 +527,8 @@ class PeerReview(Question):
         sub = node.find("self")
         self.self_pts = float(sub.attrib['points']) if sub is not None else None
         sub = node.find("rate")
-        self.rate_pts = float(sub.attrib['points']) if sub is not None else None
-        self.points = sum(self.peer_pts) + (self.self_pts or 0.) + (self.rate_pts or 0.)
+        self.rate_pts = float(sub.attrib['points']) if sub is not None else 0.
+        self.points = sum(self.peer_pts) + (self.self_pts or 0.) + self.rate_pts
 
     def to_html(self):
 
@@ -563,7 +563,7 @@ class PeerReview(Question):
         self.set_metadata()
 
         item_responses = []
-        score = 0
+        score = 0.
         time = None
         comment = ""
 
@@ -573,8 +573,7 @@ class PeerReview(Question):
             ratings = []
             for i, task in enumerate(tasks):
                 # each review is a score + response; we represent each review as two items
-                item_responses.append({"response": task.score})
-                item_responses.append({"response": task.comments})
+                item_responses.extend([ItemResponse(response=task.score), ItemResponse(response=task.comments)])
                 if task.rating is not None: ratings.append(task.rating)
                 if task.comments is not None: score += self.peer_pts[i]
                 time = task.time
@@ -589,26 +588,27 @@ class PeerReview(Question):
                 elif median <= 1:
                     comment += "Your peers found your feedback unsatisfactory. Please see a member of the course staff to discuss strategies to improve."
             elif score:
-                comment = "Watch this space for your peers' responses to your feedback. Your peers' responses is worth %f points, so you cannot earn all %s points yet." % (self.rate_pts, self.points)
+                comment = "Watch this space for your peers' judgment of your feedback."
+                if self.rate_pts:
+                    comment += "Your peers' responses is worth %f points, so you cannot earn all %s points yet." % (self.rate_pts, self.points)
 
         # get self tasks
         if self.self_pts is not None:
             # there should really only be one task, but....
             tasks = get_self_tasks_for_student(self.question_id, stuid)
             if tasks:
-                item_responses.append({"response": tasks[0].score})
-                item_responses.append({"response": tasks[0].comments})
-                if tasks[0].comments is not None: score += self.peer_pts[i]
+                item_responses.extend([ItemResponse(response=tasks[0].score), ItemResponse(response=tasks[0].comments)])
+                if tasks[0].comments is not None: score += self.self_pts
                 time = tasks[0].time
 
         return {
             "locked": (pdt_now() > self.homework.due_date),
-            "submission": { 
-                "item_responses": item_responses,
-                "score": score,
-                "comments": comment,
-                "time": time
-            }
+            "submission": QuestionResponse(
+                item_responses=item_responses,
+                score=score,
+                comments=comment,
+                time=time
+            )
         }
 
     def submit_response(self, stuid, responses):
@@ -647,22 +647,24 @@ class PeerReview(Question):
 
             # then we have self tasks
             if self.self_pts is not None:
-                tasks = get_self_tasks_for_grader(self.question_id, stuid)
+                tasks = get_self_tasks_for_student(self.question_id, stuid)
                 if tasks:
                     task = check_and_update_task(tasks[0])
                     if task.comments is not None: score += self.self_pts
 
-            comments = "Watch this space for your peers' responses to your feedback. Your peers' responses is worth %f points, so you cannot earn all %s points yet." % (self.rate_pts, self.points)
+            comments = "Watch this space for your peers' judgment of your feedback. "
+            if self.rate_pts:
+                comments += "Your peers' judgment is worth %f points, so you cannot earn all %s points yet." % (self.rate_pts, self.points)
 
             session.commit()
             
             return {
                 'locked': (pdt_now() > self.homework.due_date),
-                'submission': {
-                    "time": pdt_now(),
-                    "score": score,
-                    "comments": comments
-                    }
+                'submission': QuestionResponse(
+                    time=pdt_now(),
+                    score=score,
+                    comments=comments
+                    )
             }
 
         else:

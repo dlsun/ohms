@@ -11,33 +11,38 @@
 
 {% if peer_responses is defined %}
   <tr><td>
-    <h4>Peer Review</h4>
+    <h4>Peer Assessment</h4>
 
-    <p>Please review the following responses from your peers. You 
-should provide detailed comments, even if the response is perfect. 
-In the case of a perfect response, you should reiterate what 
-the student did well. Note that to earn full marks you must also complete
-zthe self-reflection.</p>
+    <p>Please review the following responses from your peers. Note 
+that you are only eligible to assess responses if you answered the 
+question yourself. Please provide detailed comments, even if the 
+response is perfect. In the case of a perfect response, you should 
+reiterate what the response does well.</p>
   </td></tr>
 
   {% for qr in peer_responses %}
   <tr><td>
-    <table class='table table-condensed'>
+    <table>
       <tr>
         <td class='span2'><strong>Response {{ loop.index }}</strong></td>
-        <td class='response span5'>{{ qr }}</td>
+        <td class='response span8'>{{ qr }}</td>
       </tr>
-      <tr class='info'>
+      <tr>
         <td><strong>Score</strong></td>
         <td>
           <input type='text' class='item input-mini' itemtype='short-answer' disabled='disabled'/> 
 	      out of {{ qr.question.points }} points
         </td>
       </tr>
-      <tr class='info'>
+      <tr>
         <td><strong>Comments</strong></td>
         <td>
-          <textarea class='item span5' itemtype='long-answer' disabled='disabled'></textarea>
+	  <table class='item' itemtype='long-answer'>
+	    <tr>
+	      <td class='span8'><textarea id='long{{ qr.id }}' rows="4"></textarea></td>
+	      <td class='response' style="display:none;"></td>
+	    </tr>
+	  </table>
         </td>
       </tr>
     </table>
@@ -56,22 +61,27 @@ concepts to review.</p>
 
   {% if self_response %}
   <tr><td>
-    <table class='table table-condensed'>
+    <table>
       <tr>
         <td class='span2'><strong>My Response</strong></td>
-        <td class='response span5'>{{ self_response }}</td>
+        <td class='response span8'>{{ self_response }}</td>
       </tr>
-      <tr class='info'>
+      <tr>
         <td><strong>Score</strong></td>
         <td>
           <input type='text' class='item input-mini' itemtype='short-answer' disabled='disabled'/> 
 	      out of {{ self_response.question.points }} points
         </td>
       </tr>
-      <tr class='info'>
+      <tr class=>
         <td><strong>Comments</strong></td>
         <td>
-          <textarea class='item span5' itemtype='long-answer' disabled='disabled'></textarea>
+	  <table class='item' itemtype='long-answer'>
+	    <tr>
+	      <td class='span8'><textarea id='long0' rows="4"></textarea></td>
+	      <td class='response' style="display:none;"></td>
+	    </tr>
+	  </table>
         </td>
       </tr>
     </table>
