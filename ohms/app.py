@@ -175,7 +175,8 @@ def calculate_grade(user, hw):
     for q in hw.questions:
         points += q.points
         out = q.load_response(user.stuid)
-        score += (out['submission'].score or 0.)
+        if out['submission']:
+            score += (out['submission'].score or 0.)
     # fill in grades
     grade = get_grade(user.stuid, hw.name)
     if not grade:
