@@ -57,6 +57,9 @@ def list():
 
             # check if the homework deadline has passed
             if response.question.homework.due_date < pdt_now():
+
+                calculate_grade(user, response.question.homework)
+
                 q_id = response.question_id
                 # if student is required to do self assessment:
                 if prq.self_pts is not None:
@@ -161,7 +164,6 @@ def submit():
     question = get_question(q_id)
     responses = request.form.getlist('responses')
     out = question.submit_response(user.stuid, responses)
-    calculate_grade(user, question.homework)
     return json.dumps(out, cls=NewEncoder)
 
 
@@ -193,6 +195,7 @@ def calculate_grade(user, hw):
 @app.route("/grades")
 def grades():
     user = validate_user()
+
     grades = get_all_grades(user.stuid)
     
     # fetch grades from gradebook
@@ -258,8 +261,6 @@ def update_response():
     response.score = float(score) if score else None
     response.comments = request.form["comments"]    
     session.commit()
-
-    calculate_grade(response.user, response.question.homework)
 
     return "Updated score for student %s to %f." % (response.stuid, response.score)
     
