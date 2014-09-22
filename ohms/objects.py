@@ -86,6 +86,7 @@ class Question(Base):
 
         return question
 
+    # this should probably be a sync_from_node eventually?
     def set_metadata(self):
         node = ET.fromstring(self.xml)
         node.attrib['id'] = str(self.id)
@@ -124,7 +125,7 @@ class Question(Base):
                         if include_items: parent.insert(j, e_new)
                         break
                 i += 1
-        return ET.tostring(node, method="html")
+        return node.text + "".join(ET.tostring(child, method="html") for child in node)
 
     def __iter__(self):
         """Iterates over the items in this question, in order"""
@@ -446,7 +447,10 @@ class LongAnswerItem(Item):
         """
         self.points = float(node.attrib['points'])
         solution = node.find('solution')
-        self.solution = ET.tostring(solution) if solution is not None else ""
+        if solution is not None:
+            self.solution = solution.text + "".join(ET.tostring(child) for child in solution)
+        else:
+            self.solution = ""
 
     def to_html(self):
         frame = ET.Element("table", attrib={"class": "item", "itemtype": "long-answer"})

@@ -1,10 +1,10 @@
 <table>
   <tr><td>
     <h4>Original Question</h4>
-      {{ question.to_html(include_items=False) }}
+      {{ question.to_html(include_items=False)|safe }}
     <div class='alert alert-success'>
       {% for item in question.items %}
-      {{ item.solution }}
+      {{ item.solution|safe }}
       {% endfor %}
     </div>
   </td></tr>
@@ -17,7 +17,7 @@
 should provide detailed comments, even if the response is perfect. 
 In the case of a perfect response, you should reiterate what 
 the student did well. Note that to earn full marks you must also complete
-the self-reflection.</p>
+zthe self-reflection.</p>
   </td></tr>
 
   {% for qr in peer_responses %}
@@ -59,7 +59,7 @@ concepts to review.</p>
     <table class='table table-condensed'>
       <tr>
         <td class='span2'><strong>My Response</strong></td>
-        <td class='span5' style="white-space: pre-wrap;">{{ self_response }}</td>
+        <td class='response span5'>{{ self_response }}</td>
       </tr>
       <tr class='info'>
         <td><strong>Score</strong></td>
