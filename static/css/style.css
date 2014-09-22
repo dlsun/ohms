@@ -23,7 +23,7 @@ ol.ohms-ol ol.ohms-ol {
     font-size : small;
 }
 
-.preview {
+.response {
     background-color:#e0e0e0;
     border-radius: 10px;
     padding: 10px;
@@ -38,4 +38,9 @@ ol.ohms-ol ol.ohms-ol {
     overflow:auto;
     margin-top:-200px;
     margin-left:-250px;
+}
+
+#tinymce .mceContentBody p {
+    font-size : normal;
+    white-space: pre-wrap;
 }
