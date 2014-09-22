@@ -68,24 +68,31 @@ class Question(Base):
 
     @staticmethod
     def from_xml(node):
-        # if question already has ID assigned, fetch instance; otherwise create new
+        # if question already has ID assigned, fetch it
         if 'id' in node.attrib:
             question = session.query(Question).get(node.attrib['id'])
-            question.points = 0
+        # otherwise, create a new one
         else:
-            if 'type' in node.attrib and node.attrib['type'] == 'peer_review':
+            if 'review' in node.attrib and 't' in node.attrib['review'].lower():
                 question = PeerReview()
-                question.points = float(node.attrib['points'])
             else:
                 question = Question()
-                question.points = 0
             session.add(question)
             session.flush()
-            node.attrib['id'] = str(question.id)
+
+        question.xml = ET.tostring(node, method="xml")
+        question.set_metadata()
+        session.commit()
+
+        return question
+
+    def set_metadata(self):
+        node = ET.fromstring(self.xml)
+        node.attrib['id'] = str(self.id)
         # question properties
-        question.name = node.attrib['name'] if 'name' in node.attrib else ""
-        question.items = []
-        # iterate over items
+        self.name = node.attrib['name'] if 'name' in node.attrib else ""
+        self.points = 0
+        self.items = []
         for e in node.iter():
             if e.tag == "item":
                 # save the tail
@@ -93,16 +100,12 @@ class Question(Base):
                 # fetch item object
                 item = Item.from_xml(e)
                 # add item to question
-                question.points += float(item.points)
-                question.items.append(item)
+                self.points += float(item.points)
+                self.items.append(item)
                 # update the item with its ID, re-append the tail
                 e.attrib['id'] = str(item.id)
                 e.tail = tail
 
-        question.xml = ET.tostring(node, method="xml")
-        session.commit()
-
-        return question
 
     def to_html(self, include_items=True):
 
@@ -514,76 +517,85 @@ class PeerReview(Question):
     def set_metadata(self):
         node = ET.fromstring(self.xml)
         self.question_id = int(node.attrib['question_id'])
-        self.points = float(node.attrib['points'])
-        if 'n_reviews' in node.attrib:
-            self.n_reviews = int(node.attrib['n_reviews'])
-        else:
-            self.n_reviews = 3
+        self.peer_pts = []
+        for e in node.iter("peer"):
+            self.peer_pts.append(float(e.attrib['points']))
+        sub = node.find("self")
+        self.self_pts = float(sub.attrib['points']) if sub is not None else None
+        sub = node.find("rate")
+        self.rate_pts = float(sub.attrib['points']) if sub is not None else None
+        self.points = sum(self.peer_pts) + (self.self_pts or 0.) + (self.rate_pts or 0.)
 
     def to_html(self):
 
         # not good to have imports here...
         from queries import get_question, get_last_question_response, get_peer_tasks_for_grader, get_self_tasks_for_student 
         from auth import validate_user
-
         self.set_metadata()
-
         user = validate_user()
-        question = get_question(self.question_id)
 
-        peer_tasks = get_peer_tasks_for_grader(self.question_id, user.stuid)
-        self_tasks = get_self_tasks_for_student(self.question_id, user.stuid)
+        vars = {"question": get_question(self.question_id)}
 
-        self_reflection = True if self_tasks else False
-        peer_question_responses = [get_last_question_response(self.question_id, task.student) for task in peer_tasks]
-        self_question_response = get_last_question_response(self.question_id, user.stuid) if self_tasks else None
+        # if peer assessment was assigned
+        if len(self.peer_pts):
+            peer_tasks = get_peer_tasks_for_grader(self.question_id, user.stuid)
+            vars['peer_responses'] = [get_last_question_response(self.question_id, task.student) for task in peer_tasks]
 
-        # jinja2 stuff
+        # if self assessment was assigned
+        if self.self_pts is not None:
+            self_tasks = get_self_tasks_for_student(self.question_id, user.stuid)
+            vars['self_response'] = get_last_question_response(self.question_id, user.stuid) if self_tasks else None
+
+        # jinja2 to get template for peer review questions
         from jinja2 import Environment, PackageLoader
         env = Environment(autoescape=True, loader=PackageLoader("ohms", "templates"))
         template = env.get_template("peer_review_question.html")
 
-        return template.render(question=question, 
-                        peer_question_responses=peer_question_responses,
-                        self_reflection=self_reflection,
-                        self_question_response=self_question_response
-                        )
+        return template.render(**vars)
 
     def load_response(self, stuid):
 
         from queries import get_peer_tasks_for_grader, get_self_tasks_for_student
         self.set_metadata()
-        
-        # get peer and self assessment tasks
-        tasks = get_peer_tasks_for_grader(self.question_id, stuid)
-        tasks.extend(get_self_tasks_for_student(self.question_id, stuid))
 
-        # get grading tasks
         item_responses = []
-        ratings = []
-        time = None
         score = 0
-        for task in tasks:
-            item_responses.append({"response": task.score})
-            item_responses.append({"response": task.comments})
-            if task.rating is not None: ratings.append(task.rating)
-            if task.comments is not None: score += self.points / len(tasks)
-            time = task.time
+        time = None
+        comment = ""
 
-        # provide some feedback to grader if at least 2 students have rated feedback
-        if len(ratings) > 1:
-            median = sorted(ratings)[len(ratings) // 2]
-            comment = "%d peers responded to your feedback. " % len(ratings)
-            if median == 4:
-                comment += "They were satisfied overall with the quality of your feedback."
-            elif median == 3:
-                comment += "Your feedback was good, but some peers felt that it could have been better."
-            elif median <= 2:
-                comment += "Your peers did not find your feedback satisfactory. If you are concerned, please see a member of the course staff to discuss strategies to improve."
-        elif score:
-            comment = "Your peers have not had the chance yet to look over their feedback. When they do, their feedback will be shown here."
-        else:
-            comment = ""
+        # get peer tasks
+        if len(self.peer_pts):
+            tasks = get_peer_tasks_for_grader(self.question_id, stuid)
+            ratings = []
+            for i, task in enumerate(tasks):
+                # each review is a score + response; we represent each review as two items
+                item_responses.append({"response": task.score})
+                item_responses.append({"response": task.comments})
+                if task.rating is not None: ratings.append(task.rating)
+                if task.comments is not None: score += self.peer_pts[i]
+                time = task.time
+            if len(ratings) > 1:
+                median = sorted(ratings)[len(ratings) // 2] - 1.
+                score += self.rate_pts * median / 3.
+                comment = "%d peers have responded to your feedback. " % len(ratings)
+                if median == 3:
+                    comment += "They were satisfied overall with the quality of your feedback."
+                elif median == 2:
+                    comment += "Your feedback was good, but some felt that it could have been better."
+                elif median <= 1:
+                    comment += "Your peers found your feedback unsatisfactory. Please see a member of the course staff to discuss strategies to improve."
+            elif score:
+                comment = "Watch this space for your peers' responses to your feedback. Your peers' responses is worth %f points, so you cannot earn all %s points yet." % (self.rate_pts, self.points)
+
+        # get self tasks
+        if self.self_pts is not None:
+            # there should really only be one task, but....
+            tasks = get_self_tasks_for_student(self.question_id, stuid)
+            if tasks:
+                item_responses.append({"response": tasks[0].score})
+                item_responses.append({"response": tasks[0].comments})
+                if tasks[0].comments is not None: score += self.peer_pts[i]
+                time = tasks[0].time
 
         return {
             "locked": (pdt_now() > self.homework.due_date),
@@ -602,33 +614,42 @@ class PeerReview(Question):
 
         if pdt_now() <= self.homework.due_date:
 
-            # get peer and self assessment tasks
-            tasks = get_peer_tasks_for_grader(self.question_id, stuid)
-            tasks.extend(get_self_tasks_for_student(self.question_id, stuid))
-
-            i = 0
-            score = 0
-            item_responses = []
-            while i < len(responses):
-                task = tasks[i // 2]
+            # helper function that validates and then updates a task
+            def check_and_update_task(task):
                 if task.grader != stuid:
                     raise Exception("You are not authorized to grade this response.")
                 try:
-                    assert(0 <= float(responses[i]) <= task.question.points)
+                    assert(0 <= float(responses[2*i]) <= task.question.points)
                 except:
                     raise Exception("Please enter a score between %f and %f." % (0, task.question.points))
-                if not responses[i+1].strip():
+                if not responses[2*i+1].strip():
                     raise Exception("Please enter comments for all responses.")
 
-                item_responses.append({"response": task.score})
-                item_responses.append({"response": task.comments})
                 task.time = pdt_now()
                 task.score = responses[i]
                 task.comments = responses[i+1]
 
-                if task.comments is not None: score += self.points / len(tasks)
+                return task
 
-                i += 2
+            i = 0
+            score = 0.
+
+            # peer tasks should be first
+            while i < len(self.peer_pts):
+                tasks = get_peer_tasks_for_grader(self.question_id, stuid)
+                task = check_and_update_task(tasks[i])
+                if task.comments is not None: score += self.peer_pts[i]
+                i += 1
+
+            # then we have self tasks
+            if self.self_pts is not None:
+                tasks = get_self_tasks_for_grader(self.question_id, stuid)
+                if tasks:
+                    task = check_and_update_task(tasks[0])
+                    if task.comments is not None: score += self.self_pts
+
+            comments = "Watch this space for your peers' responses to your feedback. Your peers' responses is worth %f points, so you cannot earn all %s points yet." % (self.rate_pts, self.points)
+
             session.commit()
             
             return {
@@ -636,10 +657,10 @@ class PeerReview(Question):
                 'submission': {
                     "time": pdt_now(),
                     "score": score,
-                    "comments": '''You've earned credit for completing the peer reviews, but your peer review grade will also depend on the accuracy and quality of your feedback.''',
-                    "item_responses": item_responses
+                    "comments": comments
                     }
             }
+
         else:
             raise Exception("The deadline for submitting this homework has passed.")
 

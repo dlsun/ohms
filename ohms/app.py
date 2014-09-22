@@ -58,10 +58,18 @@ def list():
             # check if the homework deadline has passed
             if response.question.homework.due_date < pdt_now():
                 q_id = response.question_id
-                # check if student has already been assigned tasks
+                # if student is required to do self assessment:
+                if prq.self_pts is not None:
+                    # and he/she hasn't been assigned the task yet, do it
+                    if not get_self_tasks_for_student(q_id, user.stuid):
+                        gt = GradingTask(grader=user.stuid,
+                                         student=user.stuid,
+                                         question_id=q_id)
+                        session.add(gt)
+                        session.commit()
+                # check if student has already been assigned peer tasks
                 tasks = get_peer_tasks_for_grader(q_id, user.stuid)
-                n = len(tasks)
-                m = prq.n_reviews
+                n, m = len(tasks), len(prq.peer_pts)
                 # if not, assign the tasks
                 if n < m:
                     responses = get_all_responses_to_question(q_id)
@@ -166,18 +174,8 @@ def calculate_grade(user, hw):
     score, points = 0, 0
     for q in hw.questions:
         points += q.points
-        if q.type == "question":
-            response = get_last_question_response(q.id, user.stuid)
-            if response and response.score:
-                score += response.score
-        elif q.type == "Peer Review":
-            q.set_metadata()
-            tasks = get_peer_tasks_for_grader(q.question_id, user.stuid)
-            tasks.extend(get_self_tasks_for_student(q.question_id, user.stuid))
-            for task in tasks:
-                if task.comments is not None:
-                    score += 1. * q.points / len(tasks)
-
+        out = q.load_response(user.stuid)
+        score += (out['submission'].score or 0.)
     # fill in grades
     grade = get_grade(user.stuid, hw.name)
     if not grade:
@@ -241,10 +239,7 @@ def update_question():
     
     q_id = request.form['q_id']
     xml_new = request.form['xml']
-    try:
-        node = ET.fromstring(xml_new)
-    except Exception as e:
-        raise Exception(str(e))
+    node = ET.fromstring(xml_new)
     node.attrib['id'] = q_id
     question = Question.from_xml(node)
     return json.dumps({

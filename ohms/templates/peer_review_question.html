@@ -8,6 +8,8 @@
       {% endfor %}
     </div>
   </td></tr>
+
+{% if peer_responses is defined %}
   <tr><td>
     <h4>Peer Review</h4>
 
@@ -18,7 +20,7 @@ the student did well. Note that to earn full marks you must also complete
 the self-reflection.</p>
   </td></tr>
 
-  {% for qr in peer_question_responses %}
+  {% for qr in peer_responses %}
   <tr><td>
     <table class='table table-condensed'>
       <tr>
@@ -41,10 +43,9 @@ the self-reflection.</p>
     </table>
   </td></tr>
   {% endfor %}
-</table>
+{% endif %}
 
-{% if self_reflection %}
-<table>
+{% if self_response is defined %}
   <tr><td>
     <h4>Self Reflection</h4>
 
@@ -53,18 +54,18 @@ leave just a brief note if you feel you've mastered the concept; otherwise, you 
 concepts to review.</p>
   </td></tr>
 
-  {% if self_question_response %}
+  {% if self_response %}
   <tr><td>
     <table class='table table-condensed'>
       <tr>
         <td class='span2'><strong>My Response</strong></td>
-        <td class='span5' style="white-space: pre-wrap;">{{ self_question_response }}</td>
+        <td class='span5' style="white-space: pre-wrap;">{{ self_response }}</td>
       </tr>
       <tr class='info'>
         <td><strong>Score</strong></td>
         <td>
           <input type='text' class='item input-mini' itemtype='short-answer' disabled='disabled'/> 
-	      out of {{ self_question_response.question.points }} points
+	      out of {{ self_response.question.points }} points
         </td>
       </tr>
       <tr class='info'>
