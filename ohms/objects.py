@@ -80,15 +80,12 @@ class Question(Base):
             session.add(question)
             session.flush()
 
-        question.xml = ET.tostring(node, method="xml")
-        question.set_metadata()
+        question.sync_from_node(node)
         session.commit()
 
         return question
 
-    # this should probably be a sync_from_node eventually?
-    def set_metadata(self):
-        node = ET.fromstring(self.xml)
+    def sync_from_node(self, node):
         node.attrib['id'] = str(self.id)
         # question properties
         self.name = node.attrib['name'] if 'name' in node.attrib else ""
@@ -106,6 +103,7 @@ class Question(Base):
                 # update the item with its ID, re-append the tail
                 e.attrib['id'] = str(item.id)
                 e.tail = tail
+        self.xml = ET.tostring(node, method="xml")
 
 
     def to_html(self, include_items=True):
@@ -520,6 +518,9 @@ class PeerReview(Question):
 
     def set_metadata(self):
         node = ET.fromstring(self.xml)
+        self.sync_from_node(node)
+
+    def sync_from_node(self, node):
         self.question_id = int(node.attrib['question_id'])
         self.peer_pts = []
         for e in node.iter("peer"):

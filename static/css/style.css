@@ -1,10 +1,14 @@
 table.frame {
     border:0px;
+    margin-top:5px;
 }
 
 table.frame td {
     vertical-align: top;
-    padding: 10px;
+}
+
+input {
+    margin-bottom:0;
 }
 
 ol.ohms-ol {

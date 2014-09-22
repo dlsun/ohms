@@ -1,8 +1,8 @@
 target = "prod"
 
 # this customizes the page header
-title = "OHMS"
-instructor = "Dennis Sun and Naftali Harris"
+title = "Stats 60"
+instructor = "Guenther Walther"
 
 # specify the URLs for your course
 base_url = "https://web.stanford.edu/class/stats60"

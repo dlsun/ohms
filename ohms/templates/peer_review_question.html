@@ -1,4 +1,4 @@
-<table>
+<table class="frame">
   <tr><td>
     <h4>Original Question</h4>
       {{ question.to_html(include_items=False)|safe }}
@@ -22,7 +22,7 @@ reiterate what the response does well.</p>
 
   {% for qr in peer_responses %}
   <tr><td>
-    <table>
+    <table class="frame">
       <tr>
         <td class='span2'><strong>Response {{ loop.index }}</strong></td>
         <td class='response span8'>{{ qr }}</td>
@@ -37,7 +37,7 @@ reiterate what the response does well.</p>
       <tr>
         <td><strong>Comments</strong></td>
         <td>
-	  <table class='item' itemtype='long-answer'>
+	  <table class='item frame' itemtype='long-answer'>
 	    <tr>
 	      <td class='span8'><textarea id='long{{ qr.id }}' rows="4"></textarea></td>
 	      <td class='response' style="display:none;"></td>
@@ -61,7 +61,7 @@ concepts to review.</p>
 
   {% if self_response %}
   <tr><td>
-    <table>
+    <table class="frame">
       <tr>
         <td class='span2'><strong>My Response</strong></td>
         <td class='response span8'>{{ self_response }}</td>
@@ -76,7 +76,7 @@ concepts to review.</p>
       <tr class=>
         <td><strong>Comments</strong></td>
         <td>
-	  <table class='item' itemtype='long-answer'>
+	  <table class='item frame' itemtype='long-answer'>
 	    <tr>
 	      <td class='span8'><textarea id='long0' rows="4"></textarea></td>
 	      <td class='response' style="display:none;"></td>
