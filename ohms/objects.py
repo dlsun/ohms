@@ -548,8 +548,13 @@ class PeerReview(Question):
 
         # if self assessment was assigned
         if self.self_pts is not None:
-            self_tasks = get_self_tasks_for_student(self.question_id, user.stuid)
-            vars['self_response'] = get_last_question_response(self.question_id, user.stuid) if self_tasks else None
+            # add the task if it hasn't been already
+            if not get_self_tasks_for_student(self.question_id, user.stuid):
+                session.add(GradingTask(grader=user.stuid, 
+                                        student=user.stuid, 
+                                        question_id=self.question_id))
+                session.commit()
+            vars['self_response'] = get_last_question_response(self.question_id, user.stuid)
 
         # jinja2 to get template for peer review questions
         from jinja2 import Environment, PackageLoader
@@ -602,6 +607,7 @@ class PeerReview(Question):
                 if tasks[0].comments is not None: score += self.self_pts
                 time = tasks[0].time
 
+        # 
         return {
             "locked": (pdt_now() > self.homework.due_date),
             "submission": QuestionResponse(

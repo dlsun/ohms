@@ -9,10 +9,10 @@ from datetime import datetime
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 
-from objects import session, Homework, Question, User, GradingTask
+from objects import session, Homework, Question, PeerReview, User, GradingTask
 from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
-    get_all_responses_to_question, get_all_peer_tasks_for_question, \
+    get_all_responses_to_question, get_all_peer_tasks, \
     get_peer_review_questions, get_peer_tasks_for_student, \
     get_peer_tasks_for_grader, get_self_tasks_for_student, \
     get_grading_task, add_grade, get_all_grades, get_grade
@@ -40,74 +40,70 @@ def list():
     user = validate_user()
     hws = get_homework()
     
-    to_do = defaultdict(int) # to-do list for peer reviews
-
-    # iterate over the questions that are peer review questions
-    peer_review_questions = get_peer_review_questions()
-    for prq in peer_review_questions:
-
-        # instantiate the object with data from the XML
+    # keep track of to-do list for peer reviews
+    to_do = defaultdict(int)
+    # keep track of the peer review corresponding to each question
+    prq_map = {}
+    for prq in get_peer_review_questions():
         prq.set_metadata()
+        prq_map[prq.question_id] = prq
 
-        # get student's response to the original question, if any
-        response = get_last_question_response(prq.question_id, user.stuid)
+    for hw in hws:
 
-        # if student answered the question
-        if response:
+        # skip if homework not due yet
+        if hw.due_date > pdt_now():
+            continue
 
-            # check if the homework deadline has passed
-            if response.question.homework.due_date < pdt_now():
+        # iterate over questions
+        for q in hw.questions:
 
-                calculate_grade(user, response.question.homework)
+            # check if q is a question that is peer-reviewed
+            if q.id in prq_map:
 
-                q_id = response.question_id
-                # if student is required to do self assessment:
-                if prq.self_pts is not None:
-                    # and he/she hasn't been assigned the task yet, do it
-                    if not get_self_tasks_for_student(q_id, user.stuid):
-                        gt = GradingTask(grader=user.stuid,
-                                         student=user.stuid,
-                                         question_id=q_id)
-                        session.add(gt)
-                        session.commit()
-                # check if student has already been assigned peer tasks
-                tasks = get_peer_tasks_for_grader(q_id, user.stuid)
-                n, m = len(tasks), len(prq.peer_pts)
-                # if not, assign the tasks
-                if n < m:
-                    responses = get_all_responses_to_question(q_id)
-                    tasks = get_all_peer_tasks_for_question(q_id)
-                    pool = []
-                    for r in responses:
-                        if r.stuid == user.stuid:
-                            continue
-                        i = len([t for t in tasks if t.student == r.stuid])
-                        pool.extend([r.stuid]*(m-i))
-                    while n < m:
-                        import random
-                        student = random.choice(pool)
-                        gt = GradingTask(grader=user.stuid,
-                                         student=student,
-                                         question_id=q_id)
-                        session.add(gt)
-                        pool = [p for p in pool if p != student]
-                        n += 1
-                    session.commit()
+                # if grading tasks haven't been assigned
+                if not get_all_peer_tasks(q.id):
+                
+                    # get corresponding Peer Review object, instantiate with data from XML
+                    prq = prq_map[q.id]
 
-            # check if peer grading deadling has passed
-            if prq.homework.due_date < pdt_now():
+                    # get list of all students who responded, then shuffle
+                    responders = [r.stuid for r in get_all_responses_to_question(q.id)]
+                    import random
+                    random.seed(q.id)
+                    random.shuffle(responders)
+
+                    # import engine
+                    from base import engine
+
+                    # assign peer grading tasks, if applicable
+                    # (self grading tasks are assigned individually, on the fly)
+                    tasks = []
+                    m, n = len(prq.peer_pts), len(responders)
+                    for i, stuid in enumerate(responders):
+                        for offset in [k*(k+1)/2 for k in range(1, m+1)]:
+                            j = (i + offset) % n
+                            tasks.append({"grader": stuid, "student": responders[j], "question_id": q.id})
+                    engine.execute(GradingTask.__table__.insert(), tasks)
+
+            # if question itself is a peer review question
+            elif isinstance(q, PeerReview):
                 # compute updated score for student
-                tasks = get_peer_tasks_for_student(prq.question_id, user.stuid)
+                response = get_last_question_response(q.question_id, user.stuid)
+                tasks = get_peer_tasks_for_student(q.question_id, user.stuid)
                 scores = [t.score for t in tasks if t.score is not None]
                 new_score = sorted(scores)[len(scores) // 2] if scores else None
                 if response.score != new_score:
                     response.score = new_score
-                    response.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments." % prq.question_id
+                    response.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments." % q.question_id
                     session.commit()
                 # check that student has rated all the peer reviews
                 for task in tasks:
                     if task.score is not None and task.rating is None:
                         to_do[response.question.homework] += 1
+
+        # update student's grade on the homework
+        calculate_grade(user, hw)
+
 
     return render_template("list.html", homeworks=hws,
                            user=user,

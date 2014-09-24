@@ -51,10 +51,7 @@ def get_question_responses(question_id, stuid):
         order_by(QuestionResponse.time).all()
 
 def get_last_question_response(question_id, stuid):
-    qrs = session.query(QuestionResponse).\
-        filter_by(stuid=stuid).\
-        filter_by(question_id=question_id).\
-        order_by(QuestionResponse.time).all()
+    qrs = get_question_responses(question_id, stuid)
     return qrs[-1] if qrs else None
 
 def get_all_responses_to_question(question_id):
@@ -69,8 +66,9 @@ def get_all_responses_to_question(question_id):
 def get_grading_task(grading_task_id):
     return session.query(GradingTask).get(grading_task_id)
 
-def get_all_peer_tasks_for_question(question_id):
-    return session.query(GradingTask).filter_by(question_id=question_id).all()
+def get_all_peer_tasks(question_id):
+    return session.query(GradingTask).filter_by(question_id=question_id).\
+        filter(GradingTask.grader != GradingTask.student).all()
 
 def get_peer_tasks_for_grader(question_id, stuid):
     return session.query(GradingTask).\
