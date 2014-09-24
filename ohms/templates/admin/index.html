@@ -24,7 +24,8 @@
 
     <table class="table">
       <thead>
-	<th>Student</th>
+	<th>Student Name</th>
+	<th>SUNet ID</th>
 	<th>Type</th>
 	<th></th>
 	{% for assignment in assignments %}
@@ -34,6 +35,7 @@
       {% for student, grades in gradebook %}
         <tr>
 	  <td>{{ student.name }}</td>
+	  <td>{{ student.stuid }}</td>
 	  <form target="_blank" action="change_user_type" method="POST">
 	  <td>
 	    <input type="hidden" name="user" value="{{ student.stuid }}" />
@@ -48,7 +50,7 @@
 	  </td>
 	  </form>
 	  {% for grade in grades %}
-	  <td>{{ grade.score }} / {{ grade.points }}</td>
+	  <td>{{ grade.score }}</td>
 	  {% endfor %}
 	</tr>
       {% endfor %}
