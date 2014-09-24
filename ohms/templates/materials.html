@@ -8,7 +8,7 @@
   </thead>
   <tbody>
   {% for file in files %}
-    <tr><td><a>{{ file }}</a></td></tr>
+    <tr><td><a href={{ options.base_url }}/restricted/{{ file }}>{{ file }}</a></td></tr>
   {% endfor %}
   </tbody>
 </table>
