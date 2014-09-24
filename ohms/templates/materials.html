@@ -1,0 +1,17 @@
+{% extends "page.html" %}
+
+{% block content %}
+
+<table class="table">
+  <thead>
+    <th>Link</th>
+  </thead>
+  <tbody>
+  {% for file in files %}
+    <tr><td><a>{{ file }}</a></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
+

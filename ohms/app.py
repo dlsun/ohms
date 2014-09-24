@@ -35,6 +35,14 @@ else:
 def index():
     return render_template("index.html", options=options)
 
+@app.route("/materials")
+def materials():
+    user = validate_user()
+    import os
+    files = [f for f in os.listdir("%s/WWW/restricted/" % options.base_dir) if not f.startswith('.')]
+    files.sort()
+    return render_template("materials.html", user=user, files=files, options=options)
+
 @app.route("/list")
 def list():
     user = validate_user()
