@@ -324,8 +324,7 @@ class ShortAnswerItem(Item):
         solutions = []
         for answer_node in node.findall("answer"):
             answer = ShortAnswer(answer_node)
-            answer.points = answer.points or self.points # this seems like the
-                                                         # xml is probably not quite correct?
+            answer.points = self.points if answer.points is None else answer.points:
             if answer.type in ["exact", "expression"]:
                 solutions.append(answer.exact)
             self.answers.append(answer)
