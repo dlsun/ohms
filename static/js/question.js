@@ -41,27 +41,35 @@ var OHMS = (function(OHMS) {
 		that.submit_response();
 	    })
 	    // allow editable source code for admins
-	    this.element.find(".editable").dblclick(function () {
-		$(this).hide();
-		that.element.find(".source").show();
-	    })
-	    this.element.find(".source").blur(function () {
-		$.ajax({
-		    url : "update_question",
-		    type : "POST",
-		    dataType : "json",
-		    data : {
-			q_id: that.id,
-			xml: that.element.find(".source").val(),
-		    }, 
-		    success : function (data) {
-			that.element.find(".source").val(data.xml).hide();
-			that.element.find(".editable").html(data.html).show();
-			MathJax.Hub.Typeset(that.element.get(0));
-		    }, 
-		    error : function (xhr) {
-			add_alert("The update failed because <br><br>" + xhr.responseText);
-		    }
+	    var editable = this.element.find(".editable");
+	    editable.dblclick(function () {
+		editable.hide();
+		var source = that.element.find(".source");
+		source.show();
+		var editor = CodeMirror.fromTextArea(source[0], {
+		    lineNumbers: true
+		    });
+		editor.on("blur", function () {
+		    $.ajax({
+			url : "update_question",
+			type : "POST",
+			dataType : "json",
+			data : {
+			    q_id: that.id,
+			    xml: editor.getDoc().getValue(),
+			}, 
+			success : function (data) {
+			    // return editor to textarea, then hide
+			    editor.toTextArea();
+			    source.hide();
+			    // show the original question and render MathJax
+			    editable.html(data.html).show();
+			    MathJax.Hub.Typeset(that.element.get(0));
+			}, 
+			error : function (xhr) {
+			    add_alert("The update failed because <br><br>" + xhr.responseText);
+			}
+		    });
 		});
 	    })
 	}
