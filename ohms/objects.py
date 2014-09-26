@@ -150,14 +150,14 @@ class Question(Base):
             submission.comments = '''Feedback on your submission will be available in %s minutes, at %s. Please refresh the page at that time to view it.''' % (1 + (time_available - now).seconds // 60, time_available.strftime("%H:%M"))
         return submission
 
-    def load_response(self, stuid):
+    def load_response(self, user):
         from queries import get_last_question_response
-        last_submission = get_last_question_response(self.id, stuid)
+        last_submission = get_last_question_response(self.id, user.stuid)
         out = {
             'submission': self.delay_feedback(last_submission),
             'locked': self.check_if_locked(last_submission),
             }
-        if pdt_now() > self.homework.due_date:
+        if user.type == "admin" or pdt_now() > self.homework.due_date:
             out['solution'] = [item.solution for item in self.items]
         return out
 
@@ -564,7 +564,7 @@ class PeerReview(Question):
 
         return template.render(**vars)
 
-    def load_response(self, stuid):
+    def load_response(self, user):
 
         from queries import get_peer_tasks_for_grader, get_self_tasks_for_student
         self.set_metadata()
@@ -576,7 +576,7 @@ class PeerReview(Question):
 
         # get peer tasks
         if len(self.peer_pts):
-            tasks = get_peer_tasks_for_grader(self.question_id, stuid)
+            tasks = get_peer_tasks_for_grader(self.question_id, user.stuid)
             ratings = []
             for i, task in enumerate(tasks):
                 # each review is a score + response; we represent each review as two items
@@ -602,7 +602,7 @@ class PeerReview(Question):
         # get self tasks
         if self.self_pts is not None:
             # there should really only be one task, but....
-            tasks = get_self_tasks_for_student(self.question_id, stuid)
+            tasks = get_self_tasks_for_student(self.question_id, user.stuid)
             if tasks:
                 item_responses.extend([ItemResponse(response=tasks[0].score), ItemResponse(response=tasks[0].comments)])
                 if tasks[0].comments is not None: score += self.self_pts

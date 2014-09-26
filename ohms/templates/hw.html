@@ -61,14 +61,14 @@
 
 </form>
 
-<h4>(Add a Peer Review)</h4>
+<h4>Add a Peer Review</h4>
 <p>This form will generate the necessary XML for a peer review question. When you click the 
 "Generate XML" button, the XML will appear in the box above.</p>
 <div id="peer_review_form">
   <table class="table">
     <tr>
-      <td colspan="3"><b>ID of question to be reviewed</b></td>
-      <td colspan="3">
+      <td colspan="2"><b>ID of question to be reviewed</b></td>
+      <td colspan="4">
 	<select name="question_id">
 	  {% for q in question_list %}
 	  <option value="{{ q.id }}">{{ q.id }} ({{ q.homework.name }})</option>
@@ -91,18 +91,16 @@
       <td><input type="text" class="input-small formelt" value="1" name="self_points"/></td>
     </tr>
     <tr>
-      <td colspan="3" class="span5"><b>Ratings of Reviews</b> (Students are required to rate the feedback that they receive. These ratings can be used to measure the "quality" of a grader's reviews. This option specifies how many points to make these ratings worth.)</td>
+      <td colspan="3" class="span5"><b>Ratings of Reviews</b> (Students are required to rate the feedback that they receive. These ratings can be used to measure the "quality" of a grader's reviews. This specifies how much to make these ratings worth.)</td>
       <td>Points:</td>
       <td><input type="text" class="input-small formelt" value="3" name="rate_points"/></td>
     </tr>
     <tr>
-      <td colspan="3"></td>
+      <td colspan="3"><button id="add_peer_review">Generate XML</button> (The XML will appear inthe box above.)</td>
       <td>Total Points:</td>
       <td><input type="text" class="input-small" name="total_points" disabled="disabled" /></td>
     </tr>
   </table>
-
-  <button id="add_peer_review">Generate XML</button>
 </div>
 {% endif %}
 
@@ -122,7 +120,6 @@
     <script type="text/javascript">
 var textbox = $("textarea[name=xml]");
 textbox.focus( function () { $(this).attr('rows', '20'); } );
-textbox.blur( function () { $(this).attr('rows', '4'); });
 
 function get_form_elements () {
   var form = $("div#peer_review_form").eq(0);
@@ -146,7 +143,6 @@ function calculate_total () {
 
 calculate_total();
 $(".formelt").change( calculate_total );
-
 $("#add_peer_review").click( function () {
   var form = get_form_elements();
   var xml = "<question review='true' question_id='" + form["question_id"] + "'>\n";

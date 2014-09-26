@@ -160,7 +160,7 @@ def load():
     user = validate_user()
     q_id = request.args.get("q_id")
     question = get_question(q_id)
-    return json.dumps(question.load_response(user.stuid), cls=NewEncoder)
+    return json.dumps(question.load_response(user), cls=NewEncoder)
 
 
 @app.route("/submit", methods=['POST'])
@@ -182,7 +182,7 @@ def calculate_grade(user, hw):
     score, points = 0, 0
     for q in hw.questions:
         points += q.points
-        out = q.load_response(user.stuid)
+        out = q.load_response(user)
         if out['submission']:
             score += (out['submission'].score or 0.)
     # fill in grades
