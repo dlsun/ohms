@@ -10,10 +10,21 @@
 
     <div class='span12'>
 
-    <h3>OHMS Admin Panel</h3>
+    <h2>OHMS Admin Panel</h2>
+
+    <hr/>
+
+    <h3>Enter User View</h3>
+
+    <p>This feature allows you to see the system from the perspective of any user. This is useful in case a student claims 
+there is a problem with the system, and you would like to see what they're seeing.</p>
+
+    <p><b><font color="red">Warning!</font></b> Once you enter the user's view, the link to this Admin Panel will no longer be visible 
+from the main page. When you  are ready to switch back to your own view, you must type in the URL (<tt>/cgi-bin/index.cgi/admin</tt>) 
+to return to this page. Once you are here, you can simply enter your User ID in the box below to return to your own view.</p>
 
     <form action="change_user" method="POST">
-    I want to see the view of the user: <input type="text" name="user"/> <input type="submit" value="Change View!"/>
+    User ID: <input type="text" name="user"/> <input type="submit" value="Enter View!"/>
     </form>
 
     <hr/>
@@ -25,7 +36,7 @@
     <table class="table">
       <thead>
 	<th>Student Name</th>
-	<th>SUNet ID</th>
+	<th>User ID</th>
 	<th>Type</th>
 	<th></th>
 	{% for assignment in assignments %}

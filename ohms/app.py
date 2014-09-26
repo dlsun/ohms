@@ -284,9 +284,7 @@ def change_user():
     admin = validate_admin()
     student = request.form['user']
 
-    try:
-        session.query(User).get(student)
-    except:
+    if not session.query(User).get(student):
         raise Exception("No user exists with the given ID.")
 
     session.query(User).filter_by(stuid=admin.stuid).update({
@@ -294,7 +292,9 @@ def change_user():
     })
     session.commit()
 
-    return "Successfully changed user to %s" % admin.proxy
+    return '''If you return to the main page now, you will be viewing the system 
+from the perspective of user <b>%s</b>. To return to your own view, you must visit 
+<a href="admin">/cgi-bin/index.cgi/admin</a> and enter your own ID.''' % admin.proxy
 
 @app.route("/add_homework", methods=['POST'])
 def add_homework():
