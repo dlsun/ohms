@@ -363,7 +363,7 @@ class ShortAnswer(object):
 
     def __init__(self, node):
         if 'points' in node.attrib:
-            self.points = float(a.attrib['points'])
+            self.points = float(node.attrib['points'])
         else:
             self.points = None 
 
