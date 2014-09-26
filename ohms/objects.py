@@ -530,6 +530,7 @@ class PeerReview(Question):
         sub = node.find("rate")
         self.rate_pts = float(sub.attrib['points']) if sub is not None else 0.
         self.points = sum(self.peer_pts) + (self.self_pts or 0.) + self.rate_pts
+        self.xml = ET.tostring(node, method="xml")
 
     def to_html(self):
 
@@ -607,7 +608,6 @@ class PeerReview(Question):
                 if tasks[0].comments is not None: score += self.self_pts
                 time = tasks[0].time
 
-        # 
         return {
             "locked": (pdt_now() > self.homework.due_date),
             "submission": QuestionResponse(

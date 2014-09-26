@@ -4,12 +4,9 @@ queries.py
 Some useful sql queries.
 """
 
-from datetime import datetime
-from collections import defaultdict
-
 from base import session
-from objects import QuestionResponse, GradingTask, User
-from objects import Homework, Question, PeerReview, Grade
+from objects import QuestionResponse, GradingTask, User, \
+    Homework, Question, PeerReview, Grade
 from pdt import pdt_now
 
 
@@ -36,6 +33,11 @@ def get_homework(hw_id=None):
 
 def get_question(question_id):
     return session.query(Question).get(question_id)
+
+def get_all_regular_questions():
+    return [q for q in session.query(Question).\
+                filter(Question.hw_id != None).\
+                all() if not isinstance(q, PeerReview)]
 
 def get_peer_review_questions():
     return session.query(PeerReview).filter(PeerReview.hw_id != None).all()

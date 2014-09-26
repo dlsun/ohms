@@ -12,9 +12,9 @@ from collections import defaultdict
 from objects import session, Homework, Question, PeerReview, User, GradingTask
 from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
+    get_all_regular_questions, \
     get_all_responses_to_question, get_all_peer_tasks, \
     get_peer_review_questions, get_peer_tasks_for_student, \
-    get_peer_tasks_for_grader, get_self_tasks_for_student, \
     get_grading_task, add_grade, get_all_grades, get_grade
 import options
 from pdt import pdt_now
@@ -125,12 +125,14 @@ def hw():
     user = validate_user()
     hw_id = request.args.get("id")
     hw = get_homework(hw_id)
+    question_list = get_all_regular_questions() if user.type == "admin" else None
     if user.type != "admin" and hw.start_date and hw.start_date > pdt_now():
         raise Exception("This homework has not yet been released.")
     else:
         return render_template("hw.html",
                                homework=hw,
                                user=user,
+                               question_list=question_list,
                                options=options)
 
 

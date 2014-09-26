@@ -53,11 +53,51 @@
   <p>Enter XML source code here.</p>
 
   <input type="hidden" name="hw_id" value={{ homework.id }} />
-  <textarea class="span8" name="xml" rows="4"></textarea>
+  <textarea class="span8" name="xml" rows="4"><question></question></textarea>
 
   <p><input type="submit" value="Add Question!"/></p>
 
 </form>
+
+<h4>(Add a Peer Review)</h4>
+<p>This form will generate the necessary XML for a peer review question. When you click the 
+"Generate XML" button, the XML will appear in the box above.</p>
+<div id="peer_review_form">
+  <table class="table">
+    <tr>
+      <td>ID of question to be peer-reviewed.</td>
+      <td>
+	<select name="question_id">
+	  {% for q in question_list %}
+	  <option value="{{ q.id }}">{{ q.id }} ({{ q.homework.name }})</option>
+	  {% endfor %}
+	</select>
+      </td>
+    </tr>
+    <tr>
+      <td>Number of peer reviews</td>
+      <td><input type="text" value="3" name="n_reviews"/></td>
+    </tr>
+    <tr>
+      <td>Points per peer review</td>
+      <td><input type="text" value="2" name="peer_points"/></td>
+    </tr>
+    <tr>
+      <td>Self review?</td>
+      <td><input type="checkbox" name="self"/> Yes</td>
+    </tr>
+    <tr>
+      <td>Points for self review</td>
+      <td><input type="text" value="1" name="self_points"/></td>
+    </tr>
+    <tr>
+      <td>Points for ratings of reviews</td>
+      <td><input type="text" value="3" name="rate_points"/></td>
+    </tr>
+  </table>
+
+  <button id="add_peer_review">Generate XML</button>
+</div>
 {% endif %}
 
 </div>
@@ -72,4 +112,40 @@
     <script src="{{options.base_url}}/{{options.static}}/js/shortansweritem.js?V=1"></script>
     <script src="{{options.base_url}}/{{options.static}}/js/longansweritem.js?V=1"></script>
     <script src="{{options.base_url}}/{{options.static}}/js/hw.js?V=1"></script>
+{% if user.type == 'admin' %}
+    <script type="text/javascript">
+var textbox = $("textarea[name=xml]");
+textbox.focus( function () { $(this).attr('rows', '20'); } );
+textbox.blur( function () { $(this).attr('rows', '4'); });
+$("#add_peer_review").click( function () {
+  var form = $(this).parents("div#peer_review_form").eq(0);
+  console.log(form);
+  var question_id = form.find("select[name=question_id]").val();
+
+  // start creating XML string
+  var xml = "<question review='true' question_id='" + question_id + "'>\n";
+
+  // determine number of reviews and points per peer review
+  var n_reviews = parseInt(form.find("input[name=n_reviews]").val());
+  var peer_points = parseFloat(form.find("input[name=peer_points]").val());
+  for (var i=1; i<=n_reviews; i++) {
+    xml += "  <peer points='" + peer_points + "' />\n";
+  }
+
+  // determine if self review and points per self review  
+  if (form.find("input[name=self]").attr("checked")) {
+    var self_points = parseFloat(form.find("input[name=self_points]").val());
+    xml += "  <self points='" + self_points + "' />\n";
+  }
+
+  // determine points that should be awarded for students' ratings of responses
+  var rate_points = parseFloat(form.find("input[name=rate_points]").val());
+  xml += "  <rate points='" + rate_points + "' />\n";
+
+  xml += "</question>";
+
+  textbox.val(xml);
+})
+    </script>
+{% endif %}
 {% endblock %}
