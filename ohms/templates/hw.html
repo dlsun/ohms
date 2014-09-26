@@ -54,7 +54,25 @@
      to use the form below.)</p>
 
   <input type="hidden" name="hw_id" value={{ homework.id }} />
-  <textarea class="span8" name="xml" id="xml_code" rows="4"><question name="">
+  <textarea class="span8" name="xml" id="xml_code" rows="4"><question name="Example Question">
+
+  <item type="Multiple Choice" points="2">
+    <option correct="true">the right answer</option>
+    <option>some other answer</option>
+  </item>
+
+  <item type="Short Answer" points="2">
+    <answer type="range">[0.2, 0.3]</answer>
+    <answer type="exact">0.25</answer>
+    <answer type="expression">(.5)^2</answer>
+  </item>
+
+  <item type="Long Answer" points="6">
+    <solution>
+      The solution to the problem goes in here.
+    </solution>
+  </item>
+
 </question></textarea>
 
   <p><input type="submit" value="Add Question!"/></p>
