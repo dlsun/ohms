@@ -34,8 +34,8 @@ var OHMS = (function(OHMS) {
 	    setup: function(editor) {
 		editor.on('init', function() {
 		    that.editor = tinymce.get(that.id);
-		    var doc = this.getDoc();
-		    doc.body.style.fontSize = '14px';
+		    that.lock();
+		    this.getDoc().body.style.fontSize = '14px';
 		 })
 		 editor.on('keyup', function() {
 		     that.preview.html(that.editor.getContent());
@@ -59,11 +59,11 @@ var OHMS = (function(OHMS) {
     }
 
     LongAnswerItem.prototype.unlock = function () {
-	this.textarea.removeAttr("disabled");
+	this.editor.getBody().setAttribute("contenteditable", true);
     }
 
     LongAnswerItem.prototype.lock = function () {
-	this.textarea.attr("disabled","disabled");
+	this.editor.getBody().setAttribute("contenteditable", false);
     }
 
 
