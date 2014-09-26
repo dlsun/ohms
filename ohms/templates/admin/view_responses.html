@@ -59,31 +59,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script src="{{options.base_url}}/{{options.static}}/js/namespace.js"></script>
-    <script type="text/javascript">
-$(".submit").click(function () {
-  var div = $(this).parents(".grading").eq(0);
-  var response_id = div.attr("id");
-  var score = div.find("input").val();
-  var comments = div.find("textarea").val();
-  $.ajax({
-    url : "update_response",
-    type : "POST",
-    dataType : "text",
-    data : {
-      response_id: response_id,
-      score: score,
-      comments: comments
-    },
-    success : function (data) {
-      div.find(".score").text(score);
-      div.find(".comments").text(comments);
-      div.css("background-color", "#dff0d8");
-    },
-    error : function () {
-      alert("Your update was not recorded successfully.");
-    }
-  })
-})
+    <script src="{{options.base_url}}/{{options.static}}/js/admin/view_responses.js"></script>
     </script>
 
 

@@ -165,10 +165,10 @@ var OHMS = (function(OHMS) {
 	    // update score
 	    var score = submission.score;
 	    var score_element = this.element.find(".score");
-	    if (score === this.points) {
+	    if (score >= this.points) {
 		score_element.html("<img src='/class/psych10/static/img/checkmark.png' " + 
 				   "height='30' width='26'> " + 
-				   "Congrats! You've earned all " + 
+				   "Congrats! You've earned " + score + " out of " + 
 				   this.points + " points.");
 		score_element.attr("class","score alert alert-success");
 	    } else if (score != null) {
