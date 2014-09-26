@@ -50,10 +50,12 @@
 <h3>Add a Question</h3>
 <form action="add_question" method="POST">
 
-  <p>Enter XML source code here.</p>
+  <p>Enter XML source code here. (If you are adding a peer review, you may find it easier 
+     to use the form below.)</p>
 
   <input type="hidden" name="hw_id" value={{ homework.id }} />
-  <textarea class="span8" name="xml" rows="4"><question></question></textarea>
+  <textarea class="span8" name="xml" rows="4"><question name="">
+</question></textarea>
 
   <p><input type="submit" value="Add Question!"/></p>
 
@@ -65,8 +67,8 @@
 <div id="peer_review_form">
   <table class="table">
     <tr>
-      <td>ID of question to be peer-reviewed.</td>
-      <td>
+      <td colspan="3"><b>ID of question to be reviewed</b></td>
+      <td colspan="3">
 	<select name="question_id">
 	  {% for q in question_list %}
 	  <option value="{{ q.id }}">{{ q.id }} ({{ q.homework.name }})</option>
@@ -75,24 +77,28 @@
       </td>
     </tr>
     <tr>
-      <td>Number of peer reviews</td>
-      <td><input type="text" value="3" name="n_reviews"/></td>
+      <td><b>Peer Reviews</b></td>
+      <td class="span2">How many peers should each student grade?</td>
+      <td><input type="text" class="input-small formelt" value="3" name="n_reviews"/></td>
+      <td>Points each:</td>
+      <td><input type="text" class="input-small formelt" value="2" name="peer_points"/></td>
     </tr>
     <tr>
-      <td>Points per peer review</td>
-      <td><input type="text" value="2" name="peer_points"/></td>
+      <td><b>Self Review</b></td>
+      <td></td>
+      <td><input type="checkbox" class="formelt" name="self" checked="checked"/> Include</td>
+      <td>Points:</td>
+      <td><input type="text" class="input-small formelt" value="1" name="self_points"/></td>
     </tr>
     <tr>
-      <td>Self review?</td>
-      <td><input type="checkbox" name="self"/> Yes</td>
+      <td colspan="3" class="span5"><b>Ratings of Reviews</b> (Students are required to rate the feedback that they receive. These ratings can be used to measure the "quality" of a grader's reviews. This option specifies how many points to make these ratings worth.)</td>
+      <td>Points:</td>
+      <td><input type="text" class="input-small formelt" value="3" name="rate_points"/></td>
     </tr>
     <tr>
-      <td>Points for self review</td>
-      <td><input type="text" value="1" name="self_points"/></td>
-    </tr>
-    <tr>
-      <td>Points for ratings of reviews</td>
-      <td><input type="text" value="3" name="rate_points"/></td>
+      <td colspan="3"></td>
+      <td>Total Points:</td>
+      <td><input type="text" class="input-small" name="total_points" disabled="disabled" /></td>
     </tr>
   </table>
 
@@ -117,33 +123,39 @@
 var textbox = $("textarea[name=xml]");
 textbox.focus( function () { $(this).attr('rows', '20'); } );
 textbox.blur( function () { $(this).attr('rows', '4'); });
+
+function get_form_elements () {
+  var form = $("div#peer_review_form").eq(0);
+  return {
+    question_id: form.find("select[name=question_id]").val(),
+    n_reviews: parseInt(form.find("input[name=n_reviews]").val()),
+    peer_points: parseFloat(form.find("input[name=peer_points]").val()),
+    is_self: form.find("input[name=self]").attr("checked"),
+    self_points: parseFloat(form.find("input[name=self_points]").val()),
+    rate_points: parseFloat(form.find("input[name=rate_points]").val()),
+  }
+}
+
+function calculate_total () {
+  var form = get_form_elements();
+  var total = form["peer_points"] * form["n_reviews"];
+  if (form["is_self"]) total += form["self_points"];
+  total += form["rate_points"];
+  return $("input[name=total_points]").val(total);
+}
+
+calculate_total();
+$(".formelt").change( calculate_total );
+
 $("#add_peer_review").click( function () {
-  var form = $(this).parents("div#peer_review_form").eq(0);
-  console.log(form);
-  var question_id = form.find("select[name=question_id]").val();
-
-  // start creating XML string
-  var xml = "<question review='true' question_id='" + question_id + "'>\n";
-
-  // determine number of reviews and points per peer review
-  var n_reviews = parseInt(form.find("input[name=n_reviews]").val());
-  var peer_points = parseFloat(form.find("input[name=peer_points]").val());
-  for (var i=1; i<=n_reviews; i++) {
-    xml += "  <peer points='" + peer_points + "' />\n";
-  }
-
-  // determine if self review and points per self review  
-  if (form.find("input[name=self]").attr("checked")) {
-    var self_points = parseFloat(form.find("input[name=self_points]").val());
-    xml += "  <self points='" + self_points + "' />\n";
-  }
-
-  // determine points that should be awarded for students' ratings of responses
-  var rate_points = parseFloat(form.find("input[name=rate_points]").val());
-  xml += "  <rate points='" + rate_points + "' />\n";
-
+  var form = get_form_elements();
+  var xml = "<question review='true' question_id='" + form["question_id"] + "'>\n";
+  for (var i=1; i<=form["n_reviews"]; i++)
+    xml += "  <peer points='" + form["peer_points"] + "' />\n";
+  if (form["is_self"])
+    xml += "  <self points='" + form["self_points"] + "' />\n";
+  xml += "  <rate points='" + form["rate_points"] + "' />\n";
   xml += "</question>";
-
   textbox.val(xml);
 })
     </script>
