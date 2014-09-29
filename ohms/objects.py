@@ -637,8 +637,8 @@ class PeerReview(Question):
                     raise Exception("Please enter comments for all responses.")
 
                 task.time = pdt_now()
-                task.score = responses[i]
-                task.comments = responses[i+1]
+                task.score = responses[2*i]
+                task.comments = responses[2*i+1]
 
                 return task
 
