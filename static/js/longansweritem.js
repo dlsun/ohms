@@ -40,7 +40,7 @@ var OHMS = (function(OHMS) {
 		    that.lock();
 		    this.getDoc().body.style.fontSize = '14px';
 		 })
-		 editor.on('keyup', function() {
+		 editor.on('change keyup input', function() {
 		     that.preview.html(that.editor.getContent());
 		     MathJax.Hub.Typeset(that.preview.get(0));
 		 })
