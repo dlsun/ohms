@@ -23,7 +23,7 @@
 
     <h4>Comment {{loop.index}}</h4>
     
-    <div class='alert' style="white-space: pre-wrap">{{task.comments}}</div>
+    <div class='alert'>{{task.comments|safe}}</div>
     
     <h5>Feedback on Quality</h5>
     
