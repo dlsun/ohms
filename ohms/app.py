@@ -235,8 +235,9 @@ def upload():
     url = "%s/%s/%s" % (options.base_url, options.upload_dir, filename)
     return '''
 <script>
-  top.$('.mce-btn.mce-open').parent().find('.mce-textbox').val('%s');
-</script>''' % url
+  var input1 = top.$('.mce-btn.mce-open').parent().find('.mce-textbox').val('%s');
+  input1.parents(".mce-formitem").next().find(".mce-textbox").val('my %s');
+</script>''' % (url, ext)
 
 
 # ADMIN FUNCTIONS
