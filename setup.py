@@ -37,6 +37,10 @@ if htaccess:
 else:
     run_command("cp cgi-bin/.htaccess %s/cgi-bin/.htaccess" % root)
 
+# make directory for uploads
+from ohms.options import upload_dir
+run_command("mkdir -p %s/WWW/%s" % (root, upload_dir))
+run_command("touch %s/WWW/%s/index.html" % (root, upload_dir))
 
 # initialize empty database
 print "Now initializing the database..."

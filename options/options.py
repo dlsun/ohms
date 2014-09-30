@@ -12,6 +12,9 @@ static = "static"
 # specify the directory on AFS
 base_dir = "/afs/ir/class/stats60"
 
+# this is the directory inside base_dir/WWW/ that stores uploaded files
+upload_dir = "uploads"
+
 # specify htaccess file -- this controls who can access OHMS
 # by default, it allows access to anybody with a Stanford login
 htaccess = ""

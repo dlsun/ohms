@@ -26,6 +26,9 @@ var OHMS = (function(OHMS) {
 		"media nonbreaking save table contextmenu",
 		"paste textcolor colorpicker textpattern"
 	    ],
+            file_browser_callback: function(field_name, url, type, win) {
+		$("form#" + that.id + " input").click();
+            },
 	    menubar: false,
 	    toolbar1: "undo redo | alignleft aligncenter alignright | bullist numlist | link image media",
 	    toolbar2: "bold italic underline | superscript subscript | fontsizeselect forecolor | table",

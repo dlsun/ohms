@@ -209,6 +209,36 @@ def grades():
     return render_template("grades.html", grades=grades, 
                            options=options, user=user)
 
+
+@app.route("/upload", methods=['POST'])
+def upload():
+    user = validate_user()
+
+    file = request.files['file']
+    if not file:
+        return "No file uploaded."
+
+    # extract the extension
+    ext = file.filename.rsplit('.', 1)[1]
+
+    # generate a random filename
+    from string import ascii_lowercase, digits
+    from random import choice
+    filename = "".join(choice(ascii_lowercase + digits) for _ in range(40))
+    filename += "." + ext
+
+    # determine where to save the file
+    path = "%s/WWW/%s/%s" % (options.base_dir, options.upload_dir, filename)
+    file.save(path)
+
+    # return the URL to the file
+    url = "%s/%s/%s" % (options.base_url, options.upload_dir, filename)
+    return '''
+<script>
+  top.$('.mce-btn.mce-open').parent().find('.mce-textbox').val('%s').closest('.mce-window').find('.mce-primary').click();
+</script>''' % url
+
+
 # ADMIN FUNCTIONS
 @app.route("/admin")
 def admin():

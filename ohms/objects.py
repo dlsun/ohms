@@ -450,11 +450,19 @@ class LongAnswerItem(Item):
             self.solution = ""
 
     def to_html(self):
-        frame = ET.Element("table", attrib={"class": "item", "itemtype": "long-answer"})
-        row = ET.SubElement(frame, "tr")
+        frame = ET.Element("div", attrib={"class": "item", "itemtype": "long-answer"})
+        table = ET.SubElement(frame, "table")
+        row = ET.SubElement(table, "tr")
         col1 = ET.SubElement(row, "td", attrib={"class": "span6"})
+        col2 = ET.SubElement(row, "td", attrib={"class": "response span4"})
         ET.SubElement(col1, "textarea", attrib={"id": "long%s" % self.id, "class": "span6", "rows": "8", "disabled": "disabled"})
-        ET.SubElement(row, "td", attrib={"class": "response span4"})
+
+        iframe = ET.SubElement(frame, "iframe", attrib={"id": "target%s" % self.id, "name": "target%s" % self.id, 
+                                                        "style": "display:none"})
+        form = ET.SubElement(frame, "form", attrib={"id": "long%s" % self.id, "action": "upload", "target": "target%s" % self.id, 
+                                                    "method": "POST", "enctype": "multipart/form-data", 
+                                                    "style": "width:0px;height:0;overflow:hidden"})
+        ET.SubElement(form, "input", attrib={"type": "file", "name": "file", "onchange": "$(this).parent('form').submit();this.value='';"})
         
         return frame
 
