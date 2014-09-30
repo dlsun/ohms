@@ -25,7 +25,7 @@ reiterate what the response does well.</p>
     <table class="frame">
       <tr>
         <td class='span2'><strong>Response {{ loop.index }}</strong></td>
-        <td class='response span8'>{{ qr }}</td>
+        <td class='response span8'>{{ qr|safe }}</td>
       </tr>
       <tr>
         <td><strong>Score</strong></td>
