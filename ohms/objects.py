@@ -603,9 +603,9 @@ class PeerReview(Question):
                 elif median <= 1:
                     comment += "Your peers found your feedback unsatisfactory. Please see a member of the course staff to discuss strategies to improve."
             elif score:
-                comment = "Watch this space for your peers' judgment of your feedback."
+                comment = "Watch this space for your peers' judgment of your feedback. "
                 if self.rate_pts:
-                    comment += "Your peers' responses is worth %f points, so you cannot earn all %s points yet." % (self.rate_pts, self.points)
+                    comment += "Your peers' responses is worth %s points, so you cannot earn all %s points yet." % (self.rate_pts, self.points)
 
         # get self tasks
         if self.self_pts is not None:
