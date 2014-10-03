@@ -1,11 +1,1 @@
-To deploy locally:
-$ make local-deploy
-$ cd ohms
-$ python init_db.py
-$ python server.py
-
-To deploy the test service:
-$ make test-deploy
-
-To deploy the prod service, (careful!!!):
-$ make prod-deploy
+See the [installation guide](http://statweb.stanford.edu/~dlsun/installing_ohms.pdf) for instructions on how to set up OHMS on Stanford's servers.
