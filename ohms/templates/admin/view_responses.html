@@ -22,13 +22,15 @@
 	  <p><tt>{{ response.stuid }}</tt></p>
 	  <p>{{ response.time }}</p>
 	</td><td class='span5'>
-	  <ul>
-	  {% for item_response in response.item_responses %}
-	    <li>
-	      <div class="response">{{ item_response.response|safe }}</div>
-	    </li>
+	  <div class="response">
+	    <ul>
+	      {% for item_response in response.item_responses %}
+	      <li>
+		{{ item_response.response|safe }}
+	      </li>
 	  {% endfor %}
-	  </ul>
+	    </ul>
+	  </div>
 	</td><td class='span6' {% if response.score != None %}style='background-color:#dff0d8;'{% endif %}>
 	  <div class="grading" id='{{ response.id }}'>
 	    <table>

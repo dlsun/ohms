@@ -33,7 +33,8 @@ ol.ohms-ol ol.ohms-ol {
 
 .response {
     background-color:#e0e0e0;
-    padding: 10px;
+    padding:10px;
+    overflow:auto;
 }
 
 .error {
