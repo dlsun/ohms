@@ -34,6 +34,7 @@ ol.ohms-ol ol.ohms-ol {
 .response {
     background-color:#e0e0e0;
     padding:10px;
+    max-width:100%;
     overflow:auto;
 }
 
