@@ -26,9 +26,13 @@ var OHMS = (function(OHMS) {
 		"media nonbreaking save table contextmenu",
 		"paste textcolor colorpicker textpattern"
 	    ],
-            file_browser_callback: function(field_name, url, type, win) {
-		$("form#" + that.id + " input").click();
-            },
+	    file_picker_callback: function(callback, value, meta) {
+		if (meta.filetype == 'file' || meta.filetype == 'image') {
+		    $("form#" + that.id + " input").click();
+		    $(".mce-btn.mce-open").parent().find(".mce-textbox").val("upload in progress...");
+		} else 
+		    alert("File upload not supported for this type.");
+	    },
 	    menubar: false,
 	    toolbar1: "undo redo | alignleft aligncenter alignright | bullist numlist | link image media",
 	    toolbar2: "bold italic underline | superscript subscript | fontsizeselect forecolor | table",

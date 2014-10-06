@@ -99,16 +99,15 @@ def get_sample_responses(question_id):
         order_by(QuestionResponse.id).all()
 
 def get_all_grades(stuid):
-    return session.query(Grade).filter_by(student=stuid).order_by(Grade.time).all()
+    return session.query(Grade).filter_by(stuid=stuid).join(Homework).order_by(Homework.due_date).all()
 
-def get_grade(stuid, assignment):
-    grades = session.query(Grade).filter_by(student=stuid).\
-        filter_by(assignment=assignment).all()
-    return grades[0] if grades else None
+def get_grade(stuid, hw_id):
+    return session.query(Grade).filter_by(stuid=stuid).\
+        filter_by(hw_id=hw_id).first()
 
-def add_grade(student, assignment, time, score, points):
-    grade = Grade(student=student, assignment=assignment, 
-                  time=time, score=score, points=points)
+def add_grade(student, homework, score):
+    grade = Grade(student=student, homework=homework, 
+                  score=score)
     session.add(grade)
     session.commit()
     

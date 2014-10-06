@@ -180,20 +180,19 @@ def calculate_grade(user, hw):
     """
 
     # total up the points
-    score, points = 0, 0
+    score = 0.
     for q in hw.questions:
-        points += q.points
         out = q.load_response(user)
-        if out['submission']:
-            score += (out['submission'].score or 0.)
+        if out['submission'] and out['submission'].score:
+            score += out['submission'].score
+        else:
+            return None
     # fill in grades
-    grade = get_grade(user.stuid, hw.name)
+    grade = get_grade(user.stuid, hw.id)
     if not grade:
-        add_grade(user.stuid, hw.name, hw.due_date, score, points)
+        add_grade(user, hw, score)
     else:
-        grade.time = hw.due_date
         grade.score = score
-        grade.points = points
     session.commit()
 
     return grade
@@ -236,8 +235,8 @@ def upload():
     return '''
 <script>
   var input1 = top.$('.mce-btn.mce-open').parent().find('.mce-textbox').val('%s');
-  input1.parents(".mce-formitem").next().find(".mce-textbox").val('my %s');
-</script>''' % (url, ext)
+  input1.parents(".mce-formitem").next().find(".mce-textbox").val('%s');
+</script>''' % (url, url)
 
 
 # ADMIN FUNCTIONS

@@ -35,18 +35,18 @@ class Homework(Base):
         hw = Homework(name=node.attrib['name'])
         if 'start_date' in node.attrib:
             hw.start_date = datetime.strptime(node.attrib['start_date'],
-                                                "%m/%d/%Y %H:%M:%S")
+                                              "%m/%d/%Y %H:%M:%S")
         else:
             hw.start_date = None
         if 'due_date' in node.attrib:
             hw.due_date = datetime.strptime(node.attrib['due_date'],
-                                              "%m/%d/%Y %H:%M:%S")
+                                            "%m/%d/%Y %H:%M:%S")
         else:
             hw.due_date = None
         for i, q in enumerate(node.iter('question')):
             print 'Processing Question %d' % (i+1)
             q_object = Question.from_xml(q)
-            q_object.hw = hw
+            q_object.homework = hw
             session.add(q_object)
         return hw
 
@@ -689,8 +689,10 @@ class PeerReview(Question):
 class Grade(Base):
     __tablename__ = 'grades'
 
-    student = Column(String(10), primary_key=True)
-    assignment = Column(String(50), primary_key=True)
-    time = Column(DateTime)
+    id = Column(Integer, primary_key=True)
+    stuid = Column(String(10), ForeignKey('users.stuid'))
+    hw_id = Column(Integer, ForeignKey('hws.id'))
     score = Column(Float)
-    points = Column(Float)
+
+    homework = relationship("Homework")
+    student = relationship("User")
