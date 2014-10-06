@@ -39,8 +39,8 @@ to return to this page. Once you are here, you can simply enter your User ID in 
 	<th>User ID</th>
 	<th>Type</th>
 	<th></th>
-	{% for assignment in assignments %}
-	<th>{{ assignment }}</th>
+	{% for homework in homeworks %}
+	<th>{{ homework.name }}</th>
 	{% endfor %}
       </thead>
       {% for student, grades in gradebook %}

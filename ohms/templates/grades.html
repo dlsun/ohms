@@ -14,9 +14,9 @@
   {% for grade in grades %}
 
   <tr>
-    <td>{{ grade.assignment }}</td>
-    <td>{{ grade.time }}</td>
-    <td>{{ grade.score }} / {{ grade.points }}</td>
+    <td>{{ grade.homework.name }}</td>
+    <td>{{ grade.homework.due_date }}</td>
+    <td>{{ grade.score }}</td>
   </tr>
 
   {% endfor %}
