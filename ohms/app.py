@@ -183,10 +183,12 @@ def calculate_grade(user, hw):
     score = 0.
     for q in hw.questions:
         out = q.load_response(user)
-        if out['submission'] and out['submission'].score:
-            score += out['submission'].score
-        else:
+        if out['submission'] is None:
+            continue
+        elif out['submission'].score is None:
             return None
+        else:
+            score += out['submission'].score
     # fill in grades
     grade = get_grade(user.stuid, hw.id)
     if not grade:
