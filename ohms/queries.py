@@ -104,7 +104,7 @@ def get_grade(stuid, hw_id):
 
 def get_all_grades(stuid):
     hws = get_homework()
-    return [hw, get_grade(stuid, hw_id) for hw in hws]
+    return [(hw, get_grade(stuid, hw.id)) for hw in hws]
 
 def add_grade(student, homework, score):
     grade = Grade(student=student, homework=homework, 

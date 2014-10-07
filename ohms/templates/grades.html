@@ -14,8 +14,8 @@
   {% for homework, grade in grades %}
 
   <tr>
-    <td>{{ grade[0].name }}</td>
-    <td>{{ grade[0].due_date }}</td>
+    <td>{{ homework.name }}</td>
+    <td>{{ homework.due_date }}</td>
     <td>{% if grade %}{{ grade.score }}{% endif %}</td>
   </tr>
 
