@@ -99,7 +99,8 @@ def get_sample_responses(question_id):
         order_by(QuestionResponse.id).all()
 
 def get_all_grades(stuid):
-    return session.query(Grade).filter_by(stuid=stuid).join(Homework).order_by(Homework.due_date).all()
+    hws = get_homework()
+    return [session.query(Grade).filter_by(stuid=stuid).filter_by(hw_id=hw.id).first() for hw in hws]
 
 def get_grade(stuid, hw_id):
     return session.query(Grade).filter_by(stuid=stuid).\
