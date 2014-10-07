@@ -101,7 +101,7 @@ def list():
                     tasks = get_peer_tasks_for_student(q.question_id, user.stuid)
                     scores = [t.score for t in tasks if t.score is not None]
                     new_score = sorted(scores)[len(scores) // 2] if scores else None
-                    if response.score != new_score:
+                    if response.score is None:
                         response.score = new_score
                         response.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments." % q.question_id
                         session.commit()
