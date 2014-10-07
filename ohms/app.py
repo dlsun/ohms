@@ -254,13 +254,11 @@ def admin():
     for student in students:
         gradebook.append((student, get_all_grades(student.stuid)))
 
-    homeworks = get_homework()
-
     guests = session.query(User).filter_by(type="guest").all()
     admins = session.query(User).filter_by(type="admin").all()
 
     return render_template("admin/index.html", students=students, guests=guests, admins=admins,  
-                           homeworks=homeworks, gradebook=gradebook, options=options)
+                           gradebook=gradebook, options=options)
 
 @app.route("/change_user_type", methods=['POST'])
 def change_user_type():
