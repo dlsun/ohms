@@ -181,6 +181,8 @@ def calculate_grade(user, hw):
 
     # total up the points
     score = 0.
+    if len(hw.questions) == 0:
+        return None
     for q in hw.questions:
         out = q.load_response(user)
         if out['submission'] is None:
