@@ -389,6 +389,7 @@ def update_grade():
     stuid = request.form['stuid']
     hw_id = request.form['hw_id']
     score = request.form['score']
+    score = None if score = "" else float(score)
 
     # fill in grades
     grade = get_grade(stuid, hw_id)
