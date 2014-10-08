@@ -380,3 +380,20 @@ def add_question():
 
     return "Question added successfully!"
 
+@app.route("/update_grade", methods=['POST'])
+def update_grade():
+    admin = validate_admin()
+
+    stuid = request.form['stuid']
+    hw_id = request.form['hw_id']
+    score = request.form['score']
+
+    # fill in grades
+    grade = get_grade(stuid, hw_id)
+    if not grade:
+        add_grade(get_user(stuid), get_homework(hw_id), score)
+    else:
+        grade.score = score
+    session.commit()
+
+    return "Grade update successful!"

@@ -59,7 +59,7 @@ to return to this page. Once you are here, you can simply enter your User ID in 
 	    </form>
 	  </td>
 	  {% for grade in grades %}
-	  <td hw_id="{{ grade[0].id }}"><input type="text" class="input-mini" 
+	  <td hw_id="{{ grade[0].id }}"><input type="text" class="input-mini grade" 
 					       value="{% if grade[1] %}{{ grade[1].score }}{% endif %}"/></td>
 	  {% endfor %}
 	</tr>
@@ -120,9 +120,8 @@ to return to this page. Once you are here, you can simply enter your User ID in 
 
     </div>
 
-    <script type="text/javascript">
-      console.log($("").parents("tr").attr("stuid"));
-    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="{{options.base_url}}/{{options.static}}/js/admin/index.js"></script>
 
   </body>
 
