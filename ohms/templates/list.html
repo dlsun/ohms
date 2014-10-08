@@ -31,7 +31,7 @@ as soon as possible.</p>
 
   <tr value="{{ hw.id }}"/>
       <td>
-	{% if hw.start_date==None or hw.start_date < current_time %}
+	{% if (hw.start_date==None or hw.start_date < current_time) and (hw.questions|length > 0) %}
           <a href="hw?id={{hw.id}}">{{hw.name}}</a>
 	{% else %}
           <p class="muted">{{hw.name}}</p>

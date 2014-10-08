@@ -11,12 +11,12 @@
   </thead>
   <tbody>
 
-  {% for grade in grades %}
+  {% for homework, grade in grades %}
 
   <tr>
-    <td>{{ grade.homework.name }}</td>
-    <td>{{ grade.homework.due_date }}</td>
-    <td>{{ grade.score }}</td>
+    <td>{{ homework.name }}</td>
+    <td>{{ homework.due_date }}</td>
+    <td>{% if grade %}{{ grade.score }}{% endif %}</td>
   </tr>
 
   {% endfor %}

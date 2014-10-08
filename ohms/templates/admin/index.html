@@ -38,33 +38,33 @@ to return to this page. Once you are here, you can simply enter your User ID in 
 	<th>Student Name</th>
 	<th>User ID</th>
 	<th>Type</th>
-	<th></th>
-	{% for homework in homeworks %}
-	<th>{{ homework.name }}</th>
+	{% for grade in gradebook[0][1] %}
+	<th>{{ grade[0].name }}</th>
 	{% endfor %}
       </thead>
-      {% for student, grades in gradebook %}
-        <tr>
+      <tbody>
+	{% for student, grades in gradebook %}
+        <tr stuid="{{ student.stuid }}">
 	  <td>{{ student.name }}</td>
 	  <td>{{ student.stuid }}</td>
-	  <form target="_blank" action="change_user_type" method="POST">
 	  <td>
-	    <input type="hidden" name="user" value="{{ student.stuid }}" />
-	    <select name="type" class="input-small">
-	      <option value="student" selected>Student</option>
-	      <option value="guest">Guest</option>
-	      <option value="admin">Admin</option>
-	    </select>
+	    <form target="_blank" action="change_user_type" method="POST">
+	      <input type="hidden" name="user" value="{{ student.stuid }}" />
+	      <select name="type" class="input-small">
+		<option value="student" selected>Student</option>
+		<option value="guest">Guest</option>
+		<option value="admin">Admin</option>
+	      </select>
+	      <input type="submit" value="Update!" />
+	    </form>
 	  </td>
-	  <td>
-	    <input type="submit" value="Update!" />
-	  </td>
-	  </form>
 	  {% for grade in grades %}
-	  <td>{{ grade.score }}</td>
+	  <td hw_id="{{ grade[0].id }}"><input type="text" class="input-mini grade" 
+					       value="{% if grade[1] %}{{ grade[1].score }}{% endif %}"/></td>
 	  {% endfor %}
 	</tr>
-      {% endfor %}
+	{% endfor %}
+      </tbody>
     </table>
 
     <hr/>
@@ -119,6 +119,9 @@ to return to this page. Once you are here, you can simply enter your User ID in 
 
 
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="{{options.base_url}}/{{options.static}}/js/admin/index.js"></script>
 
   </body>
 

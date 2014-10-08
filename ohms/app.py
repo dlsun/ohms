@@ -101,7 +101,7 @@ def list():
                     tasks = get_peer_tasks_for_student(q.question_id, user.stuid)
                     scores = [t.score for t in tasks if t.score is not None]
                     new_score = sorted(scores)[len(scores) // 2] if scores else None
-                    if response.score != new_score:
+                    if response.score is None:
                         response.score = new_score
                         response.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments." % q.question_id
                         session.commit()
@@ -181,12 +181,16 @@ def calculate_grade(user, hw):
 
     # total up the points
     score = 0.
+    if len(hw.questions) == 0:
+        return None
     for q in hw.questions:
         out = q.load_response(user)
-        if out['submission'] and out['submission'].score:
-            score += out['submission'].score
-        else:
+        if out['submission'] is None:
+            continue
+        elif out['submission'].score is None:
             return None
+        else:
+            score += out['submission'].score
     # fill in grades
     grade = get_grade(user.stuid, hw.id)
     if not grade:
@@ -252,13 +256,11 @@ def admin():
     for student in students:
         gradebook.append((student, get_all_grades(student.stuid)))
 
-    homeworks = get_homework()
-
     guests = session.query(User).filter_by(type="guest").all()
     admins = session.query(User).filter_by(type="admin").all()
 
     return render_template("admin/index.html", students=students, guests=guests, admins=admins,  
-                           homeworks=homeworks, gradebook=gradebook, options=options)
+                           gradebook=gradebook, options=options)
 
 @app.route("/change_user_type", methods=['POST'])
 def change_user_type():
@@ -380,3 +382,21 @@ def add_question():
 
     return "Question added successfully!"
 
+@app.route("/update_grade", methods=['POST'])
+def update_grade():
+    admin = validate_admin()
+
+    stuid = request.form['stuid']
+    hw_id = request.form['hw_id']
+    score = request.form['score']
+    score = None if score == "" else float(score)
+
+    # fill in grades
+    grade = get_grade(stuid, hw_id)
+    if not grade:
+        add_grade(get_user(stuid), get_homework(hw_id), score)
+    else:
+        grade.score = score
+    session.commit()
+
+    return "Grade update successful!"
