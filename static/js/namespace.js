@@ -11,7 +11,7 @@ var OHMS = OHMS || {};
 
 MathJax.Hub.Config({
     tex2jax: {
-	inlineMath: [['`','`']],
+	inlineMath: [['`','`'], ['\\(','\\)']],
 	processEscapes: true,
 	skipTags: ["script","noscript","style","textarea","code"],
     },
