@@ -21,7 +21,7 @@ as soon as possible.</p>
 
 <table class="table table-striped" id="homeworks">
   <thead>
-    <th>Homework</th>
+    <th>Assignment</th>
     <th>Start Date</th>
     <th>Due Date</th>
   </thead>
@@ -31,13 +31,15 @@ as soon as possible.</p>
 
   <tr value="{{ hw.id }}"/>
       <td>
-	{% if (hw.start_date==None or hw.start_date < current_time) and (hw.questions|length > 0) %}
-          <a href="hw?id={{hw.id}}">{{hw.name}}</a>
-	{% else %}
+	{% if (hw.start_date > current_time) %}
           <span class="muted">{{hw.name}}</span> 
 	  {% if user.type=="admin" %}
 	  (<a href="hw?id={{hw.id}}">Preview</a>)
 	  {% endif %}
+	{% elif (hw.questions|length > 0) %}
+          <a href="hw?id={{hw.id}}">{{hw.name}}</a>
+	{% else %}
+	  {{hw.name}}
         {% endif %}
       </td>
       <td>
