@@ -14,6 +14,8 @@
 	<p id="studentName" class="lead">You are logged in as <strong>{{user.name}}</strong>. 
 	  {% if user.type == "admin" %}
 	  You are an <a href="admin">administrator</a>.
+	  {% elif user.type == "guest" %}
+	  You are a guest and have limited privileges.
 	  {% endif %}
 	</p>
       </div>
