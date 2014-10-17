@@ -23,4 +23,7 @@ class NewEncoder(json.JSONEncoder):
 
 def convert_to_last_name(name):
     x = name.split()
-    return x[-1] + ', ' + " ".join(x[:-1])
+    if x[-1] not in ["I", "II", "III", "Jr.", "Sr.", "Jr", "Sr"]:
+        return x[-1] + ', ' + " ".join(x[:-1])
+    else:
+        return " ".join(x[-2:]) + ',' + " ".join(x[:-2])
