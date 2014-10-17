@@ -33,13 +33,13 @@ to return to this page. Once you are here, you can simply enter your User ID in 
 
     <p>Grades are only shown for students in the class. To exclude a student from the list, change his or her status to "Guest".</p>
 
-    <table class="table">
+    <table class="table table-striped">
       <thead>
 	<th>Student Name</th>
 	<th>User ID</th>
 	<th>Type</th>
 	{% for grade in gradebook[0][1] %}
-	<th>{{ grade[0].name }}</th>
+	<th><a href="#" onclick="$('td:nth-child({{ loop.index+3 }}):th:nth-child({{ loop.index+3 }})').hide()">{{ grade[0].name }}</th>
 	{% endfor %}
       </thead>
       <tbody>
