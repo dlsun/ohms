@@ -34,21 +34,21 @@ to return to this page. Once you are here, you can simply enter your User ID in 
     <p>Grades are only shown for students in the class. To exclude a student from the list, change his or her status to "Guest".</p>
 
     <script type="text/javascript">
-      function hide_all_other_columns(i) {
-        var table = $(this).parents('table').eq(0);
-        for(var j=4; j<={{gradebook[0][1]|length}}; j++)
-	  if(j !== i)
-	    table.find('td:nth-child(' + j + '),th:nth-child(' + j + ')').hide();
-      }
+    function hide_all_other_columns(i) {
+      var table = $("table#gradebook");
+      for(var j=0; j<{{gradebook[0][1]|length}}; j++)
+        if(j !== i)
+          table.find('td:nth-child(' + (j+4) + '),th:nth-child(' + (j+4) + ')').hide();
+    }
     </script>
 
-    <table class="table table-striped">
+    <table id="gradebook" class="table table-striped">
       <thead>
 	<th>Student Name</th>
 	<th>User ID</th>
 	<th>Type</th>
 	{% for grade in gradebook[0][1] %}
-	<th><a href="#" onclick="hide_all_other_columns({{ loop.index + 3 }})">{{ grade[0].name }}</th>
+	<th><a href="#" onclick="hide_all_other_columns({{ loop.index0 }})">{{ grade[0].name }}</th>
 	{% endfor %}
       </thead>
       <tbody>
