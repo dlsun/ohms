@@ -34,7 +34,7 @@ as soon as possible.</p>
 	{% if (hw.start_date==None or hw.start_date < current_time) and (hw.questions|length > 0) %}
           <a href="hw?id={{hw.id}}">{{hw.name}}</a>
 	{% else %}
-          <p class="muted">{{hw.name}}</p>
+          <span class="muted">{{hw.name}}</span> 
 	  {% if user.type=="admin" %}
 	  (<a href="hw?id={{hw.id}}">Preview</a>)
 	  {% endif %}

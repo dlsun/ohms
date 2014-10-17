@@ -57,7 +57,7 @@ def get_last_question_response(question_id, stuid):
     return qrs[-1] if qrs else None
 
 def get_all_responses_to_question(question_id):
-    users = session.query(User).all()
+    users = session.query(User).filter_by(type="student").all()
     responses = []
     for u in users:
         response = get_last_question_response(question_id, u.stuid)
