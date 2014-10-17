@@ -157,7 +157,7 @@ class Question(Base):
             'submission': self.delay_feedback(last_submission),
             'locked': self.check_if_locked(last_submission),
             }
-        if user.type == "admin" or pdt_now() > self.homework.due_date:
+        if user.type == "admin" or (user.type == "student" and pdt_now() > self.homework.due_date):
             out['solution'] = [item.solution for item in self.items]
         return out
 
