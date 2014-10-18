@@ -89,7 +89,7 @@
       <td colspan="4">
 	<select name="question_id">
 	  {% for q in question_list %}
-	  <option value="{{ q.id }}">{{ q.id }} ({{ q.homework.name }})</option>
+	  <option value="{{ q.id }}">{{ q.homework.name }}: {{ q.name }} (ID: {{ q.id }})</option>
 	  {% endfor %}
 	</select>
       </td>
