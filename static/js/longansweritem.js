@@ -36,7 +36,7 @@ var OHMS = (function(OHMS) {
 	    },
 	    menubar: false,
 	    toolbar1: "undo redo | alignleft aligncenter alignright | bullist numlist | link image media",
-	    toolbar2: "bold italic underline | superscript subscript | fontsizeselect forecolor | table",
+	    toolbar2: "bold italic underline | charmap superscript subscript | fontsizeselect forecolor | table",
 	    statusbar: false,
 	    image_advtab: true,
 	    setup: function(editor) {
