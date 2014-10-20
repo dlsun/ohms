@@ -26,6 +26,7 @@ var OHMS = (function(OHMS) {
 		"media nonbreaking save table contextmenu",
 		"paste textcolor colorpicker textpattern"
 	    ],
+	    paste_as_text: true,
 	    file_picker_callback: function(callback, value, meta) {
 		if (meta.filetype == 'file' || meta.filetype == 'image') {
 		    $("form#" + that.id + " input").click();
