@@ -23,6 +23,7 @@
 	  <p>{{ response.time }}</p>
 	</td><td class='span5'>
 	  <div class="response">
+	    \( \) <!-- This avoids some horrible MathJax bug that I don't understand....  !-->
 	    <ul>
 	      {% for item_response in response.item_responses %}
 	      <li>
