@@ -64,7 +64,7 @@ var OHMS = (function(OHMS) {
 			    source.hide();
 			    // show the original question and render MathJax
 			    editable.html(data.html).show();
-			    MathJax.Hub.Typeset(that.element.get(0));
+			    MathJax.Hub.Queue(["Typeset",MathJax.Hub, that.element.get(0)]);
 			}, 
 			error : function (xhr) {
 			    add_alert("The update failed because <br><br>" + xhr.responseText);
@@ -97,7 +97,6 @@ var OHMS = (function(OHMS) {
 		for (var i=0; i<data.solution.length; i++) {
 		    this.items[i].set_solution(data.solution[i]);
 		}
-	    MathJax.Hub.Typeset(this.element.get(0));
 	}
 
 	Question.prototype.load_response_error = function (xhr) {

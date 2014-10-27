@@ -27,7 +27,7 @@ var add_alert = function (msg) {
 $.ready(function() {
     var responses = $(".response");
     for(var i=0; i<responses.size(); i++) {
-	MathJax.Hub.Typeset(responses.get(i));
+	MathJax.Hub.Queue(["Typeset", MathJax.Hub, responses.get(i)]);
     }
 })
 

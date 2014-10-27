@@ -47,7 +47,7 @@ var OHMS = (function(OHMS) {
 		 })
 		 editor.on('change keyup input', function() {
 		     that.preview.html(that.editor.getContent());
-		     MathJax.Hub.Typeset(that.preview.get(0));
+		     MathJax.Hub.Queue(["Typeset", MathJax.Hub, that.preview.get(0)]);
 		 })
 	    }
 	});
@@ -63,6 +63,7 @@ var OHMS = (function(OHMS) {
 	if (value !== null) {
 	    this.editor.setContent(value);
 	    this.preview.html(value);
+	    MathJax.Hub.Queue(["Typeset", MathJax.Hub, this.preview.get(0)]);
 	}
     }
 
@@ -77,6 +78,7 @@ var OHMS = (function(OHMS) {
 
     LongAnswerItem.prototype.set_solution = function (solution) {
 	this.element.after("<div class='alert alert-success'>" + solution + "</div>");
+	MathJax.Hub.Queue(["Typeset", MathJax.Hub, this.element.next().get(0)]);
     }
     
     OHMS.LongAnswerItem = LongAnswerItem;
