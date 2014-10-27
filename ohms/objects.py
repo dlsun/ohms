@@ -546,7 +546,7 @@ class PeerReview(Question):
         from auth import validate_user
         self.set_metadata()
         user = validate_user()
-        if user.type != "student":
+        if user.type == "guest":
             return "Sorry, but only students can view peer assessment questions."
 
         vars = {"question": get_question(self.question_id)}
