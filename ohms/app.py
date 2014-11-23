@@ -248,19 +248,35 @@ def upload():
 def admin():
     admin = validate_admin()
 
-    homeworks = [hw for hw in get_homework() if hw.due_date <= pdt_now()]
-    students = session.query(User).filter_by(type="student").all()
-    students.sort(key=lambda user: convert_to_last_name(user.name))
-
-    gradebook = []
-    for student in students:
-        gradebook.append((student, get_all_grades(student.stuid)))
-
     guests = session.query(User).filter_by(type="guest").all()
     admins = session.query(User).filter_by(type="admin").all()
 
-    return render_template("admin/index.html", students=students, guests=guests, admins=admins,  
-                           gradebook=gradebook, options=options)
+    return render_template("admin/index.html", guests=guests, admins=admins,  
+                           gradebook=get_gradebook(), options=options)
+
+@app.route("/download_grades", methods=['GET'])
+def download_grades():
+    gradebook = get_gradebook()
+    entries = gradebook[0][1]
+    csv = "Student," + ",".join(hw.name for hw, _ in entries) + "\n"
+    for student, grades in gradebook:
+        row = [student.name]
+        for homework, grade in grades:
+            if grade is None:
+                row.append("")
+            else:
+                row.append(str(grade.score))
+        csv += ",".join(row) + "\n"
+
+    response = make_response(csv)
+    response.headers["Content-Disposition"] = "attachment; filename=grades.csv"
+
+    return response
+
+def get_gradebook():
+    students = session.query(User).filter_by(type="student").all()
+    students.sort(key=lambda user: convert_to_last_name(user.name))
+    return [(s, get_all_grades(s.stuid)) for s in students]
 
 @app.route("/change_user_type", methods=['POST'])
 def change_user_type():
