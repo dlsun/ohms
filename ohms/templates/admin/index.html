@@ -68,8 +68,13 @@ to return to this page. Once you are here, you can simply enter your User ID in 
 	    </form>
 	  </td>
 	  {% for grade in grades %}
-	  <td hw_id="{{ grade[0].id }}"><input type="text" class="input-mini grade" 
-					       value="{% if grade[1] %}{{ grade[1].score }}{% endif %}"/></td>
+	  <td hw_id="{{ grade[0].id }}">
+	    {% if grade.homework.questions|length %}
+	    {{ grade[1].score }}
+	    {% else %}
+	    <input type="text" class="input-mini grade" 
+		   value="{% if grade[1] %}{{ grade[1].score }}{% endif %}"/></td>
+	    {% endif %}
 	  {% endfor %}
 	</tr>
 	{% endfor %}
