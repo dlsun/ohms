@@ -47,8 +47,8 @@ to return to this page. Once you are here, you can simply enter your User ID in 
 	<th>Student Name</th>
 	<th>User ID</th>
 	<th>Type</th>
-	{% for grade in gradebook[0][1] %}
-	<th><a href="#" onclick="hide_all_other_columns({{ loop.index0 }})">{{ grade[0].name }}</th>
+	{% for homework, grade in gradebook[0][1] %}
+	<th><a href="#" onclick="hide_all_other_columns({{ loop.index0 }})">{{ homework.name }}</th>
 	{% endfor %}
       </thead>
       <tbody>
@@ -67,13 +67,13 @@ to return to this page. Once you are here, you can simply enter your User ID in 
 	      <input type="submit" value="Update!" />
 	    </form>
 	  </td>
-	  {% for grade in grades %}
-	  <td hw_id="{{ grade[0].id }}">
-	    {% if grade.homework.questions|length %}
-	    {{ grade[1].score }}
+	  {% for homework, grade in grades %}
+	  <td hw_id="{{ homework.id }}">
+	    {% if homework.questions|length %}
+	    {{ grade.score }}
 	    {% else %}
 	    <input type="text" class="input-mini grade" 
-		   value="{% if grade[1] %}{{ grade[1].score }}{% endif %}"/></td>
+		   value="{% if grade %}{{ grade.score }}{% endif %}"/></td>
 	    {% endif %}
 	  {% endfor %}
 	</tr>
