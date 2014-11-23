@@ -38,7 +38,7 @@ to return to this page. Once you are here, you can simply enter your User ID in 
     <script type="text/javascript">
     function hide_all_other_columns(i) {
       var table = $("table#gradebook");
-      for(var j=0; j<{{gradebook[0][1]|length}}; j++)
+      for(var j=0; j<{{homeworks|length}}; j++)
         if(j !== i)
           table.find('td:nth-child(' + (j+4) + '),th:nth-child(' + (j+4) + ')').hide();
     }
@@ -49,7 +49,7 @@ to return to this page. Once you are here, you can simply enter your User ID in 
 	<th>Student Name</th>
 	<th>User ID</th>
 	<th>Type</th>
-	{% for homework, grade in gradebook[0][1] %}
+	{% for homework in homeworks %}
 	<th><a href="#" onclick="hide_all_other_columns({{ loop.index0 }})">{{ homework.name }}</th>
 	{% endfor %}
       </thead>
@@ -69,13 +69,13 @@ to return to this page. Once you are here, you can simply enter your User ID in 
 	      <input type="submit" value="Update!" />
 	    </form>
 	  </td>
-	  {% for homework, grade in grades %}
-	  <td hw_id="{{ homework.id }}">
-	    {% if homework.questions|length %}
-	    {{ grade.score }}
+	  {% for hw in homeworks %}
+	  <td hw_id="{{ hw.id }}">
+	    {% if hw.questions|length %}
+	    {{ grades[hw.id].score }}
 	    {% else %}
 	    <input type="text" class="input-mini grade" 
-		   value="{% if grade %}{{ grade.score }}{% endif %}"/></td>
+		   value="{% if grades[hw.id] %}{{ grades[hw.id].score }}{% endif %}"/></td>
 	    {% endif %}
 	  {% endfor %}
 	</tr>

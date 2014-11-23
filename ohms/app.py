@@ -15,7 +15,7 @@ from queries import get_user, get_homework, get_question, \
     get_all_regular_questions, \
     get_all_responses_to_question, get_all_peer_tasks, \
     get_peer_review_questions, get_peer_tasks_for_student, \
-    get_grading_task, add_grade, get_all_grades, get_grade
+    get_grading_task, add_grade, get_grade
 import options
 from pdt import pdt_now
 from auth import validate_user, validate_admin
@@ -206,11 +206,12 @@ def calculate_grade(user, hw):
 def grades():
     user = validate_user()
 
-    grades = get_all_grades(user.stuid)
+    homeworks = get_homework()
+    grades = {hw.id: get_grade(user.stuid, hw.id) for hw in homeworks}
     
     # fetch grades from gradebook
-    return render_template("grades.html", grades=grades, 
-                           options=options, user=user)
+    return render_template("grades.html", homeworks=homeworks, 
+                           grades=grades, options=options, user=user)
 
 
 @app.route("/upload", methods=['POST'])
@@ -248,35 +249,45 @@ def upload():
 def admin():
     admin = validate_admin()
 
+    homeworks = get_homework()
+
     guests = session.query(User).filter_by(type="guest").all()
     admins = session.query(User).filter_by(type="admin").all()
 
-    return render_template("admin/index.html", guests=guests, admins=admins,  
-                           gradebook=get_gradebook(), options=options)
+    return render_template("admin/index.html", homeworks=homeworks, 
+                           guests=guests, admins=admins,  
+                           gradebook=get_gradebook(homeworks), options=options)
 
 @app.route("/download_grades", methods=['GET'])
 def download_grades():
-    gradebook = get_gradebook()
-    entries = gradebook[0][1]
-    csv = "Student," + ",".join(hw.name for hw, _ in entries) + "\n"
+
+    homeworks = get_homework()
+    gradebook = get_gradebook(homeworks)
+
+    csv = "Student," + ",".join(hw.name for hw in homeworks) + "\n"
+
     for student, grades in gradebook:
         row = [student.name]
-        for homework, grade in grades:
-            if grade is None:
+        for hw in homeworks:
+            if grades[hw.id] is None:
                 row.append("")
             else:
-                row.append(str(grade.score))
+                row.append(str(grades[hw.id].score))
         csv += ",".join(row) + "\n"
 
     response = make_response(csv)
-    response.headers["Content-Disposition"] = "attachment; filename=grades.csv"
+    course = options.title.replace(" ", "")
+    date = datetime.now().strftime("%m-%d-%Y")
+    filename = "%sGrades%s.csv" % (course, date)
+    response.headers["Content-Disposition"] = "attachment; filename=%s" % filename
 
     return response
 
-def get_gradebook():
+def get_gradebook(homeworks):
     students = session.query(User).filter_by(type="student").all()
     students.sort(key=lambda user: convert_to_last_name(user.name))
-    return [(s, get_all_grades(s.stuid)) for s in students]
+
+    return [(s, {hw.id: get_grade(s.stuid, hw.id) for hw in homeworks}) for s in students]
 
 @app.route("/change_user_type", methods=['POST'])
 def change_user_type():
