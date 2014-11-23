@@ -26,7 +26,12 @@
 	    <li><a href="{{options.base_url}}">Home</a></li>
 	    <li><a href="{{options.base_url}}/{{options.cgi}}/materials">Materials</a></li>
 	    <li><a href="{{options.base_url}}/{{options.cgi}}/list">Homeworks</a></li>
+	    {% if user.type == "student" %}
 	    <li><a href="{{options.base_url}}/{{options.cgi}}/grades">Grades</a></li>
+	    {% endif %}
+	    {% if user.type == "admin" %}
+	    <li><a href="admin">Admin</a></li>
+	    {% endif %}
 	  </ul>
 	</div>
 
