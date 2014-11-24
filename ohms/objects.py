@@ -520,7 +520,7 @@ class GradingTask(Base):
     question = relationship("Question")
 
     __table_args__ = (UniqueConstraint('grader', 'student', 'question_id', 
-                                       name='constraint'),)
+                                       name='unique_task'),)
 
 
 class PeerReview(Question):
@@ -701,3 +701,6 @@ class Grade(Base):
 
     homework = relationship("Homework")
     student = relationship("User")
+
+    __table_args__ = (UniqueConstraint('stuid', 'hw_id', name='unique_grade'),)
+
