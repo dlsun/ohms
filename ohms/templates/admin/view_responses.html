@@ -4,6 +4,30 @@
     <title>Viewing Student Responses</title>
     <link href="{{options.base_url}}/{{options.static}}/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{options.base_url}}/{{options.static}}/css/style.css" rel="stylesheet">
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Student', 'Score'],
+          {% for response in responses %}
+          ['{{ response.user.name }}', {{ response.score }} ],
+          {% endfor %}
+        ]);
+
+        var options = {
+          title: 'Scores on this Question',
+          legend: { position: 'none' },
+          histogram: { bucketSize: 1 },
+        };
+
+        var chart = new google.visualization.Histogram(document.getElementById('histogram'));
+        chart.draw(data, options);
+      }
+    </script>
+
   </head>
 
   <body>
@@ -13,6 +37,8 @@
     <h3>Viewing Student Responses</h3>
 
     <p class='lead'>Showing {{ responses|length }} Responses</p>
+
+    <div id="histogram" style="width: 900px; height: 500px;"></div>
 
     <table class='table'>
       {% for response in responses %}

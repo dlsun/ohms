@@ -7,7 +7,7 @@ Defines the database objects.
 from __future__ import division
 import xml.etree.ElementTree as ET
 import re
-from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, UnicodeText
+from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, UnicodeText, UniqueConstraint
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm.session import make_transient
 from base import Base, session
@@ -518,6 +518,9 @@ class GradingTask(Base):
     rating = Column(Integer)
 
     question = relationship("Question")
+
+    __table_args__ = (UniqueConstraint('grader', 'student', 'question_id', 
+                                       name='constraint'))
 
 
 class PeerReview(Question):
