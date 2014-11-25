@@ -9,7 +9,7 @@ from datetime import datetime
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 
-from objects import session, Homework, Question, PeerReview, User, GradingTask
+from objects import session, Homework, Question, PeerReview, User, GradingTask, Grade
 from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
     get_all_regular_questions, \
@@ -247,6 +247,7 @@ def upload():
 # ADMIN FUNCTIONS
 @app.route("/admin")
 def admin():
+
     admin = validate_admin()
 
     homeworks = get_homework()
@@ -254,23 +255,25 @@ def admin():
     guests = session.query(User).filter_by(type="guest").all()
     admins = session.query(User).filter_by(type="admin").all()
 
+    gradebook = get_gradebook()
+    
     return render_template("admin/index.html", homeworks=homeworks, 
-                           guests=guests, admins=admins,  
-                           gradebook=get_gradebook(homeworks), options=options)
+                           guests=guests, admins=admins,   
+                           gradebook=gradebook, options=options)
 
 @app.route("/download_grades", methods=['GET'])
 def download_grades():
     admin = validate_admin()
 
     homeworks = get_homework()
-    gradebook = get_gradebook(homeworks)
+    gradebook = get_gradebook()
 
     csv = '"Student",' + ','.join(('"' + hw.name.replace('"', '""') + '"') for hw in homeworks) + "\n"
 
     for student, grades in gradebook:
         row = [student.name]
         for hw in homeworks:
-            if grades[hw.id] is None:
+            if hw.id not in grades:
                 row.append("")
             else:
                 row.append(str(grades[hw.id].score))
@@ -284,11 +287,21 @@ def download_grades():
 
     return response
 
-def get_gradebook(homeworks):
-    students = session.query(User).filter_by(type="student").all()
-    students.sort(key=lambda user: convert_to_last_name(user.name))
+def get_gradebook():
 
-    return [(s, {hw.id: get_grade(s.stuid, hw.id) for hw in homeworks}) for s in students]
+    gradebook = {}
+    for g in session.query(Grade).all():
+        if g.student.type != "student":
+            continue
+        if g.student not in gradebook:
+            gradebook[g.student] = {g.homework.id: g}
+        else:
+            gradebook[g.student][g.homework.id] = g
+            
+    gradebook = [(student, grades) for student, grades in gradebook.iteritems()]
+    gradebook.sort(key=lambda entry: convert_to_last_name(entry[0].name))
+    
+    return gradebook
 
 @app.route("/change_user_type", methods=['POST'])
 def change_user_type():
