@@ -4,6 +4,7 @@
     <title>OHMS Admin Panel</title>
     <link href="{{options.base_url}}/{{options.static}}/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{options.base_url}}/{{options.static}}/css/style.css" rel="stylesheet">
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   </head>
 
   <body>
@@ -36,13 +37,56 @@ to return to this page. Once you are here, you can simply enter your User ID in 
     <p>Grades are only shown for students in the class. To remove a student from the list, change his or her status to "Guest". To hide all columns except for one (useful if you are entering grades), click the header of the column you want to keep.</p>
 
     <script type="text/javascript">
+    var scores = [["Student", "Score"]];
+
+    google.load("visualization", "1", {packages:["corechart"]});
+
+    function drawChart() {
+      var data = google.visualization.arrayToDataTable(scores);
+
+      var options = {
+          title: 'Scores on this Assignment',
+          legend: { position: 'none' },
+      };
+
+      var chart = new google.visualization.Histogram(document.getElementById('histogram'));
+      chart.draw(data, options);
+    }
+
     function hide_all_other_columns(i) {
+      var sum = 0;
+      var sum_sq = 0;
+      var n = 0;
       var table = $("table#gradebook");
-      for(var j=0; j<{{homeworks|length}}; j++)
-        if(j !== i)
+      var students = table.find('td:nth-child(1)').contents(); 
+      for(var j=0; j<{{homeworks|length}}; j++) {
+        if(j !== i) {
           table.find('td:nth-child(' + (j+4) + '),th:nth-child(' + (j+4) + ')').hide();
+        } else {
+          var inputs = table.find('td:nth-child(' + (j+4) + ')').map(function() {
+                                     return $(this).attr("value");
+                                 });
+	  for(var k=0; k < inputs.size(); k++) {
+             var score = parseFloat(inputs.get(k));
+	     if(isNaN(score)) score = -1;
+             else {
+                n += 1;
+                sum += score;
+                sum_sq += Math.pow(score, 2);
+	     }
+             scores.push([students.get(k).data, score]);
+          }
+        }
+      }
+      $("div#histogram").css("width", "900px").css("height", "500px");
+      drawChart();
+      $("div.stats").text("Mean: " + (sum / n).toFixed(2) + ", SD: " + 
+                          (Math.sqrt(sum_sq / n - Math.pow(sum / n, 2))).toFixed(2));
     }
     </script>
+
+    <div id="histogram"></div>
+    <div align="center" class="stats lead"></div>
 
     <table id="gradebook" class="table table-striped">
       <thead>
@@ -70,7 +114,7 @@ to return to this page. Once you are here, you can simply enter your User ID in 
 	    </form>
 	  </td>
 	  {% for hw in homeworks %}
-	  <td hw_id="{{ hw.id }}">
+	  <td hw_id="{{ hw.id }}" value="{{ grades[hw.id].score }}">
 	    {% if hw.questions|length %}
 	    {{ grades[hw.id].score }}
 	    {% else %}
