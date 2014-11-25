@@ -47,6 +47,7 @@ def materials():
 def list():
     user = validate_user()
     hws = get_homework()
+    categories = session.query(Category).all()
     
     # keep track of to-do list for peer reviews
     to_do = defaultdict(int)
@@ -114,7 +115,7 @@ def list():
         calculate_grade(user, hw)
 
 
-    return render_template("list.html", homeworks=hws,
+    return render_template("list.html", homeworks=hws, categories=categories,
                            user=user,
                            options=options,
                            current_time=pdt_now(),
@@ -395,10 +396,12 @@ def add_homework():
                                    "%m/%d/%Y %H:%M:%S")
     due_date = datetime.strptime(request.form['due_date'],
                                  "%m/%d/%Y %H:%M:%S")
+    category_id = request.form['category_id']
 
     homework = Homework(name=name,
                         start_date=start_date,
-                        due_date=due_date)
+                        due_date=due_date,
+                        category_id=category_id)
     session.add(homework)
     session.commit()
 

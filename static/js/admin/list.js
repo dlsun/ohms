@@ -25,6 +25,7 @@ $(".add").click(function (event) {
     type : "POST",
     dataType : "text",
     data : {
+      category_id: row.find("select[name='category']").val(),
       name: row.find("input[name='name']").val(),
       start_date: row.find("input[name='start_date']").val(),
       due_date: row.find("input[name='due_date']").val()

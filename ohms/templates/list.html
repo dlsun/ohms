@@ -67,7 +67,13 @@ as soon as possible.</p>
 
   {% if user.type == "admin" %}
   <tr id="add">
-    <td></td>
+    <td>
+      <select name="category">
+	{% for category in categories %}
+	<option value="{{ category.id }}">{{ category.name }}</option>
+	{% endfor %}
+      </select>
+    </td>
     <td><input type="text" name="name"/></td>
     <td><input type="text" name="start_date" value="MM/DD/YYYY HH:MM:SS"/></td>
     <td><input type="text" name="due_date" value="MM/DD/YYYY HH:MM:SS"/> <input type="button" class="add" value="Add!"></td>
