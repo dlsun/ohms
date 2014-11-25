@@ -260,11 +260,12 @@ def admin():
 
 @app.route("/download_grades", methods=['GET'])
 def download_grades():
+    admin = validate_admin()
 
     homeworks = get_homework()
     gradebook = get_gradebook(homeworks)
 
-    csv = "Student," + ",".join(hw.name for hw in homeworks) + "\n"
+    csv = '"Student",' + ','.join(('"' + hw.name.replace('"', '""') + '"') for hw in homeworks) + "\n"
 
     for student, grades in gradebook:
         row = [student.name]
