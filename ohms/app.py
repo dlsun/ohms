@@ -9,7 +9,7 @@ from datetime import datetime
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 
-from objects import session, Homework, Question, PeerReview, User, GradingTask, Grade
+from objects import session, Homework, Question, PeerReview, User,GradingTask, Grade, Category
 from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
     get_all_regular_questions, \
@@ -251,14 +251,15 @@ def admin():
     admin = validate_admin()
 
     homeworks = get_homework()
-
+    categories = session.query(Category).all()
+    
     guests = session.query(User).filter_by(type="guest").all()
     admins = session.query(User).filter_by(type="admin").all()
 
-    gradebook = get_gradebook()
+    gradebook = get_gradebook(categories)
     
     return render_template("admin/index.html", homeworks=homeworks, 
-                           guests=guests, admins=admins,   
+                           guests=guests, admins=admins, categories=categories,
                            gradebook=gradebook, options=options)
 
 @app.route("/download_grades", methods=['GET'])
@@ -266,7 +267,8 @@ def download_grades():
     admin = validate_admin()
 
     homeworks = get_homework()
-    gradebook = get_gradebook()
+    categories = session.query(Category).all()
+    gradebook = get_gradebook(categories)
 
     csv = '"Student",' + ','.join(('"' + hw.name.replace('"', '""') + '"') for hw in homeworks) + "\n"
 
@@ -287,19 +289,33 @@ def download_grades():
 
     return response
 
-def get_gradebook():
-
+def get_gradebook(categories):
+    
     gradebook = {}
     for g in session.query(Grade).all():
         if g.student.type != "student":
             continue
         if g.student not in gradebook:
             gradebook[g.student] = {g.homework.id: g}
+            for c in categories:
+                gradebook[g.student][c.name] = 0.
         else:
             gradebook[g.student][g.homework.id] = g
+        if type(g.score) == float:
+            gradebook[g.student][g.homework.category.name] += g.score
             
     gradebook = [(student, grades) for student, grades in gradebook.iteritems()]
     gradebook.sort(key=lambda entry: convert_to_last_name(entry[0].name))
+
+    max_grades = {}
+    for c in categories:
+        max_grade = max([grades[c.name] for student, grades in gradebook])
+        max_grades[c.name] = max(max_grade, 1)
+
+    for student, grades in gradebook:
+        grades["overall"] = 0.
+        for c in categories:
+            grades["overall"] += c.weight * grades[c.name] / max_grades[c.name]
     
     return gradebook
 

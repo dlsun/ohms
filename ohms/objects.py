@@ -20,6 +20,14 @@ def strip_and_save_tail(element):
     element.tail = None
     return tail
 
+class Category(Base):
+    __tablename__ = 'categories'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique=True)
+    weight = Column(Float)
+    
+
 class Homework(Base):
     __tablename__ = 'hws'
 
@@ -27,8 +35,10 @@ class Homework(Base):
     name = Column(String(50), unique=True)
     start_date = Column(DateTime)
     due_date = Column(DateTime)
+    category_id = Column(Integer, ForeignKey('categories.id'))
 
     questions = relationship("Question", order_by="Question.id", backref="hw")
+    category = relationship("Category")
 
     @staticmethod
     def from_xml(node):
