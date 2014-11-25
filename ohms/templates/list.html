@@ -68,7 +68,7 @@ as soon as possible.</p>
   {% if user.type == "admin" %}
   <tr id="add">
     <td>
-      <select name="category">
+      <select name="category" style="width:100px;">
 	{% for category in categories %}
 	<option value="{{ category.id }}">{{ category.name }}</option>
 	{% endfor %}
