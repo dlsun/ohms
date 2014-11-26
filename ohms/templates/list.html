@@ -83,6 +83,7 @@ as soon as possible.</p>
   </tbody>
 </table>
 
+{% if user.type == "admin" %}
 <h4>Grading Breakdown</h4>
 
 <p>Some day these will be editable, but not yet...</p>
@@ -101,6 +102,7 @@ as soon as possible.</p>
   {% endfor %}
 </tbody>
 </table>
+{% endif %}
 
 {% endblock %}
 
