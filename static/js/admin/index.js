@@ -4,12 +4,14 @@ var assignment = "";
 google.load("visualization", "1", {packages:["corechart"]});
 
 function drawChart() {
-    var data = google.visualization.arrayToDataTable(data);
-    
+    var dataTable = google.visualization.arrayToDataTable(data);
+    var range = dataTable.getColumnRange(1);
+
     var options = {
         title: assignment + ' Scores',
         legend: { position: 'none' },
         titleTextStyle: { fontSize: 24 },
+	bucketSize: Math.max(1, .01*(range.max - range.min)),
         chartArea: {
             left: '10%',
             top: '10%',
@@ -19,7 +21,7 @@ function drawChart() {
     };
     
     var chart = new google.visualization.Histogram(document.getElementById('histogram'));
-    chart.draw(data, options);
+    chart.draw(dataTable, options);
 }
 
 function hide_all_other_columns(i) {
