@@ -27,9 +27,10 @@ function hide_all_other_columns(i) {
     var sum_sq = 0;
     var n = 0;
     var missing = [];
+    var excused = [];
     var table = $("table#gradebook");
     var students = table.find('td:nth-child(1)').contents(); 
-    for(var j=2; j<table.find('tr:nth-child(1) td').size(); j++) {
+    for(var j=3; j<=table.find('tr:nth-child(1) td').size(); j++) {
         if(j !== i) {
             table.find('td:nth-child(' + j + '),th:nth-child(' + j + ')').hide();
         } else {

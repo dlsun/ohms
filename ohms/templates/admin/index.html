@@ -59,14 +59,14 @@ by adjusting the denominator in the total points.</li>
 	<th>User ID</th>
 	<th>Type</th>
 
-	<th><a href="#" onclick="hide_all_other_columns(3)">Overall</a></th>
+	<th><a href="#" onclick="hide_all_other_columns(4)">Overall</a></th>
 
 	{% for category in categories %}
-	<th><a href="#" onclick="hide_all_other_columns({{ 3 + loop.index }})">{{ category.name }} Total</a></th>
+	<th><a href="#" onclick="hide_all_other_columns({{ 4 + loop.index }})">{{ category.name }} Total</a></th>
 	{% endfor %}
 
 	{% for homework in homeworks %}
-	<th><a href="#" onclick="hide_all_other_columns({{ 3 + categories|length + loop.index }})">{{ homework.name }}</a></th>
+	<th><a href="#" onclick="hide_all_other_columns({{ 4 + categories|length + loop.index }})">{{ homework.name }}</a></th>
 	{% endfor %}
       </thead>
       <tbody>
