@@ -29,12 +29,12 @@ function hide_all_other_columns(i) {
     var missing = [];
     var table = $("table#gradebook");
     var students = table.find('td:nth-child(1)').contents(); 
-    for(var j=-1; j<1+{{categories|length}}+{{homeworks|length}}; j++) {
+    for(var j=2; j<table.find('tr:nth-child(1) td').size(); j++) {
         if(j !== i) {
-            table.find('td:nth-child(' + (j+4) + '),th:nth-child(' + (j+4) + ')').hide();
+            table.find('td:nth-child(' + j + '),th:nth-child(' + j + ')').hide();
         } else {
-            assignment = table.find('th:nth-child(' + (j+4) + ')').text();
-            var scores = table.find('td:nth-child(' + (j+4) + ')').map(function() {
+            assignment = table.find('th:nth-child(' + j + ')').text();
+            var scores = table.find('td:nth-child(' + j + ')').map(function() {
                 return $(this).attr("value");
             });
 	    for(var k=0; k < scores.size(); k++) {
