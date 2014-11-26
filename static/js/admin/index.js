@@ -12,7 +12,7 @@ function drawChart() {
         legend: { position: 'none' },
         titleTextStyle: { fontSize: 24 },
 	histogram: {
-	    bucketSize: Math.max(1, .02*(range.max - range.min)),
+	    bucketSize: Math.max(1, Math.round(.02*(range.max - range.min))),
 	},
         chartArea: {
             left: '10%',
