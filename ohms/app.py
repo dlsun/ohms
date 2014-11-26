@@ -291,33 +291,49 @@ def download_grades():
     return response
 
 def get_gradebook(categories):
-    
+
+    homeworks = get_homework()    
+
+    # get all the grades, put them into a gradebook
     gradebook = {}
+    max_scores = defaultdict(float)
     for g in session.query(Grade).all():
         if g.student.type != "student":
             continue
-        if g.student not in gradebook:
+        elif g.student not in gradebook:
             gradebook[g.student] = {g.homework.id: g}
-            for c in categories:
-                gradebook[g.student][c.name] = 0.
         else:
             gradebook[g.student][g.homework.id] = g
-        if type(g.score) == float:
-            gradebook[g.student][g.homework.category.name] += g.score
-            
-    gradebook = [(student, grades) for student, grades in gradebook.iteritems()]
+        # update maximum score for the assignment
+        try:
+            score = float(g.score)
+            if score > max_scores[g.homework.id]:
+                max_scores[g.homework.id] = score
+        except:
+            pass
+    gradebook = gradebook.items()
     gradebook.sort(key=lambda entry: convert_to_last_name(entry[0].name))
 
-    max_grades = {}
-    for c in categories:
-        max_grade = max([grades[c.name] for student, grades in gradebook])
-        max_grades[c.name] = max(max_grade, 1)
-
+    # calculate total scores by category, taking into account excused assignments
     for student, grades in gradebook:
+        earned = defaultdict(float)
+        possible = defaultdict(float)
+        for hw in homeworks:
+            if max_scores[hw.id] is None:
+                continue
+            possible[hw.category] += max_scores[hw.id]
+            if hw.id in grades and grades[hw.id].score:
+                try:
+                    earned[hw.category] += float(grades[hw.id].score)
+                except: # this means the student was excused
+                    possible[hw.category] -= max_scores[hw.id] # don't count against them
+        # add grades to gradebook
         grades["overall"] = 0.
-        for c in categories:
-            grades["overall"] += c.weight * grades[c.name] / max_grades[c.name]
-    
+        for category, points_possible in possible.iteritems():
+            grades[category.name] = "%0.1f / %0.1f" % (earned[category], points_possible)
+            if points_possible > 0:
+                grades["overall"] += category.weight * earned[category] / points_possible
+
     return gradebook
 
 @app.route("/change_user_type", methods=['POST'])
@@ -449,7 +465,6 @@ def update_grade():
     stuid = request.form['stuid']
     hw_id = request.form['hw_id']
     score = request.form['score']
-    score = None if score == "" else float(score)
 
     # fill in grades
     grade = get_grade(stuid, hw_id)

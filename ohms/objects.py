@@ -707,7 +707,7 @@ class Grade(Base):
     id = Column(Integer, primary_key=True)
     stuid = Column(String(10), ForeignKey('users.stuid'))
     hw_id = Column(Integer, ForeignKey('hws.id'))
-    score = Column(Float)
+    score = Column(String(10))
 
     homework = relationship("Homework")
     student = relationship("User")
