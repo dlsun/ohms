@@ -11,7 +11,9 @@ function drawChart() {
         title: assignment + ' Scores',
         legend: { position: 'none' },
         titleTextStyle: { fontSize: 24 },
-	bucketSize: Math.max(1, .01*(range.max - range.min)),
+	histogram: {
+	    bucketSize: Math.max(1, .02*(range.max - range.min)),
+	},
         chartArea: {
             left: '10%',
             top: '10%',
