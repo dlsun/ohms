@@ -21,7 +21,7 @@ as soon as possible.</p>
 
 <table class="table table-striped" id="homeworks">
   <thead>
-    <th width="10%">Type</th>
+    <th width="10%">Category</th>
     <th width="20%">Assignment</th>
     <th width="30%">Start Date</th>
     <th width="40%">Due Date</th>
@@ -46,14 +46,14 @@ as soon as possible.</p>
       </td>
       <td>
         {% if user.type == "admin" %}
-          <input type="text" name="start_date" value='{% if hw.start_date %}{{ hw.start_date.strftime("%m/%d/%Y %H:%M:%S") }}{% endif %}'/>
+          <input class="input-medium" type="text" name="start_date" value='{% if hw.start_date %}{{ hw.start_date.strftime("%m/%d/%Y %H:%M:%S") }}{% endif %}'/>
         {% elif hw.start_date %}
           {{hw.start_date.strftime("%a, %b %d at %I:%M %p")}}
         {% endif %}
       </td>
       <td>
         {% if user.type == "admin" %}
-          <input type="text" name="due_date" value='{% if hw.due_date %}{{ hw.due_date.strftime("%m/%d/%Y %H:%M:%S") }}{% endif %}'/>
+          <input class="input-medium" type="text" name="due_date" value='{% if hw.due_date %}{{ hw.due_date.strftime("%m/%d/%Y %H:%M:%S") }}{% endif %}'/>
         {% elif hw.due_date %}
           {{hw.due_date.strftime("%a, %b %d at %I:%M %p")}}
         {% endif %}
@@ -74,13 +74,32 @@ as soon as possible.</p>
 	{% endfor %}
       </select>
     </td>
-    <td><input type="text" name="name"/></td>
-    <td><input type="text" name="start_date" value="MM/DD/YYYY HH:MM:SS"/></td>
-    <td><input type="text" name="due_date" value="MM/DD/YYYY HH:MM:SS"/> <input type="button" class="add" value="Add!"></td>
+    <td><input class="input-medium" type="text" name="name"/></td>
+    <td><input class="input-medium" type="text" name="start_date" value="mm/dd/yyyy hh:mm:ss"/></td>
+    <td><input class="input-medium" type="text" name="due_date" value="mm/dd/yyyy hh:mm:ss"/> <input type="button" class="add" value="Add!"></td>
   </tr>
   {% endif %}
 
   </tbody>
+</table>
+
+<h4>Grading Breakdown</h4>
+
+<p>Some day these will be editable, but not yet...</p>
+
+<table class="table span4">
+<thead>
+  <th>Category</th>
+  <th>Weight</th>
+</thead>
+<tbody>
+  {% for category in categories %}
+  <tr>
+    <td>{{ category.name }}</td>
+    <td>{{ category.weight }}%</td>
+  </tr>
+  {% endfor %}
+</tbody>
 </table>
 
 {% endblock %}
