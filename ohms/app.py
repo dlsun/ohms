@@ -257,7 +257,7 @@ def admin():
     guests = session.query(User).filter_by(type="guest").all()
     admins = session.query(User).filter_by(type="admin").all()
 
-    gradebook = get_gradebook(categories)
+    gradebook = get_gradebook()
     
     return render_template("admin/index.html", homeworks=homeworks, 
                            guests=guests, admins=admins, categories=categories,
@@ -268,8 +268,7 @@ def download_grades():
     admin = validate_admin()
 
     homeworks = get_homework()
-    categories = session.query(Category).all()
-    gradebook = get_gradebook(categories)
+    gradebook = get_gradebook()
 
     csv = '"Student",' + ','.join(('"' + hw.name.replace('"', '""') + '"') for hw in homeworks) + "\n"
 
@@ -290,7 +289,7 @@ def download_grades():
 
     return response
 
-def get_gradebook(categories):
+def get_gradebook():
 
     homeworks = get_homework()    
 
@@ -322,11 +321,14 @@ def get_gradebook(categories):
             if max_scores[hw.id] is None:
                 continue
             possible[hw.category] += max_scores[hw.id]
-            if hw.id in grades and grades[hw.id].score:
+            if hw.id in grades:
+                if grades[hw.id].score == "E": # if student was excused from assignment
+                    possible[hw.category] -= max_scores[hw.id] # don't count it against them
                 try:
                     earned[hw.category] += float(grades[hw.id].score)
-                except: # this means the student was excused
-                    possible[hw.category] -= max_scores[hw.id] # don't count against them
+                except:
+                    pass
+                    
         # add grades to gradebook
         grades["overall"] = 0.
         for category, points_possible in possible.iteritems():
@@ -464,7 +466,13 @@ def update_grade():
 
     stuid = request.form['stuid']
     hw_id = request.form['hw_id']
-    score = request.form['score']
+    score = request.form['score'].strip()
+
+    # check that score is valid
+    try:
+        float(score)
+    except:
+        assert(score in ["", "E"])
 
     # fill in grades
     grade = get_grade(stuid, hw_id)
