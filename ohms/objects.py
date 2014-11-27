@@ -26,7 +26,9 @@ class Category(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50), unique=True)
     weight = Column(Float)
-    
+    drops = Column(Integer)
+
+    homeworks = relationship("Homework", order_by="Homework.due_date")
 
 class Homework(Base):
     __tablename__ = 'hws'

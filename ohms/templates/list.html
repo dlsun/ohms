@@ -83,27 +83,6 @@ as soon as possible.</p>
   </tbody>
 </table>
 
-{% if user.type == "admin" %}
-<h4>Grading Breakdown</h4>
-
-<p>Some day these will be editable, but not yet...</p>
-
-<table class="table span4">
-<thead>
-  <th>Category</th>
-  <th>Weight</th>
-</thead>
-<tbody>
-  {% for category in categories %}
-  <tr>
-    <td>{{ category.name }}</td>
-    <td>{{ category.weight }}%</td>
-  </tr>
-  {% endfor %}
-</tbody>
-</table>
-{% endif %}
-
 {% endblock %}
 
 {% block javascript %}

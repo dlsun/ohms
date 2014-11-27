@@ -3,24 +3,24 @@
 {% block content %}
 <h3>Grades</h3>
 
-<table class="table table-striped" id="homeworks">
-  <thead>
-    <th>Assignment</th>
-    <th>Date</th>
-    <th>Score</th>
-  </thead>
-  <tbody>
+  {% for category in categories %}
 
-  {% for hw in homeworks %}
-
-  <tr>
-    <td>{{ hw.name }}</td>
-    <td>{{ hw.due_date }}</td>
-    <td>{% if grades[hw.id] %}{{ grades[hw.id].score }}{% endif %}</td>
-  </tr>
-
+  <table class="table table-striped" id="homeworks">
+    <thead>
+      <th>{{ category.name }} ({{ category.weight }}% of the course grade, lowest {{ category.drops }} scores dropped)</th>
+      <th>Date</th>
+      <th>Score</th>
+    </thead>
+    <tbody>
+      {% for hw in category.homeworks %}
+      <tr>
+	<td>{{ hw.name }}</td>
+	<td>{{ hw.due_date.strftime("%Y-%m-%d") }}</td>
+	<td>{% if grades[hw.id] %}{{ grades[hw.id].score }}{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
   {% endfor %}
 
-  </tbody>
-</table>
 {% endblock %}

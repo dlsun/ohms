@@ -44,7 +44,7 @@ def materials():
     return render_template("materials.html", user=user, files=files, options=options)
 
 @app.route("/list")
-def list():
+def hw_list():
     user = validate_user()
     hws = get_homework()
     categories = session.query(Category).all()
@@ -207,12 +207,14 @@ def calculate_grade(user, hw):
 def grades():
     user = validate_user()
 
+    categories = session.query(Category).all()
     homeworks = get_homework()
     grades = {hw.id: get_grade(user.stuid, hw.id) for hw in homeworks}
     
     # fetch grades from gradebook
     return render_template("grades.html", homeworks=homeworks, 
-                           grades=grades, options=options, user=user)
+                           grades=grades, options=options, user=user,
+                           categories=categories)
 
 
 @app.route("/upload", methods=['POST'])
@@ -315,26 +317,37 @@ def get_gradebook():
 
     # calculate total scores by category, taking into account excused assignments
     for student, grades in gradebook:
-        earned = defaultdict(float)
-        possible = defaultdict(float)
+        earned = defaultdict(list)
+        possible = defaultdict(list)
         for hw in homeworks:
-            if max_scores[hw.id] is None:
+            if max_scores[hw.id] == 0.:
                 continue
-            possible[hw.category] += max_scores[hw.id]
+            possible[hw.category].append(max_scores[hw.id])
             if hw.id in grades:
                 if grades[hw.id].score == "E": # if student was excused from assignment
-                    possible[hw.category] -= max_scores[hw.id] # don't count it against them
-                try:
-                    earned[hw.category] += float(grades[hw.id].score)
-                except:
-                    pass
-                    
+                    possible[hw.category].remove(max_scores[hw.id]) # don't count it against
+                else:
+                    try:
+                        earned[hw.category].append(float(grades[hw.id].score))
+                    except:
+                        earned[hw.category].append(0)
+            else:
+                earned[hw.category].append(0)
+
         # add grades to gradebook
         grades["overall"] = 0.
-        for category, points_possible in possible.iteritems():
-            grades[category.name] = "%0.1f / %0.1f" % (earned[category], points_possible)
-            if points_possible > 0:
-                grades["overall"] += category.weight * earned[category] / points_possible
+        for category, poss in possible.iteritems():
+            if len(poss) == 0:
+                continue
+            # sort scores by number of points missed
+            grades_sorted = sorted(zip(earned[category], poss), key=lambda x: x[0]-x[1])
+            # drop lowest scores
+            if len(grades_sorted) > category.drops:
+                out = grades_sorted[category.drops:]
+            out = zip(*grades_sorted)
+            grades[category.name] = "%0.1f / %0.1f" % (sum(out[0]), sum(out[1]))
+            if sum(out[1]) > 0:
+                grades["overall"] += category.weight * sum(out[0]) / sum(out[1])
 
     return gradebook
 
