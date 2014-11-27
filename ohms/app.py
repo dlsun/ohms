@@ -496,3 +496,18 @@ def update_grade():
     session.commit()
 
     return "Grade update successful!"
+
+@app.route("/update_categories", methods=['POST'])
+def update_categories():
+    admin = validate_admin()
+
+    category_id = request.form['id']
+    name = request.form['name']
+    value = request.form['value'].strip()
+
+    c = session.query(Category).filter_by(id = category_id).update({
+        name: value
+        })
+    session.commit()
+
+    return "Updated category %s to %s" % (name, value)

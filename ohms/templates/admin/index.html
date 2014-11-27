@@ -46,6 +46,23 @@ would go. This ensures that the lost points on the assignment do not count again
 by adjusting the denominator in the total points.</li>
     </ul>
 
+    <table id="categories" class="table">
+      <thead>
+	<th>Categories</th>
+	<th>Weight</th>
+	<th>Drops</th>
+      </thead>
+      <tbody>
+	{% for category in categories %}
+	<tr value="{{ category.id }}">
+	  <td><input type="text" class="input-medium" name="name" value="{{ category.name }}"/></td>
+	  <td><input type="text" class="input-mini" name="weight" value="{{ category.weight }}"/>%</td>
+	  <td><input type="text" class="input-mini" name="drops" value="{{ category.drops }}"/></td>
+	</tr>
+	{% endfor %}
+      </tbody>
+    </table>
+
     <div align="center">
       <div id="histogram" class="span12"></div>
       <div id="missing" class="span12"></div>

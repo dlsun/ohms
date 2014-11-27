@@ -87,3 +87,26 @@ $("input.grade").change(function () {
     }
   });
 });
+
+$("#categories").find("input").change(function () {
+  var row = $(this).closest("tr");
+  var id = row.attr("value");
+  var name = $(this).attr("name");
+  var value = $(this).attr("value");
+  $.ajax({
+    url : "update_categories",
+    type : "POST",
+    dataType : "text",
+    data : {
+	id : id,
+	name : name,
+	value : value
+    },
+    success : function (data) {
+      row.find("td").css("background-color", "#dff0d8");
+    },
+    error: function () {
+      alert("Your changes were not saved successfully. Please try again.");   
+    }
+  });
+});
