@@ -343,7 +343,7 @@ def get_gradebook():
             grades_sorted = sorted(zip(earned[category], poss), key=lambda x: x[0]-x[1])
             # drop lowest scores
             if len(grades_sorted) > category.drops:
-                out = grades_sorted[category.drops:]
+                grades_sorted = grades_sorted[category.drops:]
             out = zip(*grades_sorted)
             grades[category.name] = "%0.1f / %0.1f" % (sum(out[0]), sum(out[1]))
             if sum(out[1]) > 0:
