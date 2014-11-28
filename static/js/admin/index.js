@@ -88,25 +88,27 @@ $("input.grade").change(function () {
   });
 });
 
-$("#categories").find("input").change(function () {
+$("#categories").find("input[type=button]").click(function () {
   var row = $(this).closest("tr");
-  var id = row.attr("value");
-  var name = $(this).attr("name");
-  var value = $(this).attr("value");
+  var id = row.attr("id");
+  var name = row.find("input[name=name]").val();
+  var weight = row.find("input[name=weight]").val();
+  var drops = row.find("input[name=drops]").val();
   $.ajax({
-    url : "update_categories",
+    url : "update_category",
     type : "POST",
     dataType : "text",
     data : {
 	id : id,
 	name : name,
-	value : value
+	weight : weight,
+	drops : drops,
     },
     success : function (data) {
-      row.find("td").css("background-color", "#dff0d8");
+	alert(data);
     },
     error: function () {
-      alert("Your changes were not saved successfully. Please try again.");   
+	alert("Your changes were not saved successfully. Please try again.");   
     }
   });
 });

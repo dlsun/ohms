@@ -54,12 +54,17 @@ by adjusting the denominator in the total points.</li>
       </thead>
       <tbody>
 	{% for category in categories %}
-	<tr value="{{ category.id }}">
+	<tr id="{{ category.id }}">
 	  <td><input type="text" class="input-medium" name="name" value="{{ category.name }}"/></td>
 	  <td><input type="text" class="input-mini" name="weight" value="{{ category.weight }}"/>%</td>
-	  <td><input type="text" class="input-mini" name="drops" value="{{ category.drops }}"/></td>
+	  <td><input type="text" class="input-mini" name="drops" value="{{ category.drops }}"/> <input type="button" value="Update!"/></td>
 	</tr>
 	{% endfor %}
+	<tr id="new">
+	  <td><input type="text" class="input-medium" name="name" value=""/></td>
+	  <td><input type="text" class="input-mini" name="weight" value=""/>%</td>
+	  <td><input type="text" class="input-mini" name="drops" value="0"/> <input type="button" value="Add!"/></td>
+	</tr>
       </tbody>
     </table>
 

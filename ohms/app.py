@@ -339,8 +339,9 @@ def get_gradebook():
         for category, poss in possible.iteritems():
             if len(poss) == 0:
                 continue
-            # sort scores by number of points missed
-            grades_sorted = sorted(zip(earned[category], poss), key=lambda x: x[0]-x[1])
+            # sort scores by benefit to grade if dropped
+            e, p = sum(earned[category]), sum(poss)
+            grades_sorted = sorted(zip(earned[category], poss), key=lambda x: -(e-x[0])/(p-x[1]))
             # drop lowest scores
             if len(grades_sorted) > category.drops:
                 grades_sorted = grades_sorted[category.drops:]
@@ -497,17 +498,23 @@ def update_grade():
 
     return "Grade update successful!"
 
-@app.route("/update_categories", methods=['POST'])
-def update_categories():
+@app.route("/update_category", methods=['POST'])
+def update_category():
     admin = validate_admin()
 
-    category_id = request.form['id']
     name = request.form['name']
-    value = request.form['value'].strip()
+    weight = float(request.form['weight'])
+    drops = int(request.form['drops'])
 
-    c = session.query(Category).filter_by(id = category_id).update({
-        name: value
-        })
+    try:
+        category_id = int(request.form['id'])
+        category = session.query(Category).get(category_id)
+        category.name = name
+        category.weight = weight
+        category.drops = drops
+    except:
+        session.add(Category(name=name, weight=weight, drops=drops))
+
     session.commit()
 
-    return "Updated category %s to %s" % (name, value)
+    return "Category %s successfully added/updated." % name
