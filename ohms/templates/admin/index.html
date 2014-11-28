@@ -108,8 +108,8 @@ would go. Then, the lost points on this assignment will not count against
 
     <table id="gradebook" class="table table-striped">
       <thead>
-	<th>Student Name</th>
 	<th>User ID</th>
+	<th>Student Name</th>
 	<th>Type</th>
 	<th>Letter</th>
 
@@ -126,8 +126,10 @@ would go. Then, the lost points on this assignment will not count against
       <tbody>
 
 	<tr class="warning">
-	  <td colspan="4" align="center"><b>Maximum</b></td>
-	  <td></td>
+	  <td><strike>&emsp;&emsp;&emsp;&emsp;</strike></td>
+	  <td><b>Maximum</b></td>
+	  <td><strike>&emsp;&emsp;&emsp;&emsp;</strike></td>
+	  <td></td><td></td>
 	  {% for category in categories %}
 	  <td></td>
 	  {% endfor %}
@@ -139,9 +141,9 @@ would go. Then, the lost points on this assignment will not count against
 
 	{% for student, grades in gradebook %}
         <tr stuid="{{ student.stuid }}">
-	  <td>{{ student.name }}</td>
 	  <td>{{ student.stuid }}</td>
-	  <td>
+	  <td>{{ student.name }}</td>
+	  <td style="white-space:nowrap;">
 	    <form target="_blank" action="change_user_type" method="POST">
 	      <input type="hidden" name="user" value="{{ student.stuid }}" />
 	      <select name="type" class="input-small">
