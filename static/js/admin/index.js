@@ -127,6 +127,7 @@ $("table#cutoffs").find("input").change(function() {
 	return(parseFloat($(this).val()));
     });
     gradebook.find(".overall").map(function() {
+	$(this).prev().text("");
 	var score = parseFloat($(this).attr("value"));
 	if (score >= cutoffs[0]) $(this).prev().text(letters[0]);
 	else if (score <= cutoffs[11]) $(this).prev().text("NP");
