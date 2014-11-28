@@ -124,6 +124,19 @@ would go. Then, the lost points on this assignment will not count against
 	{% endfor %}
       </thead>
       <tbody>
+
+	<tr class="warning">
+	  <td colspan="4" align="center"><b>Maximum</b></td>
+	  <td></td>
+	  {% for category in categories %}
+	  <td></td>
+	  {% endfor %}
+	  {% for hw in homeworks %}
+	  <td><b>{{ max_scores[hw.id] }}</b></td>
+	  {% endfor %}
+	</tr>
+
+
 	{% for student, grades in gradebook %}
         <tr stuid="{{ student.stuid }}">
 	  <td>{{ student.name }}</td>

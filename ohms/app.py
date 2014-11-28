@@ -9,7 +9,7 @@ from datetime import datetime
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 
-from objects import session, Homework, Question, PeerReview, User,GradingTask, Grade, Category
+from objects import session, Homework, Question, PeerReview, User, GradingTask, Grade, Category
 from queries import get_user, get_homework, get_question, \
     get_question_response, get_last_question_response, \
     get_all_regular_questions, \
@@ -209,11 +209,19 @@ def grades():
 
     categories = session.query(Category).all()
     homeworks = get_homework()
-    grades = {hw.id: get_grade(user.stuid, hw.id) for hw in homeworks}
+
+    gradebook, max_scores = get_gradebook()
+
+    grades = [entry for entry in gradebook if entry[0] == user]
+
+    if grades:
+        grades = grades[0][1]
+    else:
+        grades = {hw.id: get_grade(user.stuid, hw.id) for hw in homeworks}
     
-    # fetch grades from gradebook
     return render_template("grades.html", homeworks=homeworks, 
-                           grades=grades, options=options, user=user,
+                           grades=grades, max_scores=max_scores,
+                           options=options, user=user,
                            categories=categories)
 
 
@@ -259,18 +267,18 @@ def admin():
     guests = session.query(User).filter_by(type="guest").all()
     admins = session.query(User).filter_by(type="admin").all()
 
-    gradebook = get_gradebook()
+    gradebook, max_scores = get_gradebook()
     
     return render_template("admin/index.html", homeworks=homeworks, 
                            guests=guests, admins=admins, categories=categories,
-                           gradebook=gradebook, options=options)
+                           gradebook=gradebook, max_scores=max_scores, options=options)
 
 @app.route("/download_grades", methods=['GET'])
 def download_grades():
     admin = validate_admin()
 
     homeworks = get_homework()
-    gradebook = get_gradebook()
+    gradebook, _ = get_gradebook()
 
     csv = '"Student",' + ','.join(('"' + hw.name.replace('"', '""') + '"') for hw in homeworks) + "\n"
 
@@ -349,8 +357,8 @@ def get_gradebook():
             grades[category.name] = "%0.1f / %0.1f" % (sum(out[0]), sum(out[1]))
             if sum(out[1]) > 0:
                 grades["overall"] += category.weight * sum(out[0]) / sum(out[1])
-
-    return gradebook
+                
+    return gradebook, max_scores
 
 @app.route("/change_user_type", methods=['POST'])
 def change_user_type():

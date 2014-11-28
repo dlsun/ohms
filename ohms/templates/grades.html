@@ -7,7 +7,7 @@
 
   <table class="table table-striped" id="homeworks">
     <thead>
-      <th>{{ category.name }} (worth {{ category.weight }}%, lowest {{ category.drops }} scores dropped)</th>
+      <th>{{ category.name }} ({{ category.weight }}% of course grade)</th>
       <th>Date</th>
       <th>Score</th>
     </thead>
@@ -16,9 +16,21 @@
       <tr>
 	<td>{{ hw.name }}</td>
 	<td>{{ hw.due_date.strftime("%Y-%m-%d") }}</td>
-	<td>{% if grades[hw.id] %}{{ grades[hw.id].score }}{% endif %}</td>
+	<td>{% if grades[hw.id] %}{{ grades[hw.id].score }} /
+	{{ max_scores[hw.id] }}{% endif %}</td>
       </tr>
       {% endfor %}
+
+      <tr class="warning">
+	<td><b>Overall</b>
+	  {% if category.drops == 1 %}(lowest score dropped)
+	  {% elif category.drops > 1 %}(lowest {{ category.drops }} scores
+	  dropped)
+	  {% endif %}
+	<td></td>
+	<td>{{ grades[category.name] }}</td>
+      </tr>
+
     </tbody>
   </table>
   {% endfor %}
