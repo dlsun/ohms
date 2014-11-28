@@ -33,8 +33,13 @@ function hide_all_other_columns(i) {
     var missing = [];
     var excused = [];
     var table = $("table#gradebook");
-    var students = table.find('td:nth-child(1)').contents(); 
-    for(var j=3; j<=table.find('tr:nth-child(1) td').size(); j++) {
+    var students = table.find('td:nth-child(1)').contents();
+
+    // hide column that changes student status
+    table.find('td:nth-child(3),th:nth-child(3)').hide();
+
+    // hide columns starting with the Overall column
+    for(var j=5; j<=table.find('tr:nth-child(1) td').size(); j++) {
         if(j !== i) {
             table.find('td:nth-child(' + j + '),th:nth-child(' + j + ')').hide();
         } else {
@@ -112,3 +117,24 @@ $("#categories").find("input[type=button]").click(function () {
     }
   });
 });
+
+var gradebook = $("table#gradebook");
+var letters = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+",
+	       "D", "D-"]
+
+$("table#cutoffs").find("input").change(function() {
+    var cutoffs = $("table#cutoffs").find("input").map(function() {
+	return(parseFloat($(this).val()));
+    });
+    gradebook.find(".overall").map(function() {
+	var score = parseFloat($(this).attr("value"));
+	if (score >= cutoffs[0]) $(this).prev().text(letters[0]);
+	else if (score <= cutoffs[11]) $(this).prev().text("NP");
+	else {
+	    for(var i=0; i<11; i++) {
+		if((cutoffs[i] > score) && (score >= cutoffs[i+1]))
+		    $(this).prev().text(letters[i+1]);
+	    }
+	}
+    })
+})
