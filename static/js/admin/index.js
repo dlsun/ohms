@@ -33,7 +33,9 @@ function hide_all_other_columns(i) {
     var missing = [];
     var excused = [];
     var table = $("table#gradebook");
-    var students = table.find('td:nth-child(1)').contents();
+    var students = table.find('td:nth-child(2)').map(function() {
+	return($(this).text());
+    });
 
     // hide column that changes student status
     table.find('td:nth-child(3),th:nth-child(3)').hide();
@@ -47,14 +49,14 @@ function hide_all_other_columns(i) {
             var scores = table.find('td:nth-child(' + j + ')').map(function() {
                 return $(this).attr("value");
             });
-	    for(var k=0; k < scores.size(); k++) {
+	    for(var k=1; k < students.size(); k++) {
 		if(scores.get(k) == "") {
-		    missing.push(students.get(k).data)
+		    missing.push(students.get(k))
 		} else if(scores.get(k) == "E") {
-		    excused.push(students.get(k).data)
+		    excused.push(students.get(k))
 		} else {
 		    var score = parseFloat(scores.get(k));
-		    data.push([students.get(k).data, score]);
+		    data.push([students.get(k), score]);
                     n += 1;
                     sum += score;
                     sum_sq += Math.pow(score, 2);

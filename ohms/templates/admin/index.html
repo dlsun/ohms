@@ -129,15 +129,15 @@ would go. Then, the lost points on this assignment will not count against
 	  <td><strike>&emsp;&emsp;&emsp;&emsp;</strike></td>
 	  <td><b>Maximum</b></td>
 	  <td><strike>&emsp;&emsp;&emsp;&emsp;</strike></td>
-	  <td></td><td></td>
-	  {% for category in categories %}
 	  <td></td>
+	  <td value="max"></td>
+	  {% for category in categories %}
+	  <td value="max"></td>
 	  {% endfor %}
 	  {% for hw in homeworks %}
-	  <td><b>{{ max_scores[hw.id] }}</b></td>
+	  <td value="max"><b>{{ max_scores[hw.id] }}</b></td>
 	  {% endfor %}
 	</tr>
-
 
 	{% for student, grades in gradebook %}
         <tr stuid="{{ student.stuid }}">
