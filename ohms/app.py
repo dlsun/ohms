@@ -332,7 +332,7 @@ def get_gradebook():
                 continue
             possible[hw.category].append(max_scores[hw.id])
             if hw.id in grades:
-                if grades[hw.id].score == "E": # if student was excused from assignment
+                if grades[hw.id].excused: # if student was excused from assignment
                     possible[hw.category].remove(max_scores[hw.id]) # don't count it against
                 else:
                     try:
@@ -489,7 +489,7 @@ def update_grade():
     stuid = request.form['stuid']
     hw_id = request.form['hw_id']
     score = request.form['score'].strip()
-    excused = bool(request.form['is_checked'])
+    excused = 1 if request.form['is_checked'] == "true" else 0
 
     # check that score is valid
     try:

@@ -75,7 +75,7 @@ function hide_all_other_columns(i) {
 function update_grade () {
   var td = $(this).parent("td");
   var hw_id = td.attr("hw_id");
-  var score = td.find(".grade").val();
+  var score = td.attr("value");
   var is_excused = td.find(".excused").is(":checked");
   var stuid = $(this).parents("tr").attr("stuid");
   $.ajax({

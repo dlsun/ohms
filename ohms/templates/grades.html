@@ -16,8 +16,13 @@
       <tr>
 	<td>{{ hw.name }}</td>
 	<td>{{ hw.due_date.strftime("%Y-%m-%d") }}</td>
-	<td>{% if grades[hw.id] %}{{ grades[hw.id].score }} /
-	{{ max_scores[hw.id] }}{% endif %}</td>
+	<td>
+	  {% if grades[hw.id] %}
+	    {% if grades[hw.id].excused %}Excused
+	    {% else %}{{ grades[hw.id].score }} / {{ max_scores[hw.id] }}
+	    {% endif %}
+	  {% endif %}
+	</td>
       </tr>
       {% endfor %}
 

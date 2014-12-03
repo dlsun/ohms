@@ -170,7 +170,7 @@ enter scores.</li>
 	    <input type="text" class="input-mini grade" 
 		   value="{% if hw.id in grades %}{{ grades[hw.id].score }}{% endif %}"/>
 	    {% endif %}
-	    <input type="checkbox" class="excused" {% if grades[hw.id].excused %}checked{% endif %}/>
+	    <input type="checkbox" class="excused" {% if hw.id in grades and grades[hw.id].excused %}checked{% endif %}/>
 	  </td>
 	  {% endfor %}
 	</tr>
