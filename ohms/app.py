@@ -349,11 +349,12 @@ def get_gradebook():
                 continue
             # sort scores by benefit to grade if dropped
             e, p = sum(earned[category]), sum(poss)
-            grades_sorted = sorted(zip(earned[category], poss), key=lambda x: -(e-x[0])/(p-x[1]))
-            # drop lowest scores
-            if len(grades_sorted) > category.drops:
+            if len(poss) > category.drops + 1:
+                grades_sorted = sorted(zip(earned[category], poss), key=lambda x: -(e-x[0])/(p-x[1]))
                 grades_sorted = grades_sorted[category.drops:]
-            out = zip(*grades_sorted)
+                out = zip(*grades_sorted)
+            else:
+                out = earned[category], poss
             grades[category.name] = "%0.1f / %0.1f" % (sum(out[0]), sum(out[1]))
             if sum(out[1]) > 0:
                 grades["overall"] += category.weight * sum(out[0]) / sum(out[1])
