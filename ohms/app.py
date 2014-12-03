@@ -489,6 +489,7 @@ def update_grade():
     stuid = request.form['stuid']
     hw_id = request.form['hw_id']
     score = request.form['score'].strip()
+    excused = bool(request.form['is_checked'])
 
     # check that score is valid
     try:
@@ -499,9 +500,10 @@ def update_grade():
     # fill in grades
     grade = get_grade(stuid, hw_id)
     if not grade:
-        add_grade(get_user(stuid), get_homework(hw_id), score)
+        add_grade(get_user(stuid), get_homework(hw_id), score, excused)
     else:
         grade.score = score
+        grade.excused = excused
     session.commit()
 
     return "Grade update successful!"

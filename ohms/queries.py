@@ -102,9 +102,9 @@ def get_grade(stuid, hw_id):
     return session.query(Grade).filter_by(stuid=stuid).\
         filter_by(hw_id=hw_id).first()
 
-def add_grade(student, homework, score):
+def add_grade(student, homework, score, excused=False):
     grade = Grade(student=student, homework=homework, 
-                  score=score)
+                  score=score, excused=excused)
     session.add(grade)
     session.commit()
     

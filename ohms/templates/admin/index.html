@@ -41,8 +41,7 @@ status of any user who is not enrolled in the class to "Guest".</li>
       <li>Click on the name of any assignment to view a histogram of the scores for that 
 assignment. This will also hide all columns except for that column, making it easier to 
 enter scores.</li>
-      <li>To excuse a student from an assignment, enter an "E" in the blank where the score 
-would go. Then, the lost points on this assignment will not count against
+      <li>To excuse a student from an assignment, check the box next to his or her score. Then, the lost points on this assignment will not count against
 	the student. You can verify this by looking at the denominator in
 	the category total.</li>
     </ul>
@@ -169,8 +168,10 @@ would go. Then, the lost points on this assignment will not count against
 	      {% if hw.id in grades %}{{ grades[hw.id].score }}{% endif %}
 	    {% else %}
 	    <input type="text" class="input-mini grade" 
-		   value="{% if hw.id in grades %}{{ grades[hw.id].score }}{% endif %}"/></td>
+		   value="{% if hw.id in grades %}{{ grades[hw.id].score }}{% endif %}"/>
 	    {% endif %}
+	    <input type="checkbox" class="excused" {% if grades[hw.id].excused %}checked{% endif %}/>
+	  </td>
 	  {% endfor %}
 	</tr>
 	{% endfor %}

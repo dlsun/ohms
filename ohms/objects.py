@@ -7,7 +7,7 @@ Defines the database objects.
 from __future__ import division
 import xml.etree.ElementTree as ET
 import re
-from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, UnicodeText, UniqueConstraint
+from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, UnicodeText, UniqueConstraint, Boolean
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm.session import make_transient
 from base import Base, session
@@ -710,6 +710,7 @@ class Grade(Base):
     stuid = Column(String(10), ForeignKey('users.stuid'))
     hw_id = Column(Integer, ForeignKey('hws.id'))
     score = Column(String(10))
+    excused = Column(Boolean)
 
     homework = relationship("Homework")
     student = relationship("User")

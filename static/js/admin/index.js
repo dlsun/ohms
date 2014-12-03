@@ -72,10 +72,11 @@ function hide_all_other_columns(i) {
     drawChart();
 }
 
-$("input.grade").change(function () {
-  var score = $(this).val();
+function update_grade () {
   var td = $(this).parent("td");
   var hw_id = td.attr("hw_id");
+  var score = td.find(".grade").val();
+  var is_excused = td.find(".excused").is(":checked");
   var stuid = $(this).parents("tr").attr("stuid");
   $.ajax({
     url : "update_grade",
@@ -85,6 +86,7 @@ $("input.grade").change(function () {
       stuid: stuid,
       hw_id: hw_id,
       score: score,
+      is_excused: is_excused,
     },
     success : function (data) {
       td.css("background-color", "#dff0d8");
@@ -93,7 +95,10 @@ $("input.grade").change(function () {
       alert("The grade was not saved successfully. Please try again.");   
     }
   });
-});
+}
+
+$("input.grade").change(update_grade);
+$("input.excused").change(update_grade);
 
 $("#categories").find("input[type=button]").click(function () {
   var row = $(this).closest("tr");
