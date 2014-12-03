@@ -76,7 +76,7 @@ function update_grade () {
   var td = $(this).parent("td");
   var hw_id = td.attr("hw_id");
   var score = td.attr("value");
-  var is_excused = td.find(".excused").is(":checked");
+  var excused = td.find(".excused").is(":checked");
   var stuid = $(this).parents("tr").attr("stuid");
   $.ajax({
     url : "update_grade",
@@ -86,7 +86,7 @@ function update_grade () {
       stuid: stuid,
       hw_id: hw_id,
       score: score,
-      is_excused: is_excused,
+      excused: excused,
     },
     success : function (data) {
       td.css("background-color", "#dff0d8");

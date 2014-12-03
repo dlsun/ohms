@@ -489,7 +489,7 @@ def update_grade():
     stuid = request.form['stuid']
     hw_id = request.form['hw_id']
     score = request.form['score'].strip()
-    excused = 1 if request.form['is_checked'] == "true" else 0
+    excused = 1 if request.form['excused'] == "true" else 0
 
     # check that score is valid
     try:
