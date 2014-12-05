@@ -9,19 +9,20 @@
     <thead>
       <th>{{ category.name }} ({{ category.weight }}% of course grade)</th>
       <th>Date</th>
-      <th>Score</th>
+      <th style="text-align: right;">Score</th>
     </thead>
     <tbody>
       {% for hw in category.homeworks %}
       <tr>
 	<td>{{ hw.name }}</td>
 	<td>{{ hw.due_date.strftime("%Y-%m-%d") }}</td>
-	<td>
+	<td style="text-align: right;">
 	  {% if grades[hw.id] %}
-	    {% if grades[hw.id].excused %}Excused
-	    {% else %}{{ grades[hw.id].score }} / {{ max_scores[hw.id] }}
+	    {% if grades[hw.id].excused %}<span class="muted">excused</span>
+	    {% else %}{{ grades[hw.id].score }}
 	    {% endif %}
 	  {% endif %}
+	  / {{ max_scores[hw.id] }}
 	</td>
       </tr>
       {% endfor %}
@@ -33,7 +34,7 @@
 	  dropped)
 	  {% endif %}
 	<td></td>
-	<td>{{ grades[category.name] }}</td>
+	<td style="text-align: right;">{{ grades[category.name] }}</td>
       </tr>
 
     </tbody>

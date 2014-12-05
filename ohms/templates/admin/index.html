@@ -167,7 +167,7 @@ enter scores.</li>
 	    {% if hw.questions|length %}
 	      {% if hw.id in grades %}{{ grades[hw.id].score }}{% endif %}
 	    {% else %}
-	    <input type="text" class="input-mini grade" 
+	    <input type="text" class="grade" style="width: 40px; height: 30px;" 
 		   value="{% if hw.id in grades %}{{ grades[hw.id].score }}{% endif %}"/>
 	    {% endif %}
 	    <input type="checkbox" class="excused" {% if hw.id in grades and grades[hw.id].excused %}checked{% endif %}/>

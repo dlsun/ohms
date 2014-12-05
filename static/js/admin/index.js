@@ -72,29 +72,29 @@ function hide_all_other_columns(i) {
     drawChart();
 }
 
-function update_grade () {
-  var td = $(this).parent("td");
-  var hw_id = td.attr("hw_id");
-  var score = td.attr("value");
-  var excused = td.find(".excused").is(":checked");
-  var stuid = $(this).parents("tr").attr("stuid");
-  $.ajax({
-    url : "update_grade",
-    type : "POST",
-    dataType : "text",
-    data : {
-      stuid: stuid,
-      hw_id: hw_id,
-      score: score,
-      excused: excused,
-    },
-    success : function (data) {
-      td.css("background-color", "#dff0d8");
-    },
-    error: function () {
-      alert("The grade was not saved successfully. Please try again.");   
-    }
-  });
+function update_grade (td, score) {
+    var td = $(this).parent("td");
+    var score = td.find("input.grade").val()
+    var hw_id = td.attr("hw_id");
+    var excused = td.find(".excused").is(":checked");
+    var stuid = $(this).parents("tr").attr("stuid");
+    $.ajax({
+	url : "update_grade",
+	type : "POST",
+	dataType : "text",
+	data : {
+	    stuid: stuid,
+	    hw_id: hw_id,
+	    score: score,
+	    excused: excused,
+	},
+	success : function (data) {
+	    td.css("background-color", "#dff0d8");
+	},
+	error: function () {
+	    alert("The grade was not saved successfully. Please try again.");   
+	}
+    });
 }
 
 $("input.grade").change(update_grade);
