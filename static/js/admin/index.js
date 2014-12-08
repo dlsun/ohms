@@ -49,11 +49,15 @@ function hide_all_other_columns(i) {
             var scores = table.find('td:nth-child(' + j + ')').map(function() {
                 return $(this).attr("value");
             });
+	    var excuses = table.find('td:nth-child(' + j + ')').map(function() {
+                return $(this).find("input.excused").is(":checked");
+            });
+	    console.log(excuses.get(6));
 	    for(var k=1; k < students.size(); k++) {
-		if(scores.get(k) == "") {
-		    missing.push(students.get(k))
-		} else if(scores.get(k) == "E") {
+		if(excuses.get(k)) {
 		    excused.push(students.get(k))
+		} else if(scores.get(k) == "") {
+		    missing.push(students.get(k))
 		} else {
 		    var score = parseFloat(scores.get(k));
 		    data.push([students.get(k), score]);
@@ -75,6 +79,7 @@ function hide_all_other_columns(i) {
 function update_grade (td, score) {
     var td = $(this).parent("td");
     var score = td.find("input.grade").val()
+    td.attr("value", score);
     var hw_id = td.attr("hw_id");
     var excused = td.find(".excused").is(":checked");
     var stuid = $(this).parents("tr").attr("stuid");
