@@ -4,6 +4,7 @@
     <title>OHMS Admin Panel</title>
     <link href="{{options.base_url}}/{{options.static}}/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{options.base_url}}/{{options.static}}/css/style.css" rel="stylesheet">
+
   </head>
 
   <body>
@@ -11,21 +12,6 @@
     <div class="span12">
 
     <h2>OHMS Admin Panel</h2>
-
-    <hr/>
-
-    <h3>Enter User View</h3>
-
-    <p>This feature allows you to see the system from the perspective of any user. This is useful in case a student claims 
-there is a problem with the system, and you would like to see what they're seeing.</p>
-
-    <p><b><font color="red">Warning!</font></b> Once you enter the user's view, the link to this Admin Panel will no longer be visible 
-from the main page. When you  are ready to switch back to your own view, you must type in the URL (<tt>/cgi-bin/index.cgi/admin</tt>) 
-to return to this page. Once you are here, you can simply enter your User ID in the box below to return to your own view.</p>
-
-    <form action="change_user" method="POST">
-    User ID: <input type="text" name="user"/> <input type="submit" value="Enter View!"/>
-    </form>
 
     <hr/>
 
@@ -39,15 +25,18 @@ to return to this page. Once you are here, you can simply enter your User ID in 
     <ul>
       <li>Grades are only shown for students in the class. It is recommended that you change the 
 status of any user who is not enrolled in the class to "Guest".</li>
-      <li>Click on the name of any assignment to view a histogram of the scores for that 
+      <li>Click on the name of an assignment to view a histogram of scores for that 
 assignment. This will also hide all columns except for that column, making it easier to 
 enter scores.</li>
       <li>To excuse a student from an assignment, check the box next to his or her score. Then, the lost points on this assignment will not count against
 	the student. You can verify this by looking at the denominator in
 	the category total.</li>
+      <li>Click on a student's User ID to view the system from the perspective of 
+	that students. This is useful in case a student reports a problem with the 
+	system, and you would like to see what they're seeing.</p>
     </ul>
 
-    <table id="categories" class="table">
+    <table id="categories" class="table span4">
       <thead>
 	<th>Categories</th>
 	<th>Weight</th>
@@ -106,43 +95,54 @@ enter scores.</li>
       </tr>
     </table>
 
+    <div style="overflow-x: scroll;">
     <table id="gradebook" class="table table-striped">
       <thead>
+	<th style="position:absolute;">User ID</th>
 	<th>User ID</th>
 	<th>Student Name</th>
 	<th>Type</th>
 	<th>Letter</th>
 
-	<th><a href="#" onclick="hide_all_other_columns(5)">Overall</a></th>
+	<th><a href="#" onclick="hide_all_other_columns(6)">Overall</a></th>
 
 	{% for category in categories %}
-	<th><a href="#" onclick="hide_all_other_columns({{ 5 + loop.index }})">{{ category.name }} Total</a></th>
+	<th><a href="#" onclick="hide_all_other_columns({{ 6 + loop.index }})">{{ category.name }} Total</a></th>
 	{% endfor %}
 
 	{% for homework in homeworks %}
-	<th><a href="#" onclick="hide_all_other_columns({{ 5 + categories|length + loop.index }})">{{ homework.name }}</a></th>
+	<th><a href="#" onclick="hide_all_other_columns({{ 6 + categories|length + loop.index }})">{{ homework.name }}</a></th>
 	{% endfor %}
       </thead>
       <tbody>
 
 	<tr class="warning">
+	  <td style="position:absolute;"><strike>&emsp;&emsp;&emsp;&emsp;</strike></td>
 	  <td><strike>&emsp;&emsp;&emsp;&emsp;</strike></td>
 	  <td><b>Maximum</b></td>
 	  <td><strike>&emsp;&emsp;&emsp;&emsp;</strike></td>
 	  <td></td>
-	  <td value="max"></td>
+	  <td value="max">
+	    <input type="hidden" class="grade" value=""/>
+	  </td>
 	  {% for category in categories %}
-	  <td value="max"></td>
+	  <td value="max">
+	    <input type="hidden" class="grade" value=""/>
+	  </td>
 	  {% endfor %}
 	  {% for hw in homeworks %}
-	  <td value="max"><b>{{ max_scores[hw.id] }}</b></td>
+	  <td value="max">
+	    <b>{{ max_scores[hw.id] }}</b>
+	    <input type="hidden" class="grade" value="{{ max_scores[hw.id] }}"/>
+	  </td>
 	  {% endfor %}
 	</tr>
 
 	{% for student, grades in gradebook %}
         <tr stuid="{{ student.stuid }}">
-	  <td>{{ student.stuid }}</td>
-	  <td>{{ student.name }}</td>
+	  <td style="position:absolute;"><a href="change?user={{ student.stuid }}">{{ student.stuid }}</a></td>
+	  <td><a href="change?user={{ student.stuid }}">{{ student.stuid }}</a></td>
+	  <td><div style="width:10em;"/>{{ student.name }}</td>
 	  <td style="white-space:nowrap;">
 	    <form target="_blank" action="change_user_type" method="POST">
 	      <input type="hidden" name="user" value="{{ student.stuid }}" />
@@ -156,21 +156,20 @@ enter scores.</li>
 	  </td>
 
 	  <td class="letter"></td>
-	  <td class="overall" value={{ grades["overall"]|round(3) }}>{{ grades["overall"]|round(1) }}%</td>
+	  <td class="overall">{{ grades["overall"]|round(1) }}%
+	    <input type="hidden" class="grade" value="{{ grades['overall']|round(3) }}"/>
+	  </td>
 
 	  {% for category in categories %}
-	  <td value={{ grades[category.name] }}>{{ grades[category.name] }}</td>
+	  <td>{{ grades[category.name] }}
+	    <input type="hidden" class="grade" value="{{ grades[category.name] }}"/>
+	  </td>
 	  {% endfor %}
 	  {% for hw in homeworks %}
-	  <td hw_id="{{ hw.id }}" value="{% if hw.id in grades %}{{
-					 grades[hw.id].score }}{% endif
-					 %}">
-	    {% if hw.questions|length %}
-	      {% if hw.id in grades %}{{ grades[hw.id].score }}{% endif %}
-	    {% else %}
+	  <td hw_id="{{ hw.id }}">
 	    <input type="text" class="grade" style="width: 40px; height: 30px;" 
-		   value="{% if hw.id in grades %}{{ grades[hw.id].score }}{% endif %}"/>
-	    {% endif %}
+		   value="{% if hw.id in grades %}{{ grades[hw.id].score }}{% endif %}" 
+		   {% if hw.questions|length %}disabled{% endif %} />
 	    <input type="checkbox" class="excused" {% if hw.id in grades and grades[hw.id].excused %}checked{% endif %}/>
 	  </td>
 	  {% endfor %}
@@ -178,18 +177,22 @@ enter scores.</li>
 	{% endfor %}
       </tbody>
     </table>
+    </div>
 
     <hr/>
 
     <h3>Other Users</h3>
 
+    <div style="height:500px; overflow:scroll;">
     <table class="table">
       <thead>
+	<th>User ID</th>
 	<th>Guests</th>
 	<th>Actions</th>
       </thead>
       {% for guest in guests %}
         <tr>
+	  <td><a href="change?user={{ guest.stuid }}">{{ guest.stuid }}</a></td>
 	  <td>{{ guest.name }}</td>
 	  <form target="_blank" action="change_user_type" method="POST">
 	  <td>
@@ -205,14 +208,17 @@ enter scores.</li>
 	</tr>
       {% endfor %}
     </table>
+    </div>
 
     <table class="table">
       <thead>
+	<th>User ID</th>
 	<th>Admins</th>
 	<th>Actions</th>
       </thead>
       {% for admin in admins %}
         <tr>
+	  <td><a href="change?user={{ admin.stuid }}">{{ admin.stuid }}</a></td>
 	  <td>{{ admin.name }}</td>
 	  <form target="_blank" action="change_user_type" method="POST">
 	  <td>

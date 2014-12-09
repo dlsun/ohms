@@ -31,6 +31,20 @@ else:
     def handle_exceptions(error):
         return make_response(error.message, 403)
 
+@app.route("/update_gradebook")
+def update_gradebook():
+    """
+    This updates all students' scores on all homeworks.
+    """
+    homeworks = get_homework()
+    students = session.query(User).filter_by(type="student").all()
+    for student in students:
+        update_hw_grades(student, homeworks)
+        print student.name
+    session.commit()
+    return "Successfully updated all students' grades."
+
+
 @app.route("/")
 def index():
     return render_template("index.html", options=options)
@@ -46,9 +60,24 @@ def materials():
 @app.route("/list")
 def hw_list():
     user = validate_user()
-    hws = get_homework()
+    homeworks = get_homework()
     categories = session.query(Category).all()
-    
+
+    to_do = update_hw_grades(user, homeworks)
+    session.commit()
+
+    return render_template("list.html", homeworks=homeworks, categories=categories,
+                           user=user,
+                           options=options,
+                           current_time=pdt_now(),
+                           to_do=to_do)
+
+def update_hw_grades(user, homeworks):
+    """ 
+    helper function that computes user's grades on homeworks, 
+    returns a list of uncompleted peer reviews
+    """
+
     # keep track of to-do list for peer reviews
     to_do = defaultdict(int)
     # keep track of the peer review corresponding to each question
@@ -57,7 +86,7 @@ def hw_list():
         prq.set_metadata()
         prq_map[prq.question_id] = prq
 
-    for hw in hws:
+    for hw in homeworks:
 
         # skip if homework not due yet
         if hw.due_date > pdt_now():
@@ -105,7 +134,6 @@ def hw_list():
                     if response.score is None:
                         response.score = new_score
                         response.comments = "Click <a href='rate?id=%d' target='_blank'>here</a> to view comments." % q.question_id
-                        session.commit()
                     # check that student has rated all the peer reviews
                     for task in tasks:
                         if task.score is not None and task.rating is None:
@@ -114,12 +142,7 @@ def hw_list():
         # update student's grade on the homework
         calculate_grade(user, hw)
 
-
-    return render_template("list.html", homeworks=hws, categories=categories,
-                           user=user,
-                           options=options,
-                           current_time=pdt_now(),
-                           to_do=to_do)
+    return to_do
 
 
 @app.route("/hw", methods=['GET'])
@@ -196,9 +219,10 @@ def calculate_grade(user, hw):
     grade = get_grade(user.stuid, hw.id)
     if not grade:
         add_grade(user, hw, score)
-    else:
+    elif grade.score != score:
         grade.score = score
-    session.commit()
+    else:
+        return grade
 
     return grade
 
@@ -209,6 +233,9 @@ def grades():
 
     categories = session.query(Category).all()
     homeworks = get_homework()
+
+    update_hw_grades(user, homeworks)
+    session.commit()
 
     gradebook, max_scores = get_gradebook()
 
@@ -299,7 +326,33 @@ def download_grades():
 
     return response
 
+@app.route("/download_peer_reviews", methods=['GET'])
+def download_peer_reviews():
+    admin = validate_admin()
+
+    tasks = session.query(GradingTask).all()
+    csv = "grader,student,question,score,comments,rating\n"
+
+    for t in tasks:
+        row = []
+        for item in [t.grader, t.student, t.question_id, t.score, t.comments, t.rating]:
+            if item is not None:
+                row.append('"' + str(item).replace('"', '\"') + '"')
+            else:
+                row.append('""')
+        csv += ",".join(row) + "\n"
+
+    response = make_response(csv)
+    course = options.title.replace(" ", "")
+    filename = "%sPeerAssessments.csv" % course
+    response.headers["Content-Disposition"] = "attachment; filename=%s" % filename
+
+    return response
+
 def get_gradebook():
+    """
+    helper function that gets the gradebook
+    """
 
     homeworks = get_homework()    
 
@@ -397,7 +450,8 @@ def update_response():
     response = get_question_response(response_id)
     score = request.form["score"]
     response.score = float(score) if score else None
-    response.comments = request.form["comments"]    
+    response.comments = request.form["comments"]
+    calculate_grade(response.user, response.question.homework)
     session.commit()
 
     return "Updated score for student %s to %f." % (response.stuid, response.score)
@@ -411,17 +465,15 @@ def view_responses():
 
     return render_template("admin/view_responses.html", responses=responses, options=options)
 
-@app.route("/change_user", methods=['POST'])
+@app.route("/change", methods=['GET'])
 def change_user():
     admin = validate_admin()
-    student = request.form['user']
+    student = request.args['user']
 
     if not session.query(User).get(student):
         raise Exception("No user exists with the given ID.")
 
-    session.query(User).filter_by(stuid=admin.stuid).update({
-        "proxy": student
-    })
+    admin.proxy = student
     session.commit()
 
     return '''If you return to the main page now, you will be viewing the system 

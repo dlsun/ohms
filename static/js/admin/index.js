@@ -33,26 +33,29 @@ function hide_all_other_columns(i) {
     var missing = [];
     var excused = [];
     var table = $("table#gradebook");
-    var students = table.find('td:nth-child(2)').map(function() {
+    var students = table.find('td:nth-child(3)').map(function() {
 	return($(this).text());
     });
 
+    // hide duplicate column
+    table.find('td:nth-child(2),th:nth-child(2)').hide();
+    table.find('th,td').css("position", "relative");
+
     // hide column that changes student status
-    table.find('td:nth-child(3),th:nth-child(3)').hide();
+    table.find('td:nth-child(4),th:nth-child(4)').hide();
 
     // hide columns starting with the Overall column
-    for(var j=5; j<=table.find('tr:nth-child(1) td').size(); j++) {
+    for(var j=6; j<=table.find('tr:nth-child(1) td').size(); j++) {
         if(j !== i) {
             table.find('td:nth-child(' + j + '),th:nth-child(' + j + ')').hide();
         } else {
             assignment = table.find('th:nth-child(' + j + ')').text();
             var scores = table.find('td:nth-child(' + j + ')').map(function() {
-                return $(this).attr("value");
+                return $(this).find("input.grade").val();
             });
 	    var excuses = table.find('td:nth-child(' + j + ')').map(function() {
                 return $(this).find("input.excused").is(":checked");
             });
-	    console.log(excuses.get(6));
 	    for(var k=1; k < students.size(); k++) {
 		if(excuses.get(k)) {
 		    excused.push(students.get(k))
@@ -79,7 +82,6 @@ function hide_all_other_columns(i) {
 function update_grade (td, score) {
     var td = $(this).parent("td");
     var score = td.find("input.grade").val()
-    td.attr("value", score);
     var hw_id = td.attr("hw_id");
     var excused = td.find(".excused").is(":checked");
     var stuid = $(this).parents("tr").attr("stuid");
@@ -140,7 +142,7 @@ $("table#cutoffs").find("input").change(function() {
     });
     gradebook.find(".overall").map(function() {
 	$(this).prev().text("");
-	var score = parseFloat($(this).attr("value"));
+	var score = parseFloat($(this).find("input.grade").val());
 	if (score >= cutoffs[0]) $(this).prev().text(letters[0]);
 	else if (score <= cutoffs[11]) $(this).prev().text("NP");
 	else {
