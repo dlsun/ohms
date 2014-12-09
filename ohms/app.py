@@ -337,7 +337,7 @@ def download_peer_reviews():
         row = []
         for item in [t.grader, t.student, t.question_id, t.score, t.comments, t.rating]:
             if item is not None:
-                row.append('"' + str(item).replace('"', '\"') + '"')
+                row.append('"' + str(item).replace('"', '""') + '"')
             else:
                 row.append('""')
         csv += ",".join(row) + "\n"
