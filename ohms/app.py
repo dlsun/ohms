@@ -2,7 +2,7 @@
 OHMS: Online Homework Management System
 """
 
-from flask import Flask, request, render_template, make_response, redirect
+from flask import Flask, request, render_template, make_response, redirect, url_for
 import json
 from utils import NewEncoder, convert_to_last_name
 from datetime import datetime
@@ -476,9 +476,7 @@ def change_user():
     admin.proxy = student
     session.commit()
 
-    return '''If you return to the main page now, you will be viewing the system 
-from the perspective of user <b>%s</b>. To return to your own view, you must visit 
-<a href="admin">/cgi-bin/index.cgi/admin</a> and enter your own ID.''' % admin.proxy
+    return redirect(url_for('hw_list'))
 
 @app.route("/add_homework", methods=['POST'])
 def add_homework():

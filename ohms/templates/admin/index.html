@@ -140,7 +140,7 @@ enter scores.</li>
 
 	{% for student, grades in gradebook %}
         <tr stuid="{{ student.stuid }}">
-	  <td style="position:absolute;"><a href="change?user={{ student.stuid }}">{{ student.stuid }}</a></td>
+	  <td style="position:absolute;"><a href="change?user={{ student.stuid }}" target="_blank">{{ student.stuid }}</a></td>
 	  <td><a href="change?user={{ student.stuid }}">{{ student.stuid }}</a></td>
 	  <td><div style="width:10em;"/>{{ student.name }}</td>
 	  <td style="white-space:nowrap;">
