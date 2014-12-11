@@ -140,15 +140,22 @@ $("table#cutoffs").find("input").change(function() {
     var cutoffs = $("table#cutoffs").find("input").map(function() {
 	return(parseFloat($(this).val()));
     });
+    var counts = $("table#cutoffs tr.counts td");
+    counts.text(0);
     gradebook.find(".overall").map(function() {
 	$(this).prev().text("");
 	var score = parseFloat($(this).find("input.grade").val());
-	if (score >= cutoffs[0]) $(this).prev().text(letters[0]);
+	if (score >= cutoffs[0]) {
+	    $(this).prev().text(letters[0]);
+	    counts.eq(0).text(parseInt(counts.eq(0).text()) + 1);
+	}
 	else if (score <= cutoffs[11]) $(this).prev().text("NP");
 	else {
 	    for(var i=0; i<11; i++) {
-		if((cutoffs[i] > score) && (score >= cutoffs[i+1]))
+		if((cutoffs[i] > score) && (score >= cutoffs[i+1])) {
 		    $(this).prev().text(letters[i+1]);
+		    counts.eq(i+1).text(parseInt(counts.eq(i+1).text()) + 1);
+		}
 	    }
 	}
     })
