@@ -71,11 +71,24 @@ function hide_all_other_columns(i) {
             }
         }
     }
+    var n = data.length;
+    var sorted = new Array(n);
+    for(var i=1; i<n; i++) {
+	sorted[i] = data[i][1];
+    }
+    sorted.sort();
+    console.log(sorted);
+    if(n % 2 == 1) {
+	var median = sorted[Math.floor(n/2)];
+    } else {
+	var median = .5*(sorted[(n/2)-1] + sorted[(n/2)]);
+    }
     $("div#histogram").css("height", "500px");
     $("div#missing").text("These students' scores are missing: " + missing.join(", ") + ".");
     $("div#excused").text("These students have been excused: " + excused.join(", ") + ".");
-    $("div#stats").text("Mean: " + (sum / n).toFixed(2) + ", SD: " + 
-                        (Math.sqrt(sum_sq / n - Math.pow(sum / n, 2))).toFixed(2));
+    $("div#stats").text("Mean: " + (sum / n).toFixed(2) + 
+			", Median: " + median.toFixed(2) + 
+			", SD: " + (Math.sqrt(sum_sq / n - Math.pow(sum / n, 2))).toFixed(2));
     drawChart();
 }
 
