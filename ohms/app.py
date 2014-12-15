@@ -31,10 +31,10 @@ else:
     def handle_exceptions(error):
         return make_response(error.message, 403)
 
-@app.route("/update_gradebook")
-def update_gradebook():
+@app.route("/refresh_grades")
+def refresh_grades():
     """
-    This updates all students' scores on all homeworks.
+    This updates all students' grades on all homeworks.
     """
     homeworks = get_homework()
     students = session.query(User).filter_by(type="student").all()
@@ -305,12 +305,20 @@ def download_grades():
     admin = validate_admin()
 
     homeworks = get_homework()
-    gradebook, _ = get_gradebook()
+    categories = session.query(Category).all()
+    gradebook, max_scores = get_gradebook()
 
-    csv = '"Student",' + ','.join(('"' + hw.name.replace('"', '""') + '"') for hw in homeworks) + "\n"
+    csv = '"SUNet","Student","Overall",'
+    csv += ','.join(('"' + c.name.replace('"', '""') + ' Total"') for c in categories) + ","
+    csv += ','.join(('"' + hw.name.replace('"', '""') + '"') for hw in homeworks) + "\n"
+
+    csv += ',"MAXIMUM",,' + ",".join("" for c in categories) + "," 
+    csv += ",".join(str(max_scores[hw.id]) for hw in homeworks) + "\n"
 
     for student, grades in gradebook:
-        row = [student.name]
+        row = [student.stuid, student.name, str(grades["overall"])]
+        for category in categories:
+            row.append(str(grades[category.name]))
         for hw in homeworks:
             if hw.id not in grades:
                 row.append("")
