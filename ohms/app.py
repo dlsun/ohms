@@ -323,7 +323,7 @@ def download_grades():
             if hw.id not in grades:
                 row.append("")
             else:
-                row.append(str(grades[hw.id].score))
+                row.append("E" if grades[hw.id].excused else str(grades[hw.id].score))
         csv += ",".join(row) + "\n"
 
     response = make_response(csv)
