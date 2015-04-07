@@ -22,11 +22,15 @@
 {% if user.type == "admin" %}
     <span class='lead'>[<a href='view_responses?q={{ q.id }}'>View Student Responses</a>]</span>
     <form method="POST" action="move_question">
-      <span class='lead'>[Move Question to 
+      <span class='lead'>[Move Question to Homework: 
 	<input type="hidden" name="q_id" value="{{ q.id }}" />
-	<input class="span1" type="text" name="hw_id" value="{{ homework.id }}" />
-	<small>(Enter homework ID here, or 0 to delete question.)</small>
-	<input type="submit" />]
+	<select name="hw_id">
+	  {% for hw in hw_list %}
+	  <option value="{{ hw.id }}" {% if hw.id == homework.id %}selected="selected"{% endif %}>{{ hw.name }}</option>
+	  {% endfor %}
+	  <option value="0">Delete this question!</option>
+	</select>
+	<input type="submit" value="Go!"/>]
       </span>
     </form>
 {% endif %}

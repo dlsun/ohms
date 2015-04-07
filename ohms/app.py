@@ -151,15 +151,24 @@ def hw():
     hw_id = request.args.get("id")
     hw = get_homework(hw_id)
     question_list = get_all_regular_questions() if user.type == "admin" else None
-    if user.type != "admin" and hw.start_date and hw.start_date > pdt_now():
-        raise Exception("This homework has not yet been released.")
+
+    if user.type == "admin":
+        return render_template("hw.html",
+                               hw_list=get_homework(),
+                               homework=hw,
+                               user=user,
+                               question_list=question_list,
+                               options=options)
     else:
+        if hw.start_date and hw.start_date > pdt_now():
+            raise Exception("This homework has not yet been released.")
         return render_template("hw.html",
                                homework=hw,
                                user=user,
                                question_list=question_list,
                                options=options)
-
+        
+        
 
 @app.route("/rate", methods=['GET'])
 def rate():
