@@ -20,14 +20,14 @@
 : {{q.name|safe}}
 {% endif %}  
 {% if user.type == "admin" %}
-    <span class='lead'>[<a href='view_responses?q={{ q.id }}'>View Student Responses</a>]</span> 
-    <span class='lead'>[Move Question to Homework ID
-      <form method="POST" action="move_question">
+    <span class='lead'>[<a href='view_responses?q={{ q.id }}'>View Student Responses</a>]</span>
+    <form method="POST" action="move_question">
+      <span class='lead'>[Move Question to 
 	<input class="input-mini" type="hidden" name="q_id" value="{{ q.id }}" />
 	<input class="input-mini" type="text" name="hw_id" value="{{ homework.id }}" />
-	<input type="submit" />
-      </form> <small>(Enter 0 to delete question.)</small>
-    ]</span>
+	<input type="submit" /><small>(Enter homework ID here, or 0 to delete question.)</small>]
+      </span>
+    </form>
 {% endif %}
   </h3>
 
