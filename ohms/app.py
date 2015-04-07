@@ -447,7 +447,7 @@ def move_question():
     question.hw_id = hw_id if hw_id else None
     session.commit()
 
-    if hw_id > -1:
+    if hw_id:
         return "Question ID %d moved to <a href=hw?id=%d>%s</a>." % (q_id, question.homework.id, question.homework.name)
     else:
         return "Question ID %d has been deleted!" % q_id
