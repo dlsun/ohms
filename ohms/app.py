@@ -436,6 +436,23 @@ def change_user_type():
 
     return "Successfully changed user %s to %s." % (stuid, user_type)
 
+@app.route("/move_question", methods=['POST'])
+def move_question():
+    admin = validate_admin()
+
+    q_id = request.form['q_id']
+    hw_id = int(request.form['hw_id'])
+
+    question = get_question(q_id)
+    question.hw_id = hw_id if hw_id else None
+    session.commit()
+
+    if hw_id > -1:
+        return "Question ID %d moved to <a href=hw?id=%d>%s</a>" % (q_id, question.homework.id, question.homework.name)
+    else:
+        return "Question ID %d has been deleted!"
+
+    
 @app.route("/update_question", methods=['POST'])
 def update_question():
     admin = validate_admin()
