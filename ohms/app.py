@@ -440,7 +440,7 @@ def change_user_type():
 def move_question():
     admin = validate_admin()
 
-    q_id = request.form['q_id']
+    q_id = int(request.form['q_id'])
     hw_id = int(request.form['hw_id'])
 
     question = get_question(q_id)
@@ -450,7 +450,7 @@ def move_question():
     if hw_id > -1:
         return "Question ID %d moved to <a href=hw?id=%d>%s</a>" % (q_id, question.homework.id, question.homework.name)
     else:
-        return "Question ID %d has been deleted!"
+        return "Question ID %d has been deleted!" % q_id
 
     
 @app.route("/update_question", methods=['POST'])
