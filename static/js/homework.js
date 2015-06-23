@@ -15,6 +15,12 @@ var OHMS = (function(OHMS) {
 	this.bind_events();
     }
 
+    Homework.prototype.bind_events = function () {
+	$("#homeworkNameAdmin").change(function() {
+	    this.update_name($("#homeworkNameAdmin").val());
+	});
+    }
+    
     Homework.prototype.load_homework = function () {
 
 	this.id = $("#homeworkID").val();
@@ -24,10 +30,6 @@ var OHMS = (function(OHMS) {
 	    var question = new OHMS.Question(this,questions.eq(i));
 	    this.questions.push(question);
 	}
-
-	$("#homeworkNameAdmin").change(function() {
-	    this.update_name($("#homeworkNameAdmin").val());
-	});
     }
 
     Homework.prototype.update_name = function(name) {

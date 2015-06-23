@@ -8,7 +8,7 @@
   <input type="hidden" id="homeworkID" value="{{ homework.id }}" />
   
   {% if user.type == "admin" %}
-  <input type="text" id="HomeworkNameAdmin" value="{{ homework.name }}" />
+  <input type="text" id="homeworkNameAdmin" value="{{ homework.name }}" />
   {% else %}
   <h3 id="homeworkName">{{ homework.name }}</h3>
   {% endif %}
