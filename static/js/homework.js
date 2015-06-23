@@ -16,8 +16,9 @@ var OHMS = (function(OHMS) {
     }
 
     Homework.prototype.bind_events = function () {
+	var that = this;
 	$("#homeworkNameAdmin").change(function() {
-	    this.update_name($("#homeworkNameAdmin").val());
+	    that.update_name($("#homeworkNameAdmin").val());
 	});
     }
     
@@ -37,10 +38,16 @@ var OHMS = (function(OHMS) {
 	$.ajax({
 	    url : "update_hw_name",
 	    type : "POST",
-	    dataType : "json",
+	    dataType : "text",
 	    data : {
 		hw_id: this.id,
 		hw_name: this.name,
+	    },
+	    success: function (data) {
+		alert(data);
+	    },
+	    error: function (xhr) {
+		add_alert("The update failed because <br><br>" + xhr.responseText);
 	    }
 	})
     }

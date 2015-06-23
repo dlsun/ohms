@@ -552,7 +552,7 @@ def update_hw_name():
     homework.name = hw_name
     session.commit()
 
-    return "Homework name updated successfully to %s!" % homework.name
+    return '''The homework name was successfully updated to "%s"!''' % homework.name
 
 
 @app.route("/update_due_date", methods=['POST'])
