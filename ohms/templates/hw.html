@@ -5,8 +5,13 @@
 
 <div id="homework">
 
-<h3 id="homework_name">{{ homework.name }} (Due: {{
-  homework.due_date.strftime("%a, %b %d at %I:%M %p") }} PST)</h3>
+  <input type="hidden" id="homeworkID" value="{{ homework.id }}" />
+  
+  {% if user.type == "admin" %}
+  <input type="text" id="HomeworkNameAdmin" value="{{ homework.name }}" />
+  {% else %}
+  <h3 id="homeworkName">{{ homework.name }}</h3>
+  {% endif %}
 
 <div id="homework_text"></div>
 

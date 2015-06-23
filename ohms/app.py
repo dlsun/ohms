@@ -541,6 +541,20 @@ def add_homework():
 
     return "%s added successfully!" % name
 
+@app.route("/update_hw_name", methods=['POST'])
+def update_hw_name():
+    admin = validate_admin()
+
+    hw_id = request.form['hw_id']
+    hw_name = request.form['hw_name']
+
+    homework = get_homework(hw_id)
+    homework.name = hw_name
+    session.commit()
+
+    return "Homework name updated successfully to %s!" % homework.name
+
+
 @app.route("/update_due_date", methods=['POST'])
 def update_due_date():
     admin = validate_admin()
@@ -622,3 +636,5 @@ def update_category():
     session.commit()
 
     return "Category %s successfully added/updated." % name
+
+

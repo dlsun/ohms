@@ -8,22 +8,43 @@
 
 var OHMS = (function(OHMS) {
 	
-	var Homework = function () {
-	    this.questions = [];
-	    this.load_homework();
+    var Homework = function () {
+	this.name = "";
+	this.questions = [];
+	this.load_homework();
+	this.bind_events();
+    }
+
+    Homework.prototype.load_homework = function () {
+
+	this.id = $("#homeworkID").val();
+	this.name = $("#homeworkName").val();
+	var questions = $(".question");
+	for (var i=0; i<questions.length; i++) {
+	    var question = new OHMS.Question(this,questions.eq(i));
+	    this.questions.push(question);
 	}
 
-	Homework.prototype.load_homework = function () {
+	$("#homeworkNameAdmin").change(function() {
+	    this.update_name($("#homeworkNameAdmin").val());
+	});
+    }
 
-	    var questions = $(".question");
-	    for (var i=0; i<questions.length; i++) {
-		var question = new OHMS.Question(this,questions.eq(i));
-		this.questions.push(question);
+    Homework.prototype.update_name = function(name) {
+	this.name = name;
+	$.ajax({
+	    url : "update_hw_name",
+	    type : "POST",
+	    dataType : "json",
+	    data : {
+		hw_id: this.id,
+		hw_name: this.name,
 	    }
-	}
-
-	OHMS.Homework = Homework;
-
-	return OHMS;
-
-    }(OHMS));
+	})
+    }
+    
+    OHMS.Homework = Homework;
+    
+    return OHMS;
+    
+}(OHMS));
