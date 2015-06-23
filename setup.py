@@ -13,7 +13,7 @@ run_command("fs sa . system:anyuser none")
 
 # figure out name of CGI user (usually of the form class-stats60-1142.cgi), set its permissions
 out = subprocess.check_output(["fs", "la", root])
-cgi_user = re.findall('class.*\.cgi', out)[0]
+cgi_user = re.findall('class.*\.cgi', out)[-1]
 run_command('fs sa -dir `find %s -type d -not -path "*/.backup*" -print` -acl %s rlidwk' % (root, cgi_user))
 
 # replace the options file in ohms/ with the appropriate options file

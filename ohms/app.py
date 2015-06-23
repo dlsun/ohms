@@ -329,7 +329,7 @@ def download_grades():
 
     csv += ',"MAXIMUM",,' + ",".join("" for c in categories) + "," 
     csv += ",".join(str(max_scores[hw.id]) for hw in homeworks) + "\n"
-
+    
     for student, grades in gradebook:
         row = [student.stuid, student.name, str(grades["overall"])]
         for category in categories:
@@ -340,7 +340,7 @@ def download_grades():
             else:
                 row.append("E" if grades[hw.id].excused else str(grades[hw.id].score))
         csv += ",".join(row) + "\n"
-
+        
     response = make_response(csv)
     course = options.title.replace(" ", "")
     date = datetime.now().strftime("%m-%d-%Y")
@@ -399,10 +399,12 @@ def get_gradebook():
     gradebook = gradebook.items()
     gradebook.sort(key=lambda entry: convert_to_last_name(entry[0].name))
 
+    categories = session.query(Category).all()
+    
     # calculate total scores by category, taking into account excused assignments
     for student, grades in gradebook:
-        earned = defaultdict(list)
-        possible = defaultdict(list)
+        earned = {c: [] for c in categories}
+        possible = {c: [] for c in categories}
         for hw in homeworks:
             if max_scores[hw.id] == 0.:
                 continue
@@ -422,6 +424,7 @@ def get_gradebook():
         grades["overall"] = 0.
         for category, poss in possible.iteritems():
             if len(poss) == 0:
+                grades[category.name] = "0 / 0"
                 continue
             # sort scores by benefit to grade if dropped
             e, p = sum(earned[category]), sum(poss)
