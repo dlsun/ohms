@@ -111,5 +111,7 @@ def add_grade(student, homework, score, excused=False):
 def get_user(stuid):
     return session.query(User).filter_by(stuid=stuid).one()
 
+def get_users():
+    return session.query(User).all()
 
 

@@ -15,7 +15,7 @@ from queries import get_user, get_homework, get_question, \
     get_all_regular_questions, \
     get_all_responses_to_question, get_all_peer_tasks, \
     get_peer_review_questions, get_peer_tasks_for_student, \
-    get_grading_task, add_grade, get_grade
+    get_grading_task, add_grade, get_grade, get_users
 import options
 from pdt import pdt_now
 from auth import validate_user, validate_admin
@@ -37,7 +37,7 @@ def refresh_grades():
     This updates all students' grades on all homeworks.
     """
     homeworks = get_homework()
-    students = session.query(User).filter_by(type="student").all()
+    students = get_students()
     for student in students:
         update_hw_grades(student, homeworks)
         print student.name
@@ -299,9 +299,15 @@ def admin():
 
     homeworks = get_homework()
     categories = session.query(Category).all()
-    
-    guests = session.query(User).filter_by(type="guest").all()
-    admins = session.query(User).filter_by(type="admin").all()
+
+    users = get_users()
+    guests = []
+    admins = []
+    for user in users:
+        if user.type == "guest":
+            guests.append(user)
+        elif user.type == "admin":
+            admins.append(user)
 
     gradebook, max_scores = get_gradebook()
     
@@ -376,13 +382,13 @@ def get_gradebook():
     # get all the grades, put them into a gradebook
     gradebook = {}
     max_scores = defaultdict(float)
+    for user in get_users():
+        if user.type == "student":
+            gradebook[user] = {}
     for g in session.query(Grade).all():
-        if g.student.type != "student":
+        if g.student not in gradebook:
             continue
-        elif g.student not in gradebook:
-            gradebook[g.student] = {g.homework.id: g}
-        else:
-            gradebook[g.student][g.homework.id] = g
+        gradebook[g.student][g.homework.id] = g
         # update maximum score for the assignment
         try:
             score = float(g.score)
