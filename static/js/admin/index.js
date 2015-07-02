@@ -76,8 +76,7 @@ function hide_all_other_columns(i) {
     for(var i=1; i<n; i++) {
 	sorted[i] = data[i][1];
     }
-    sorted.sort();
-    console.log(sorted);
+    sorted.sort(function(a, b) { return a-b });
     if(n % 2 == 1) {
 	var median = sorted[Math.floor(n/2)];
     } else {
