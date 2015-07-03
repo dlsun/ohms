@@ -119,7 +119,7 @@ function update_grade (td, score) {
 $("input.grade").change(update_grade);
 $("input.excused").change(update_grade);
 
-function update_max (td, score) {
+function update_max_score (td, score) {
     var td = $(this).parent("td");
     var max_score = td.find("input.max").val()
     var hw_id = td.attr("hw_id");
@@ -140,6 +140,7 @@ function update_max (td, score) {
     });
 }
 
+$("input.max").change(update_max_score);
 
 
 $("#categories").find("input[type=button]").click(function () {
