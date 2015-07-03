@@ -15,30 +15,15 @@
 
     <hr/>
 
-    <h3>Gradebook</h3>
+    <h4>Grading Breakdown</h4>
 
-    <p class="lead">[<a href="download_grades">Download Grades as CSV</a>] 
-      [<a href="download_peer_reviews">Download Peer Assessments as CSV</a>]</p>
-
-    <strong>How to use the Gradebook:</strong>
-
-    <ul>
-      <li>Grades are only shown for students in the class. It is recommended that you change the 
-status of any user who is not enrolled in the class to "Guest".</li>
-      <li>Click on the name of an assignment to view a histogram of scores for that 
-assignment. This will also hide all columns except for that column, making it easier to 
-enter scores.</li>
-      <li>To excuse a student from an assignment, check the box next to his or her score. Then, the lost points on this assignment will not count against
-	the student. You can verify this by looking at the denominator in
-	the category total.</li>
-      <li>Click on a student's User ID to view the system from the perspective of 
-	that students. This is useful in case a student reports a problem with the 
-	system, and you would like to see what they're seeing.</p>
-    </ul>
+    <p>Enter the different components of the course grade here. You can specify 
+    how much weight to give to each category, as well as how many of the lowest 
+      scores to drop (e.g., you might want to drop the lowest homework score).</p>
 
     <table id="categories" class="table span4">
       <thead>
-	<th>Categories</th>
+	<th>Category</th>
 	<th>Weight</th>
 	<th>Drops</th>
       </thead>
@@ -67,10 +52,11 @@ enter scores.</li>
 
     <h4>Letter Grade Cutoffs</h4>
 
-    <p>Enter the minimum percent needed for each letter grade. As you enter the 
-      cutoffs, the letter grade will be automatically updated in the table below. 
-      Please note that these cutoffs and letter grades are not saved. They will be 
-      lost if you refresh the page.</p>
+    <p>Enter the minimum percent needed for each letter grade. 
+      As you enter the cutoffs, the letter grade will be 
+      automatically updated in the table below. Please note 
+      that these cutoffs and letter grades are not saved. 
+      They will be lost if you refresh the page.</p>
 
     <table class="table" id="cutoffs">
       <tr>
@@ -100,6 +86,31 @@ enter scores.</li>
 	<td>0</td><td>0</td><td>0</td>
       </tr>
     </table>
+
+
+
+    <h4>Gradebook</h4>
+
+    <p class="lead">[<a href="download_grades">Download Grades as CSV</a>] 
+      [<a href="download_peer_reviews">Download Peer Assessments as CSV</a>]</p>
+
+    <ul>
+      <li>Grades are only shown for students in the class. It is recommended that you change the 
+status of any user who is not enrolled in the class to "Guest".</li>
+      <li>Click on the name of an assignment to view a histogram of scores for that 
+assignment. This will also hide all columns except for that column, making it easier to 
+enter grades.</li>
+      <li>To excuse a student from an assignment, check the box next to his or her score. Then, the lost points on this assignment will not count against
+	the student. You can verify this by looking at the denominator in
+	the category total.</li>
+      <li>Click on a student's User ID to view the system from the perspective of 
+	that student. This is useful in case a student reports a problem with the 
+	system, and you would like to see what they're seeing. Come back to this 
+      page and click on your own User ID to return to admin view.</li>
+      <li>You can change the maximum score for any assignment in the gradebook here. 
+      Otherwise, it will default to the highest score among students in the class.</li>
+    </ul>
+
 
     <div style="overflow-x: scroll;">
     <table id="gradebook" class="table table-striped">
