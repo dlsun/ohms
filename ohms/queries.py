@@ -31,6 +31,9 @@ def get_homework(hw_id=None):
     else:
         return session.query(Homework).get(hw_id)
 
+def get_homeworks_before(due_date=pdt_now()):
+    return session.query(Homework).filter(Homework.due_date <= due_date).all()
+    
 def get_question(question_id):
     return session.query(Question).get(question_id)
 

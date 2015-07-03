@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict
 
 from objects import session, Homework, Question, PeerReview, User, GradingTask, Grade, Category
-from queries import get_user, get_homework, get_question, \
+from queries import get_user, get_homework, get_homeworks_before, get_question, \
     get_question_response, get_last_question_response, \
     get_all_regular_questions, \
     get_all_responses_to_question, get_all_peer_tasks, \
@@ -241,7 +241,7 @@ def grades():
     user = validate_user()
 
     categories = session.query(Category).all()
-    homeworks = get_homework()
+    homeworks = get_homeworks_before()
 
     update_hw_grades(user, homeworks)
     session.commit()
@@ -377,25 +377,34 @@ def get_gradebook():
     helper function that gets the gradebook
     """
 
-    homeworks = get_homework()    
+    homeworks = get_homeworks_before()
 
     # get all the grades, put them into a gradebook
-    gradebook = {}
-    max_scores = defaultdict(float)
+    gradebook, max_scores = {}, {}
+
     for user in get_users():
         if user.type == "student":
             gradebook[user] = {}
-    for g in session.query(Grade).all():
-        if g.student not in gradebook:
-            continue
-        gradebook[g.student][g.homework.id] = g
-        # update maximum score for the assignment
-        try:
-            score = float(g.score)
-            if score > max_scores[g.homework.id]:
-                max_scores[g.homework.id] = score
-        except:
-            pass
+
+    for homework in homeworks:
+        
+        grades = session.query(Grade).filter_by(hw_id = homework.id).all()
+
+        scores = []
+        for g in grades:
+            if g.student not in gradebook:
+                continue
+            gradebook[g.student][homework.id] = g
+            try:
+                scores.append(float(g.score))
+            except:
+                pass
+
+        if homework.max_score is None:
+            max_scores[homework.id] = max(scores)
+        else:
+            max_scores[homework.id] = homework.max_score
+            
     gradebook = gradebook.items()
     gradebook.sort(key=lambda entry: convert_to_last_name(entry[0].name))
 

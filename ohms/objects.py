@@ -38,6 +38,7 @@ class Homework(Base):
     start_date = Column(DateTime)
     due_date = Column(DateTime)
     category_id = Column(Integer, ForeignKey('categories.id'))
+    max_score = Column(Integer)
 
     questions = relationship("Question", order_by="Question.id", backref="hw")
     category = relationship("Category")
