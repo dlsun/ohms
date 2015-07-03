@@ -1,8 +1,9 @@
+// Store data
 var data = [["Student", "Score"]];
 var assignment = "";
 
+// This function draws the histogram for each quiz using Google Charts.
 google.load("visualization", "1", {packages:["corechart"]});
-
 function drawChart() {
     var dataTable = google.visualization.arrayToDataTable(data);
     var range = dataTable.getColumnRange(1);
@@ -26,6 +27,7 @@ function drawChart() {
     chart.draw(dataTable, options);
 }
 
+// This function hides all columns except for the ith column
 function hide_all_other_columns(i) {
     var sum = 0;
     var sum_sq = 0;
@@ -91,6 +93,7 @@ function hide_all_other_columns(i) {
     drawChart();
 }
 
+// This function updates a student's grade for an assignment.
 function update_grade (td, score) {
     var td = $(this).parent("td");
     var score = td.find("input.grade").val()
@@ -116,9 +119,12 @@ function update_grade (td, score) {
     });
 }
 
+// These event handlers call update_grade() above when a grade is changed.
 $("input.grade").change(update_grade);
 $("input.excused").change(update_grade);
 
+
+// This function updates the maximum score for an assignment.
 function update_max_score (td, score) {
     var td = $(this).parent("td");
     var max_score = td.find("input.max").val()
@@ -140,9 +146,11 @@ function update_max_score (td, score) {
     });
 }
 
+// This event handler calls update_max_score() above when the max score for an assignment is changed.
 $("input.max").change(update_max_score);
 
 
+// Event handler that updates category names/weights/drops when button is pressed
 $("#categories").find("input[type=button]").click(function () {
   var row = $(this).closest("tr");
   var id = row.attr("id");
@@ -168,10 +176,11 @@ $("#categories").find("input[type=button]").click(function () {
   });
 });
 
+
+// Calculate letter grades when letter grade cutoffs are changed.
 var gradebook = $("table#gradebook");
 var letters = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+",
 	       "D", "D-"]
-
 $("table#cutoffs").find("input").change(function() {
     var cutoffs = $("table#cutoffs").find("input").map(function() {
 	return(parseFloat($(this).val()));
@@ -195,4 +204,14 @@ $("table#cutoffs").find("input").change(function() {
 	    }
 	}
     })
-})
+});
+
+// Remind user to bookmark admin page when they are about to change user.
+$(".userid").click(function() {
+    alert('You are about to enter the view of a student. In order to return to your own view again,' + 
+	  'you must come back to this page and click on your own ID at the bottom of the page. ' +
+	  "Since you will not be able to see the link to this page once you enter a student's view, " + 
+	  "we recommend that you bookmark this page now by pressing " +
+	  (navigator.userAgent.toLowerCase().indexOf('mac') != - 1 ? 'Command/Cmd' : 'CTRL') + 
+	  ' + D.');
+});
