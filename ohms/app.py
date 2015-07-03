@@ -400,10 +400,10 @@ def get_gradebook():
             except:
                 pass
 
-        if homework.max_score is None:
-            max_scores[homework.id] = max(scores)
-        else:
+        if homework.max_score is not None:
             max_scores[homework.id] = homework.max_score
+        elif scores:
+            max_scores[homework.id] = max(scores)
             
     gradebook = gradebook.items()
     gradebook.sort(key=lambda entry: convert_to_last_name(entry[0].name))
