@@ -119,6 +119,29 @@ function update_grade (td, score) {
 $("input.grade").change(update_grade);
 $("input.excused").change(update_grade);
 
+function update_max (td, score) {
+    var td = $(this).parent("td");
+    var max_score = td.find("input.max").val()
+    var hw_id = td.attr("hw_id");
+    $.ajax({
+	url : "update_max_score",
+	type : "POST",
+	dataType : "text",
+	data : {
+	    hw_id: hw_id,
+	    max_score: max_score,
+	},
+	success : function (data) {
+	    alert(data);
+	},
+	error: function () {
+	    alert("The maximum score was not changed successfully. Please try again.");   
+	}
+    });
+}
+
+
+
 $("#categories").find("input[type=button]").click(function () {
   var row = $(this).closest("tr");
   var id = row.attr("id");

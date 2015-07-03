@@ -129,17 +129,16 @@ enter scores.</li>
 	  <td><strike>&emsp;&emsp;&emsp;&emsp;</strike></td>
 	  <td></td>
 	  <td value="max">
-	    <input type="hidden" class="grade" value=""/>
+	    <input type="hidden" class="max" value=""/>
 	  </td>
 	  {% for category in categories %}
 	  <td value="max">
-	    <input type="hidden" class="grade" value=""/>
+	    <input type="hidden" class="max" value=""/>
 	  </td>
 	  {% endfor %}
 	  {% for hw in homeworks %}
-	  <td value="max">
-	    <b>{{ max_scores[hw.id] }}</b>
-	    <input type="hidden" class="grade" value="{{ max_scores[hw.id] }}"/>
+	  <td value="max" hw_id="{{ hw.id }}">
+	    <input type="text" class="max" value="{{ max_scores[hw.id] }}" />
 	  </td>
 	  {% endfor %}
 	</tr>

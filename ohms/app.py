@@ -625,6 +625,19 @@ def update_grade():
 
     return "Grade update successful!"
 
+@app.route("/update_max_score", methods=['POST'])
+def update_max_score():
+    admin = validate_admin()
+
+    hw_id = request.form['hw_id']
+    max_score = request.form['max_score'].strip()
+
+    homework = get_homework(hw_id)
+    homework.max_score = None if max_score == "" else float(max_score)
+    session.commit()
+
+    return "The maximum score for %s has been successfully updated!" % homework.name
+
 @app.route("/update_category", methods=['POST'])
 def update_category():
     admin = validate_admin()
