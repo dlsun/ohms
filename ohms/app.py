@@ -404,6 +404,8 @@ def get_gradebook():
             max_scores[homework.id] = homework.max_score
         elif scores:
             max_scores[homework.id] = max(scores)
+        else:
+            max_scores[homework.id] = None
             
     gradebook = gradebook.items()
     gradebook.sort(key=lambda entry: convert_to_last_name(entry[0].name))
@@ -415,7 +417,7 @@ def get_gradebook():
         earned = {c: [] for c in categories}
         possible = {c: [] for c in categories}
         for hw in homeworks:
-            if max_scores[hw.id] == 0.:
+            if max_scores[hw.id] is None or max_scores[hw.id] == 0:
                 continue
             possible[hw.category].append(max_scores[hw.id])
             if hw.id in grades:
