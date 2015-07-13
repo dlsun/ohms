@@ -377,7 +377,12 @@ def get_gradebook():
     helper function that gets the gradebook
     """
 
-    homeworks = get_homeworks_before()
+    user = validate_user()
+
+    if user.type == "admin":
+        homeworks = get_homework()
+    else:
+        homeworks = get_homeworks_before()
 
     # get all the grades, put them into a gradebook
     gradebook, max_scores = {}, {}
