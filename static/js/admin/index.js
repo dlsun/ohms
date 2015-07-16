@@ -208,9 +208,10 @@ $("table#cutoffs").find("input").change(function() {
 
 // Remind user to bookmark admin page when they are about to change user.
 $(".userid").click(function() {
-    alert('You are about to enter the view of a student. In order to return to your own view again,' + 
-	  'you must come back to this page and click on your own ID at the bottom of the page. ' +
-	  "Since you will not be able to see the link to this page once you enter a student's view, " + 
+    alert("You are about to enter a student view of OHMS. In order to return to your own view, " + 
+	  "you have to return to this admin page, at which point your view will automatically be " + 
+	  "reinstated. " +
+	  "Since the link to this admin page does not appear in the student view, " + 
 	  "we recommend that you bookmark this page now by pressing " +
 	  (navigator.userAgent.toLowerCase().indexOf('mac') != - 1 ? 'Command/Cmd' : 'CTRL') + 
 	  ' + D.');

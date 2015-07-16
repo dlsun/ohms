@@ -294,8 +294,11 @@ def upload():
 # ADMIN FUNCTIONS
 @app.route("/admin")
 def admin():
-
     admin = validate_admin()
+
+    # change back to admin view
+    admin.proxy = admin.stuid
+    session.commit()
 
     homeworks = get_homework()
     categories = session.query(Category).all()
