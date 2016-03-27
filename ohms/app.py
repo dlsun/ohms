@@ -567,7 +567,7 @@ def import_homework():
     hw_id = request.form['hw_id']
     hw = get_homework(hw_id)
 
-    xml = request.files['xml']
+    xml = request.files['xml'].read()
     if not xml:
         return "Empty file uploaded."
 
@@ -579,11 +579,11 @@ def import_homework():
     return "Homework updated successfully from XML."
     
 
-@app.route("/export_hw", methods=['POST'])
+@app.route("/export_hw", methods=['GET'])
 def export_homework():
     admin = validate_admin()
 
-    hw_id = request.form['hw_id']
+    hw_id = request.args['id']
     hw = get_homework(hw_id)
 
     # get XML for questions, wrap in <homework> tags
