@@ -138,17 +138,19 @@
   </table>
 </div>
 
-<h3>Export and Import Homework</h3>
+<h3>Export Homework to XML</h3>
 
 <form method="POST" action="export_hw">
   <input type="hidden" id="hw_id" value="{{ homework.id }}" />
-  <input type="submit" value="Export Homework as XML" />
+  <input type="submit" value="Export!" />
 </form>
+
+<h3>Import Homework from XML</h3>
 
 <form method="POST" action="import_hw">
   <input type="hidden" id="hw_id" value="{{ homework.id }}" />
-  <input type="file" id="xml"/>
-  <input type="submit" value="Import Homework from XML File" />
+  <input type="file" id="xml"/><br/>
+  <input type="submit" value="Upload" />
 </form>
 {% endif %}
 

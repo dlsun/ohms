@@ -564,7 +564,7 @@ def add_homework():
 def import_homework():
     admin = validate_admin()
 
-    hw_id = request.args['hw_id']
+    hw_id = request.form['hw_id']
     hw = get_homework(hw_id)
 
     xml = request.files['xml']
@@ -583,7 +583,7 @@ def import_homework():
 def export_homework():
     admin = validate_admin()
 
-    hw_id = request.args['hw_id']
+    hw_id = request.form['hw_id']
     hw = get_homework(hw_id)
 
     # get XML for questions, wrap in <homework> tags
