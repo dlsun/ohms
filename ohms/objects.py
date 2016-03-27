@@ -46,7 +46,6 @@ class Homework(Base):
     def update_from_xml(self, xml):
         node = ET.fromstring(xml)
         for i, q in enumerate(node.iter('question')):
-            print 'Processing Question %d' % (i+1)
             q_object = Question.from_xml(q)
             q_object.homework = self
             self.questions.append(q_object)
