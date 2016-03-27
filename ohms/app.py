@@ -560,6 +560,16 @@ def add_homework():
 
     return "%s added successfully!" % name
 
+@app.route("/export_hw", methods=['GET'])
+def export_homework():
+    admin = validate_admin()
+
+    hw_id = request.args['id']
+    hw = get_homework(hw_id)
+    
+    xml = "\n\n".join(q.xml for q in hw.questions)
+    return xml
+
 @app.route("/update_hw_name", methods=['POST'])
 def update_hw_name():
     admin = validate_admin()
@@ -589,7 +599,6 @@ def update_due_date():
     session.commit()
 
     return "Due date for %s updated successfully!" % homework.name
-
 
 @app.route("/add_question", methods=['POST'])
 def add_question():
