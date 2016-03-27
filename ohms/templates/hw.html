@@ -140,7 +140,8 @@
 
 <h3>Export Homework to XML</h3>
 
-<form method="GET" action="export_hw?id={{ homework.id }}">
+<form method="GET" action="export_hw">
+  <input type="hidden" name="id" value="{{ homework.id }}" />
   <input type="submit" value="Export!" />
 </form>
 
