@@ -560,14 +560,42 @@ def add_homework():
 
     return "%s added successfully!" % name
 
-@app.route("/export_hw", methods=['GET'])
+@app.route("/import_hw", methods=['POST'])
+def import_homework():
+    admin = validate_admin()
+
+    hw_id = request.args['hw_id']
+    hw = get_homework(hw_id)
+
+    xml = request.files['xml']
+    if not xml:
+        return "Empty file uploaded."
+
+    try:
+        hw.update_from_xml(xml)
+    except:
+        return "Invalid XML uploaded"
+
+    return "Homework updated successfully from XML."
+    
+
+@app.route("/export_hw", methods=['POST'])
 def export_homework():
     admin = validate_admin()
 
-    hw_id = request.args['id']
+    hw_id = request.args['hw_id']
     hw = get_homework(hw_id)
-    
+
+    # get XML for questions, wrap in <homework> tags
     xml = "\n\n".join(q.xml for q in hw.questions)
+    xml = "<homework>\n" + xml + "\n</homework>"
+
+    # get tree, remove any ID tags, convert back to string
+    node = ET.fromstring(xml)
+    for e in node.iter():
+        if "id" in e.attrib: e.attrib.pop("id")
+    xml = ET.tostring(node)
+
     return Response(xml, content_type='text')
 
 @app.route("/update_hw_name", methods=['POST'])

@@ -43,25 +43,15 @@ class Homework(Base):
     questions = relationship("Question", order_by="Question.id", backref="hw")
     category = relationship("Category")
 
-    @staticmethod
-    def from_xml(node):
-        hw = Homework(name=node.attrib['name'])
-        if 'start_date' in node.attrib:
-            hw.start_date = datetime.strptime(node.attrib['start_date'],
-                                              "%m/%d/%Y %H:%M:%S")
-        else:
-            hw.start_date = None
-        if 'due_date' in node.attrib:
-            hw.due_date = datetime.strptime(node.attrib['due_date'],
-                                            "%m/%d/%Y %H:%M:%S")
-        else:
-            hw.due_date = None
+    def update_from_xml(self, xml):
+        node = ET.fromstring(xml)
         for i, q in enumerate(node.iter('question')):
             print 'Processing Question %d' % (i+1)
             q_object = Question.from_xml(q)
-            q_object.homework = hw
-            session.add(q_object)
-        return hw
+            q_object.homework = self
+            self.questions.append(q_object)
+
+        session.commit()
 
 class Question(Base):
     __tablename__ = 'questions'
