@@ -568,7 +568,7 @@ def export_homework():
     hw = get_homework(hw_id)
     
     xml = "\n\n".join(q.xml for q in hw.questions)
-    return Response(xml, content_type='text/xml; charset=utf-8')
+    return Response(xml, content_type='text')
 
 @app.route("/update_hw_name", methods=['POST'])
 def update_hw_name():
