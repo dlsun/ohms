@@ -2,7 +2,7 @@
 OHMS: Online Homework Management System
 """
 
-from flask import Flask, request, render_template, make_response, redirect, url_for
+from flask import Flask, Response, request, render_template, make_response, redirect, url_for
 import json
 from utils import NewEncoder, convert_to_last_name
 from datetime import datetime
@@ -568,7 +568,7 @@ def export_homework():
     hw = get_homework(hw_id)
     
     xml = "\n\n".join(q.xml for q in hw.questions)
-    return xml
+    return Response(xml, content_type='text/xml; charset=utf-8')
 
 @app.route("/update_hw_name", methods=['POST'])
 def update_hw_name():
